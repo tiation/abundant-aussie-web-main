@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./packages/riggerbackend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - supabase
+
+  riggerconnect:
+    build:
+      context: ./packages/riggerconnect
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      VITE_API_URL: http://localhost:3000
+
+  riggerhub:
+    build:
+      context: ./packages/riggerhub
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      VITE_API_URL: http://localhost:3000
+
+  supabase:
+    image: supabase/postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: supabase
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+
+volumes:
+  supabase_data: {}

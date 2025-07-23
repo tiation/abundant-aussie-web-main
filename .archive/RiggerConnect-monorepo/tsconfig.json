@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolution-mode": "bundler",
+    
+    // Bundler mode
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    
+    // Best practices
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "exactOptionalPropertyTypes": true,
+    
+    // Interop
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    // JSON
+    "resolveJsonModule": true,
+    
+    // JSX
+    "jsx": "react-jsx",
+    
+    // Paths
+    "baseUrl": ".",
+    "paths": {
+      "@rigger/shared": ["./packages/shared/src"],
+      "@rigger/shared/*": ["./packages/shared/src/*"],
+      "@/*": ["./src/*"]
+    },
+    
+    // Skip lib check for faster builds
+    "skipLibCheck": true
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "packages/*/*.ts",
+    "packages/*/*.tsx",
+    "types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/riggerconnect" },
+    { "path": "./packages/riggerhub" },
+    { "path": "./packages/riggerbackend" }
+  ]
+}
