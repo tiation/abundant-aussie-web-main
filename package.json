@@ -1,7 +1,43 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "abundant-aussie-web",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Australian web platform featuring modern, scalable architecture with ethical development practices, cutting-edge design, and comprehensive DevOps integration.",
+  "author": {
+    "name": "Tiation",
+    "email": "tiatheone@protonmail.com",
+    "url": "https://github.com/tiation-repos"
+  },
+  "contributors": [
+    {
+      "name": "ChaseWhiteRabbit NGO",
+      "email": "support@chasewhiterabbit.org",
+      "url": "https://github.com/ChaseWhiteRabbit-repos"
+    }
+  ],
+  "homepage": "https://github.com/tiation/abundant-aussie-web-main",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tiation/abundant-aussie-web-main.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tiation/abundant-aussie-web-main/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "enterprise",
+    "web-application",
+    "react",
+    "typescript",
+    "vite",
+    "tailwind",
+    "shadcn-ui",
+    "ethical-development",
+    "devops",
+    "australian",
+    "ngo",
+    "community"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
