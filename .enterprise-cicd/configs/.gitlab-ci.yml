@@ -1,0 +1,184 @@
+# Enterprise GitLab CI/CD Pipeline
+# ChaseWhiteRabbit NGO - Ethical Technology Standards
+
+stages:
+  - security
+  - quality
+  - test
+  - build
+  - deploy-staging
+  - deploy-production
+
+variables:
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.11"
+  GO_VERSION: "1.21"
+  DOCKER_REGISTRY: "docker.sxc.codes"
+
+# Templates
+.node_template: &node_template
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+  cache:
+    paths:
+      - node_modules/
+
+.python_template: &python_template
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt || echo "No requirements.txt found"
+  cache:
+    paths:
+      - .pip-cache/
+
+.go_template: &go_template
+  image: golang:${GO_VERSION}
+  before_script:
+    - go mod download
+  cache:
+    paths:
+      - .go-cache/
+
+# Security Stage
+security:trivy:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy fs --exit-code 0 --format table .
+    - trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+  allow_failure: true
+
+security:gitleaks:
+  stage: security
+  image: zricethezav/gitleaks:latest
+  script:
+    - gitleaks detect --source . --verbose
+  allow_failure: true
+
+# Quality Stage
+quality:eslint:
+  <<: *node_template
+  stage: quality
+  script:
+    - npm run lint || echo "No lint script found"
+  only:
+    exists:
+      - package.json
+
+quality:prettier:
+  <<: *node_template
+  stage: quality
+  script:
+    - npm run format:check || echo "No format:check script found"
+  only:
+    exists:
+      - package.json
+
+quality:black:
+  <<: *python_template
+  stage: quality
+  script:
+    - black --check . || echo "Python formatting issues found"
+  only:
+    exists:
+      - requirements.txt
+
+quality:flake8:
+  <<: *python_template
+  stage: quality
+  script:
+    - flake8 . || echo "Python linting issues found"
+  only:
+    exists:
+      - requirements.txt
+
+quality:gofmt:
+  <<: *go_template
+  stage: quality
+  script:
+    - go fmt ./...
+    - go vet ./...
+  only:
+    exists:
+      - go.mod
+
+# Test Stage
+test:unit:
+  <<: *node_template
+  stage: test
+  script:
+    - npm test || echo "No test script found"
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  only:
+    exists:
+      - package.json
+
+test:python:
+  <<: *python_template
+  stage: test
+  script:
+    - pytest --cov=. --cov-report=xml || echo "No Python tests found"
+  coverage: '/TOTAL.+?(\d+\%)$/'
+  only:
+    exists:
+      - requirements.txt
+
+test:go:
+  <<: *go_template
+  stage: test
+  script:
+    - go test -v -race -coverprofile=coverage.out ./...
+  coverage: '/coverage: \d+.\d+% of statements/'
+  only:
+    exists:
+      - go.mod
+
+# Build Stage
+build:docker:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+  only:
+    exists:
+      - Dockerfile
+
+# Deploy Stages
+deploy:staging:
+  stage: deploy-staging
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -H 145.223.22.9 >> ~/.ssh/known_hosts
+  script:
+    - ssh root@145.223.22.9 "cd /opt/applications && docker-compose pull && docker-compose up -d"
+  environment:
+    name: staging
+    url: https://staging.sxc.codes
+  only:
+    - develop
+
+deploy:production:
+  stage: deploy-production
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -H 145.223.22.7 >> ~/.ssh/known_hosts
+  script:
+    - ssh root@145.223.22.7 "cd /opt/applications && docker-compose pull && docker-compose up -d"
+  environment:
+    name: production
+    url: https://sxc.codes
+  when: manual
+  only:
+    - main

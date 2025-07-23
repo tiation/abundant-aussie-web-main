@@ -1,0 +1,48 @@
+# Ignore nested git repositories
+*/.git/
+.git/
+
+# Ignore node_modules in all subdirectories
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Ignore build outputs
+**/dist/
+**/build/
+**/out/
+**/.next/
+**/target/
+
+# Ignore IDE files
+**/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
+**/.DS_Store
+
+# Ignore temporary files
+**/*.tmp
+**/*.temp
+**/.cache/
+**/*.log
+
+# Ignore backup files
+*.backup
+*.bak
+
+# Ignore environment files with secrets
+**/.env.local
+**/.env.production
+**/.env.staging
+
+# Keep documentation and configuration files
+!*.md
+!*.yml
+!*.yaml
+!*.json
+!*.sh
+!LICENSE*
+!CONTRIBUTING*
+!CODE_OF_CONDUCT*
