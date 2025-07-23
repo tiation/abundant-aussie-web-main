@@ -1,0 +1,189 @@
+# ==========================================================================
+# RiggerBackend - Helm Chart Values
+# ChaseWhiteRabbit NGO Initiative
+# ==========================================================================
+
+# Application configuration
+replicaCount: 3
+
+image:
+  repository: docker.sxc.codes/rigger-backend
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Service account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod security context
+podAnnotations: {}
+podSecurityContext:
+  fsGroup: 1001
+  runAsNonRoot: true
+  runAsUser: 1001
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: api.rigger.sxc.codes
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: rigger-backend-tls
+      hosts:
+        - api.rigger.sxc.codes
+
+# Resource configuration
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Node selection
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Environment variables
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: PORT
+    value: "3000"
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: rigger-backend-secrets
+        key: database-url
+  - name: REDIS_URL
+    valueFrom:
+      secretKeyRef:
+        name: rigger-backend-secrets
+        key: redis-url
+  - name: JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: rigger-backend-secrets
+        key: jwt-secret
+
+# Health checks
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Persistent volumes
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
+# Monitoring and observability
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    path: /metrics
+
+# Database configuration (if using subchart)
+postgresql:
+  enabled: false
+  auth:
+    postgresPassword: ""
+    username: rigger
+    password: ""
+    database: riggerdb
+
+# Redis configuration (if using subchart)
+redis:
+  enabled: false
+  auth:
+    enabled: true
+    password: ""
+
+# Network policies
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 5432  # PostgreSQL
+        - protocol: TCP
+          port: 6379  # Redis
+        - protocol: TCP
+          port: 53    # DNS
+        - protocol: UDP
+          port: 53    # DNS
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2

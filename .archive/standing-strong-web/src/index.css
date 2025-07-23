@@ -1,0 +1,143 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional blue-tone color palette for enterprise branding */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Professional blue primary colors */
+    --primary: 217 91% 24%; /* Deep navy blue */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 32% 89%; /* Light blue-gray */
+    --secondary-foreground: 217 91% 24%;
+
+    --muted: 217 15% 95%;
+    --muted-foreground: 217 25% 45%;
+
+    --accent: 217 78% 51%; /* Professional blue */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 20% 88%;
+    --input: 217 20% 88%;
+    --ring: 217 91% 24%;
+
+    --radius: 0.5rem;
+
+    /* Custom blue tones */
+    --slate-blue: 217 91% 24%;
+    --sky-blue: 217 78% 51%;
+    --navy-blue: 217 100% 15%;
+    --light-blue: 217 45% 92%;
+  }
+
+  .dark {
+    --background: 217 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 78% 51%;
+    --primary-foreground: 217 84% 4.9%;
+
+    --secondary: 217 32% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 32% 17.5%;
+    --muted-foreground: 217 20% 65.1%;
+
+    --accent: 217 78% 51%;
+    --accent-foreground: 217 84% 4.9%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32% 17.5%;
+    --input: 217 32% 17.5%;
+    --ring: 217 78% 51%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--slate-blue)) 0%, hsl(var(--sky-blue)) 100%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--slate-blue)), hsl(var(--sky-blue)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Professional animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.6s ease-out;
+}
+
+/* Smooth transitions for interactive elements */
+.transition-all-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

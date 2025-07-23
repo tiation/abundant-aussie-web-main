@@ -1,0 +1,634 @@
+version: '3.8'
+
+# 🚀 Tiation SaaS Ecosystem - Development Environment
+# Multi-platform containerized development with all services
+
+networks:
+  tiation-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  elasticsearch_data:
+
+services:
+  # ===============================================
+  # 🗄️  DATABASES & DATA STORES
+  # ===============================================
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: tiation-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tiation_saas_dev
+      POSTGRES_USER: tiation
+      POSTGRES_PASSWORD: dev_password_123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tiation"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mongodb:
+    image: mongo:6.0
+    container_name: tiation-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tiation
+      MONGO_INITDB_ROOT_PASSWORD: dev_password_123
+      MONGO_INITDB_DATABASE: tiation_gaming_dev
+    volumes:
+      - mongodb_data:/data/db
+      - ./database/mongo-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: tiation-redis
+    restart: unless-stopped
+    command: redis-server --requirepass dev_password_123 --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🔍 SEARCH & ANALYTICS
+  # ===============================================
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: tiation-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🚀 RIGGER PLATFORM SERVICES
+  # ===============================================
+  
+  rigger-backend:
+    build:
+      context: ./rigger/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-rigger-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://tiation:dev_password_123@postgres:5432/tiation_saas_dev
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      CORS_ORIGIN: http://localhost:3001
+    volumes:
+      - ./rigger/backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  rigger-frontend:
+    build:
+      context: ./rigger/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-rigger-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      REACT_APP_API_URL: http://localhost:3000
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./rigger/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    networks:
+      - tiation-network
+    depends_on:
+      - rigger-backend
+
+  # ===============================================
+  # 🤖 AI AGENTS PLATFORM SERVICES
+  # ===============================================
+  
+  ai-agents-backend:
+    build:
+      context: ./ai-agents/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-ai-agents-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      DATABASE_URL: postgresql://tiation:dev_password_123@postgres:5432/tiation_saas_dev
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      OPENAI_API_KEY: sk-dev-openai-key
+      CORS_ORIGIN: http://localhost:3003
+    volumes:
+      - ./ai-agents/backend:/app
+      - /app/node_modules
+    ports:
+      - "3002:3002"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  ai-agents-frontend:
+    build:
+      context: ./ai-agents/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-ai-agents-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+      REACT_APP_API_URL: http://localhost:3002
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./ai-agents/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3003:3003"
+    networks:
+      - tiation-network
+    depends_on:
+      - ai-agents-backend
+
+  # ===============================================
+  # 🎲 GAMING PLATFORM SERVICES
+  # ===============================================
+  
+  gaming-backend:
+    build:
+      context: ./gaming/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-gaming-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3004
+      MONGODB_URI: mongodb://tiation:dev_password_123@mongodb:27017/tiation_gaming_dev?authSource=admin
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      CORS_ORIGIN: http://localhost:3005
+    volumes:
+      - ./gaming/backend:/app
+      - /app/node_modules
+    ports:
+      - "3004:3004"
+    networks:
+      - tiation-network
+    depends_on:
+      - mongodb
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3004/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  gaming-frontend:
+    build:
+      context: ./gaming/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-gaming-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3005
+      REACT_APP_API_URL: http://localhost:3004
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./gaming/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3005:3005"
+    networks:
+      - tiation-network
+    depends_on:
+      - gaming-backend
+
+  # ===============================================
+  # 🎧 PODCAST PLATFORM SERVICES
+  # ===============================================
+  
+  podcast-backend:
+    build:
+      context: ./podcast/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-podcast-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3006
+      DATABASE_URL: postgresql://tiation:dev_password_123@postgres:5432/tiation_saas_dev
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      CORS_ORIGIN: http://localhost:3007
+      AWS_REGION: ap-southeast-2
+      S3_BUCKET_NAME: tiation-podcast-dev
+    volumes:
+      - ./podcast/backend:/app
+      - /app/node_modules
+    ports:
+      - "3006:3006"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3006/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  podcast-frontend:
+    build:
+      context: ./podcast/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-podcast-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3007
+      REACT_APP_API_URL: http://localhost:3006
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./podcast/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3007:3007"
+    networks:
+      - tiation-network
+    depends_on:
+      - podcast-backend
+
+  # ===============================================
+  # 📄 TEMPLATES PLATFORM SERVICES
+  # ===============================================
+  
+  templates-backend:
+    build:
+      context: ./templates/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-templates-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3008
+      DATABASE_URL: postgresql://tiation:dev_password_123@postgres:5432/tiation_saas_dev
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      CORS_ORIGIN: http://localhost:3009
+    volumes:
+      - ./templates/backend:/app
+      - /app/node_modules
+    ports:
+      - "3008:3008"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3008/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  templates-frontend:
+    build:
+      context: ./templates/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-templates-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3009
+      REACT_APP_API_URL: http://localhost:3008
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./templates/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3009:3009"
+    networks:
+      - tiation-network
+    depends_on:
+      - templates-backend
+
+  # ===============================================
+  # 🏢 ENTERPRISE PLATFORM SERVICES
+  # ===============================================
+  
+  enterprise-backend:
+    build:
+      context: ./enterprise/backend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-enterprise-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3010
+      DATABASE_URL: postgresql://tiation:dev_password_123@postgres:5432/tiation_saas_dev
+      REDIS_URL: redis://:dev_password_123@redis:6379
+      STRIPE_SECRET_KEY: sk_test_51234567890
+      STRIPE_WEBHOOK_SECRET: whsec_test_1234567890
+      JWT_SECRET: dev_jwt_secret_key_very_long
+      CORS_ORIGIN: http://localhost:3011
+    volumes:
+      - ./enterprise/backend:/app
+      - /app/node_modules
+    ports:
+      - "3010:3010"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3010/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  enterprise-frontend:
+    build:
+      context: ./enterprise/frontend
+      dockerfile: Dockerfile.dev
+    container_name: tiation-enterprise-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3011
+      REACT_APP_API_URL: http://localhost:3010
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51234567890
+      REACT_APP_ENVIRONMENT: development
+    volumes:
+      - ./enterprise/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3011:3011"
+    networks:
+      - tiation-network
+    depends_on:
+      - enterprise-backend
+
+  # ===============================================
+  # 🌐 REVERSE PROXY & LOAD BALANCER
+  # ===============================================
+  
+  nginx:
+    image: nginx:alpine
+    container_name: tiation-nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - tiation-network
+    depends_on:
+      - rigger-backend
+      - rigger-frontend
+      - ai-agents-backend
+      - ai-agents-frontend
+      - gaming-backend
+      - gaming-frontend
+      - podcast-backend
+      - podcast-frontend
+      - templates-backend
+      - templates-frontend
+      - enterprise-backend
+      - enterprise-frontend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===============================================
+  # 📊 MONITORING & OBSERVABILITY
+  # ===============================================
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: tiation-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/rules:/etc/prometheus/rules:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: tiation-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3100:3000"
+    networks:
+      - tiation-network
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===============================================
+  # 📧 MAILHOG - EMAIL TESTING
+  # ===============================================
+  
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: tiation-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    networks:
+      - tiation-network
+
+  # ===============================================
+  # 🔧 DEVELOPMENT TOOLS
+  # ===============================================
+  
+  adminer:
+    image: adminer:latest
+    container_name: tiation-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: tiation-mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: tiation
+      ME_CONFIG_MONGODB_ADMINPASSWORD: dev_password_123
+      ME_CONFIG_MONGODB_URL: mongodb://tiation:dev_password_123@mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    ports:
+      - "8081:8081"
+    networks:
+      - tiation-network
+    depends_on:
+      - mongodb
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: tiation-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:dev_password_123
+    ports:
+      - "8082:8081"
+    networks:
+      - tiation-network
+    depends_on:
+      - redis
+
+  # ===============================================
+  # 📋 HEALTH CHECK DASHBOARD
+  # ===============================================
+  
+  health-dashboard:
+    build:
+      context: ./tools/health-dashboard
+      dockerfile: Dockerfile
+    container_name: tiation-health-dashboard
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 8090
+      SERVICES_CONFIG: |
+        {
+          "rigger": {"backend": "http://rigger-backend:3000", "frontend": "http://rigger-frontend:3001"},
+          "ai-agents": {"backend": "http://ai-agents-backend:3002", "frontend": "http://ai-agents-frontend:3003"},
+          "gaming": {"backend": "http://gaming-backend:3004", "frontend": "http://gaming-frontend:3005"},
+          "podcast": {"backend": "http://podcast-backend:3006", "frontend": "http://podcast-frontend:3007"},
+          "templates": {"backend": "http://templates-backend:3008", "frontend": "http://templates-frontend:3009"},
+          "enterprise": {"backend": "http://enterprise-backend:3010", "frontend": "http://enterprise-frontend:3011"}
+        }
+    ports:
+      - "8090:8090"
+    networks:
+      - tiation-network
+    depends_on:
+      - rigger-backend
+      - ai-agents-backend
+      - gaming-backend
+      - podcast-backend
+      - templates-backend
+      - enterprise-backend

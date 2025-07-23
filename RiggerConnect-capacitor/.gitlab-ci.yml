@@ -1,0 +1,223 @@
+# GitLab CI/CD Pipeline for RiggerConnect Capacitor App
+# Integrates with ChaseWhiteRabbit NGO infrastructure
+
+stages:
+  - test
+  - build
+  - deploy-staging
+  - deploy-production
+  - mobile-build
+
+variables:
+  DOCKER_REGISTRY: "docker.sxc.codes"
+  HELM_REGISTRY: "helm.sxc.codes"
+  SUPABASE_URL: "https://supabase.sxc.codes"
+  NODE_VERSION: "18"
+  
+# Test stage
+test:
+  stage: test
+  image: node:${NODE_VERSION}-alpine
+  before_script:
+    - npm ci
+  script:
+    - npm run lint
+    - npm run test
+    - npm run build
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# Build web app
+build-web:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+  script:
+    - docker build -t $DOCKER_REGISTRY/riggerconnect-capacitor:$CI_COMMIT_SHA .
+    - docker tag $DOCKER_REGISTRY/riggerconnect-capacitor:$CI_COMMIT_SHA $DOCKER_REGISTRY/riggerconnect-capacitor:latest
+    - docker push $DOCKER_REGISTRY/riggerconnect-capacitor:$CI_COMMIT_SHA
+    - docker push $DOCKER_REGISTRY/riggerconnect-capacitor:latest
+  only:
+    - main
+    - develop
+
+# Deploy to staging
+deploy-staging:
+  stage: deploy-staging
+  image: alpine/helm:latest
+  before_script:
+    - apk add --no-cache curl openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H docker.sxc.codes >> ~/.ssh/known_hosts
+  script:
+    - helm upgrade --install riggerconnect-staging ./helm-chart 
+        --set image.repository=$DOCKER_REGISTRY/riggerconnect-capacitor 
+        --set image.tag=$CI_COMMIT_SHA
+        --set environment=staging
+        --set supabase.url=$SUPABASE_URL
+        --set ingress.host=riggerconnect-staging.sxc.codes
+        --namespace rigger-staging
+        --create-namespace
+  environment:
+    name: staging
+    url: https://riggerconnect-staging.sxc.codes
+  only:
+    - develop
+
+# Deploy to production
+deploy-production:
+  stage: deploy-production
+  image: alpine/helm:latest
+  before_script:
+    - apk add --no-cache curl openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H helm.sxc.codes >> ~/.ssh/known_hosts
+  script:
+    - helm upgrade --install riggerconnect-prod ./helm-chart 
+        --set image.repository=$DOCKER_REGISTRY/riggerconnect-capacitor 
+        --set image.tag=$CI_COMMIT_SHA
+        --set environment=production
+        --set supabase.url=$SUPABASE_URL
+        --set ingress.host=riggerconnect.sxc.codes
+        --namespace rigger-production
+        --create-namespace
+  environment:
+    name: production
+    url: https://riggerconnect.sxc.codes
+  when: manual
+  only:
+    - main
+
+# Build Android APK
+build-android:
+  stage: mobile-build
+  image: openjdk:11-jdk
+  variables:
+    ANDROID_COMPILE_SDK: "33"
+    ANDROID_BUILD_TOOLS: "33.0.0"
+    ANDROID_SDK_TOOLS: "9477386"
+  before_script:
+    - apt-get update -y && apt-get install -y curl unzip nodejs npm
+    - npm ci
+    - npm run build
+    # Setup Android SDK
+    - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
+    - unzip -d android-sdk-linux android-sdk.zip
+    - echo y | android-sdk-linux/cmdline-tools/bin/sdkmanager --sdk_root=android-sdk-linux "platforms;android-${ANDROID_COMPILE_SDK}" >/dev/null
+    - echo y | android-sdk-linux/cmdline-tools/bin/sdkmanager --sdk_root=android-sdk-linux "platform-tools" >/dev/null
+    - echo y | android-sdk-linux/cmdline-tools/bin/sdkmanager --sdk_root=android-sdk-linux "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
+    - export ANDROID_SDK_ROOT=$PWD/android-sdk-linux
+    - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/
+    # Setup Capacitor
+    - npx cap add android
+    - npx cap sync android
+  script:
+    - cd android
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - android/app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+
+# Build iOS (requires macOS runner)
+build-ios:
+  stage: mobile-build
+  tags:
+    - macos
+  before_script:
+    - npm ci
+    - npm run build
+    - npx cap add ios
+    - npx cap sync ios
+  script:
+    - cd ios/App
+    - xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -destination generic/platform=iOS build
+  artifacts:
+    paths:
+      - ios/App/build/
+    expire_in: 1 week
+  only:
+    - main
+  when: manual
+
+# Performance monitoring
+performance-test:
+  stage: test
+  image: sitespeedio/sitespeed.io:latest
+  script:
+    - sitespeed.io --budget lighthouse-budget.json https://riggerconnect-staging.sxc.codes
+  artifacts:
+    paths:
+      - sitespeed-result/
+    expire_in: 1 week
+  only:
+    - schedules
+
+# Security scanning
+security-scan:
+  stage: test
+  image: owasp/zap2docker-stable
+  script:
+    - zap-baseline.py -t https://riggerconnect-staging.sxc.codes
+  artifacts:
+    reports:
+      junit: report.xml
+  only:
+    - schedules
+
+# Notification to ChaseWhiteRabbit team
+notify-deployment:
+  stage: deploy-production
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      curl -X POST "$WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"text\": \"🚀 RiggerConnect Capacitor App deployed to production!\",
+          \"attachments\": [{
+            \"color\": \"good\",
+            \"fields\": [{
+              \"title\": \"Environment\",
+              \"value\": \"Production\",
+              \"short\": true
+            }, {
+              \"title\": \"Version\",
+              \"value\": \"$CI_COMMIT_SHA\",
+              \"short\": true
+            }, {
+              \"title\": \"URL\",
+              \"value\": \"https://riggerconnect.sxc.codes\",
+              \"short\": false
+            }]
+          }]
+        }"
+  dependencies:
+    - deploy-production
+  only:
+    - main
+  when: on_success

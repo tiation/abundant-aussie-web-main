@@ -1,0 +1,332 @@
+version: '3.8'
+
+# ==============================================
+# RIGGER ECOSYSTEM - LOCAL DEVELOPMENT
+# MacOS Docker Compose Configuration
+# ChaseWhiteRabbit NGO
+# ==============================================
+
+services:
+  # ==============================================
+  # DATABASE SERVICES
+  # ==============================================
+  
+  # PostgreSQL - Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: rigger-postgres-local
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-rigger_local}
+      - POSTGRES_USER=${POSTGRES_USER:-rigger_local}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-rigger123}
+      - POSTGRES_MULTIPLE_DATABASES=riggerhub,riggerconnect,riggerbackend
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
+    ports:
+      - "${PORT_POSTGRES:-5432}:5432"
+    networks:
+      - rigger-local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rigger_local} -d ${POSTGRES_DB:-rigger_local}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Caching & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: rigger-redis-local
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-redis123}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "${PORT_REDIS:-6379}:6379"
+    networks:
+      - rigger-local
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # MongoDB - Document Store for Analytics
+  mongodb:
+    image: mongo:7.0
+    container_name: rigger-mongodb-local
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-mongo123}
+      - MONGO_INITDB_DATABASE=${MONGO_DB:-rigger_local_analytics}
+    volumes:
+      - mongodb-data:/data/db
+      - ./scripts/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "${PORT_MONGODB:-27017}:27017"
+    networks:
+      - rigger-local
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==============================================
+  # RIGGER BACKEND SERVICE
+  # ==============================================
+  
+  rigger-backend:
+    build:
+      context: ./RiggerBackend
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-local-dev}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-local}
+    image: rigger-backend:local
+    container_name: rigger-backend-local
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-rigger_local}:${POSTGRES_PASSWORD:-rigger123}@postgres:5432/riggerbackend
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis123}@redis:6379
+      - MONGODB_URL=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-mongo123}@mongodb:27017/rigger_local_analytics?authSource=admin
+      - JWT_SECRET=${JWT_SECRET:-local-jwt-secret-key-for-development-only}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-24h}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_local}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_local}
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
+      - EMAIL_USER=${EMAIL_USER:-test@localhost}
+      - EMAIL_PASS=${EMAIL_PASS:-}
+      - SUPABASE_URL=${SUPABASE_URL:-http://localhost:54321}
+      - SUPABASE_KEY=${SUPABASE_KEY:-local-supabase-service-key}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - LOG_LEVEL=debug
+      - DEBUG=rigger:*
+    volumes:
+      - ./RiggerBackend/src:/app/src:ro  # Hot reload for development
+      - backend-logs:/app/logs
+      - backend-uploads:/app/uploads
+    ports:
+      - "${PORT_RIGGER_BACKEND:-8000}:8000"
+    networks:
+      - rigger-local
+    depends_on:
+      - postgres
+      - redis
+      - mongodb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '${BACKEND_CPU_LIMIT:-1.0}'
+          memory: ${BACKEND_MEMORY_LIMIT:-512M}
+
+  # ==============================================
+  # RIGGER WEB APPLICATIONS
+  # ==============================================
+  
+  # RiggerHub-web - Business Portal
+  riggerhub-web:
+    build:
+      context: ./RiggerHub-web
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-local-dev}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-local}
+        - PLATFORM_MODE=hub
+    image: riggerhub-web:local
+    container_name: riggerhub-web-local
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://localhost:54321}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-local-supabase-anon-key}
+      - VITE_APP_NAME=RiggerHub
+      - VITE_APP_URL=${VITE_APP_URL_HUB:-http://localhost:3000}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000}
+      - VITE_ENVIRONMENT=development
+    volumes:
+      - ./RiggerHub-web/src:/app/src:ro  # Hot reload for development
+      - hub-logs:/app/logs
+      - hub-uploads:/app/uploads
+    ports:
+      - "${PORT_RIGGERHUB_WEB:-3000}:3000"
+    networks:
+      - rigger-local
+    depends_on:
+      - rigger-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '${WEB_CPU_LIMIT:-0.5}'
+          memory: ${WEB_MEMORY_LIMIT:-256M}
+
+  # RiggerConnect-web - Worker Portal
+  riggerconnect-web:
+    build:
+      context: ./RiggerConnect-web
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-local-dev}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-local}
+        - PLATFORM_MODE=connect
+    image: riggerconnect-web:local
+    container_name: riggerconnect-web-local
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://localhost:54321}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-local-supabase-anon-key}
+      - VITE_APP_NAME=RiggerConnect
+      - VITE_APP_URL=${VITE_APP_URL_CONNECT:-http://localhost:3001}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000}
+      - VITE_ENVIRONMENT=development
+    volumes:
+      - ./RiggerConnect-web/src:/app/src:ro  # Hot reload for development
+      - connect-logs:/app/logs
+      - connect-uploads:/app/uploads
+    ports:
+      - "${PORT_RIGGERCONNECT_WEB:-3001}:3000"
+    networks:
+      - rigger-local
+    depends_on:
+      - rigger-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '${WEB_CPU_LIMIT:-0.5}'
+          memory: ${WEB_MEMORY_LIMIT:-256M}
+
+  # ==============================================
+  # DEVELOPMENT TOOLS
+  # ==============================================
+  
+  # Mailhog - Email Testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: rigger-mailhog-local
+    restart: unless-stopped
+    ports:
+      - "${PORT_MAILHOG_WEB:-8025}:8025"     # Web UI
+      - "${PORT_MAILHOG_SMTP:-1025}:1025"    # SMTP
+    networks:
+      - rigger-local
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==============================================
+  # MONITORING - LIGHTWEIGHT FOR LOCAL
+  # ==============================================
+  
+  # Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rigger-prometheus-local
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'  # Shorter retention for local
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./config/prometheus/prometheus.local.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "${PORT_PROMETHEUS:-9090}:9090"
+    networks:
+      - rigger-local
+
+  # Grafana - Metrics Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rigger-grafana-local
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=true
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "${PORT_GRAFANA:-3002}:3000"
+    networks:
+      - rigger-local
+    depends_on:
+      - prometheus
+
+# ==============================================
+# NETWORKS
+# ==============================================
+networks:
+  rigger-local:
+    driver: bridge
+    name: rigger-local
+
+# ==============================================
+# VOLUMES - LOCAL DEVELOPMENT
+# ==============================================
+volumes:
+  # Database volumes
+  postgres-data:
+    driver: local
+  mongodb-data:
+    driver: local
+  redis-data:
+    driver: local
+
+  # Application volumes
+  backend-logs:
+    driver: local
+  backend-uploads:
+    driver: local
+  hub-logs:
+    driver: local
+  hub-uploads:
+    driver: local
+  connect-logs:
+    driver: local
+  connect-uploads:
+    driver: local
+
+  # Monitoring volumes
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local

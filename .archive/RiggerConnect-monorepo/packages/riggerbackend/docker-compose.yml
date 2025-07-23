@@ -1,0 +1,177 @@
+# ==========================================================================
+# RiggerBackend - Docker Compose Development Environment
+# ChaseWhiteRabbit NGO Initiative
+# 
+# Complete development stack with all required services
+# ==========================================================================
+
+version: '3.8'
+
+services:
+  # ---- Core Application ----
+  rigger-backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: rigger-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://rigger:riggerpass@postgres:5432/riggerdb
+      - REDIS_URL=redis://redis:6379
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+    volumes:
+      - ./src:/app/src:ro
+      - ./config:/app/config:ro
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---- Database ----
+  postgres:
+    image: postgres:15-alpine
+    container_name: rigger-postgres
+    environment:
+      POSTGRES_DB: riggerdb
+      POSTGRES_USER: rigger
+      POSTGRES_PASSWORD: riggerpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rigger -d riggerdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- Cache & Session Store ----
+  redis:
+    image: redis:7-alpine
+    container_name: rigger-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ---- Search Engine ----
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: rigger-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---- Monitoring ----
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rigger-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # ---- Observability Dashboard ----
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rigger-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=riggeradmin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - rigger-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+# ---- Networks ----
+networks:
+  rigger-network:
+    driver: bridge
+    name: rigger-network
+
+# ---- Persistent Volumes ----
+volumes:
+  postgres_data:
+    name: rigger_postgres_data
+  redis_data:
+    name: rigger_redis_data
+  elasticsearch_data:
+    name: rigger_elasticsearch_data
+  prometheus_data:
+    name: rigger_prometheus_data
+  grafana_data:
+    name: rigger_grafana_data
+
+# ==========================================================================
+# Usage Instructions:
+# 
+# Start all services:
+#   docker-compose up -d
+#
+# Start specific services:
+#   docker-compose up -d postgres redis
+#
+# View logs:
+#   docker-compose logs -f rigger-backend
+#
+# Stop all services:
+#   docker-compose down
+#
+# Clean up (removes volumes):
+#   docker-compose down -v
+#
+# Rebuild and start:
+#   docker-compose up --build -d
+# ==========================================================================

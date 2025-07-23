@@ -1,0 +1,22 @@
+[2025-07-23 22:41:20] 🚀 Starting repository update process...
+[2025-07-23 22:41:20] 📁 Base directory: /Users/tiaastor/Github/tiation-repos
+[2025-07-23 22:41:20] 🎯 Updating priority repositories...
+[2025-07-23 22:41:20] 🔄 Updating tiation-rigger-workspace...
+[2025-07-23 22:41:24] ✅ tiation-rigger-workspace: Fetched latest changes
+[2025-07-23 22:41:24] ✅ tiation-rigger-workspace: Updated to latest main
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: tiation-rigger-ecosystem
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerConnect-web
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerConnect-android
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerConnect-ios
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerHub-web
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerHub-android
+[2025-07-23 22:41:24] ⚠️  Priority repository not found: RiggerHub-ios
+[2025-07-23 22:41:24] 🔄 Updating RiggerShared...
+[2025-07-23 22:41:28] ✅ RiggerShared: Fetched latest changes
+[2025-07-23 22:41:28] ✅ RiggerShared: Updated to latest main
+[2025-07-23 22:41:28] ⚠️  Priority repository not found: RiggerBackend
+[2025-07-23 22:41:28] ⚠️  Priority repository not found: tiation-ecosystem
+[2025-07-23 22:41:28] ⚠️  Priority repository not found: tiation-monorepo
+[2025-07-23 22:41:28] 📦 Updating remaining repositories...
+[2025-07-23 22:41:28] ✅ Repository update process completed!
+[2025-07-23 22:41:28] 📊 Check /Users/tiaastor/Github/tiation-repos/repo_update_log.txt for detailed results

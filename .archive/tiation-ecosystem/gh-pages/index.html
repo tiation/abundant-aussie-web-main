@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Demos</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <h1>Interactive Demos</h1>
+    <div id="demo-container" data-tiation-demo="demo-1"></div>
+    <script src="./demo-core.js"></script>
+    <script>
+        // Initialize the demo here
+        window.TiationDemo.registerDemo({
+            id: 'demo-1',
+            title: 'Welcome to Interactive Demo',
+            description: 'An engaging demo showcasing our application capabilities.',
+            steps: [
+                {
+                    title: 'Introduction',
+                    description: 'This step introduces the features.',
+                    code: 'console.log("Hello, world!");',
+                },
+                {
+                    title: 'Feature Demonstration',
+                    description: 'More engaging content here.',
+                    code: 'console.log("Feature in action!");',
+                }
+            ]
+        });
+    </script>
+</body>
+</html>
+

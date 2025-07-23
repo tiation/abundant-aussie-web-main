@@ -1,0 +1,66 @@
+title: Tiation Interactive Demos
+description: Enterprise-grade interactive demonstrations showcasing cutting-edge technology solutions
+author: TiaAstor
+email: tiatheone@protonmail.com
+url: https://tiaastor.github.io/tiation-interactive-demos
+baseurl: /tiation-interactive-demos
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Theme
+theme: minima
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - .jekyll-cache
+  - .git
+
+# Include files
+include:
+  - _pages
+
+# Collections
+collections:
+  demos:
+    output: true
+    permalink: /demos/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "demos"
+    values:
+      layout: "demo"
+
+# SEO and social
+github_username: tiaastor
+twitter_username: tiaastor
+
+# Google Analytics
+google_analytics: # Add your GA tracking ID here
+
+# Plugin settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Sass
+sass:
+  sass_dir: assets/styles
+  style: compressed

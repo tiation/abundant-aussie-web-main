@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Backend Tests
+        working-directory: ./backend
+        run: |
+          npm install
+          npm test
+
+  mobile-builds:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        app: ['client', 'enterprise']
+        platform: ['ios', 'android']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+      - name: Install dependencies
+        working-directory: ./mobile
+        run: npm install
+      - name: Build ${{ matrix.platform }} ${{ matrix.app }}
+        working-directory: ./mobile/${{ matrix.platform }}/${{ matrix.app }}-app
+        run: |
+          # Add platform-specific build commands here
+          echo "Building ${{ matrix.platform }} ${{ matrix.app }} app"
+
+  web-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+      - name: Build web
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+      - name: Deploy to staging
+        if: github.ref == 'refs/heads/develop'
+        run: echo "Deploy to staging"
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: echo "Deploy to production"

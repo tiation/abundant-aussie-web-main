@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Setup Guide - Abundant Aussie Web</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --light-bg: #f8fafc;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            background: var(--white);
+            margin: -50px auto 2rem;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 10;
+        }
+
+        .step {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        .step:hover {
+            border-color: var(--primary);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--primary);
+            color: var(--white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            padding-left: 1rem;
+        }
+
+        .step p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .tip {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tip-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .prerequisites {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .prerequisite {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .prerequisite .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .prerequisite h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .next-steps {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .next-steps h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--white);
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                margin: -30px 20px 2rem;
+                padding: 2rem;
+            }
+            
+            .step {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="back-link">← Back to Docs</a>
+            <h1>🚀 Setup Guide</h1>
+            <p>Let's get you up and running in no time!</p>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+
+        <div class="tip">
+            <span class="tip-icon">💡</span>
+            <strong>New to coding?</strong> Don't worry! We'll walk you through everything step by step. 
+            Each step is designed to be beginner-friendly with plenty of explanations.
+        </div>
+
+        <section class="step" data-step="1">
+            <div class="step-number">1</div>
+            <h3>📋 Check Prerequisites</h3>
+            <p>Before we start building awesome things, let's make sure you have the right tools installed!</p>
+            
+            <div class="prerequisites">
+                <div class="prerequisite">
+                    <span class="icon">💻</span>
+                    <h4>Code Editor</h4>
+                    <p>VS Code (recommended) or your favorite editor</p>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">🟢</span>
+                    <h4>Node.js</h4>
+                    <p>Version 18 or higher</p>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">📦</span>
+                    <h4>Git</h4>
+                    <p>For version control</p>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">🌐</span>
+                    <h4>Browser</h4>
+                    <p>Chrome, Firefox, or Safari</p>
+                </div>
+            </div>
+
+            <div class="tip">
+                <span class="tip-icon">💡</span>
+                Don't have these installed? No problem! Check out our 
+                <a href="#installation-links" style="color: var(--primary); font-weight: 600;">installation links</a> below.
+            </div>
+        </section>
+
+        <section class="step" data-step="2">
+            <div class="step-number">2</div>
+            <h3>📥 Clone the Repository</h3>
+            <p>Time to grab our awesome codebase! Open your terminal and run this command:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                <code>git clone https://github.com/tiation/abundant-aussie-web-main.git</code>
+            </div>
+
+            <p>This downloads all the project files to your computer. Think of it like downloading a zip file, but way cooler! 🎉</p>
+
+            <div class="warning">
+                <span class="tip-icon">⚠️</span>
+                <strong>First time using Git?</strong> Git is like a time machine for your code. 
+                It helps you track changes and collaborate with others. Pretty neat, right?
+            </div>
+        </section>
+
+        <section class="step" data-step="3">
+            <div class="step-number">3</div>
+            <h3>📂 Navigate to the Project</h3>
+            <p>Let's move into our project folder:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                <code>cd abundant-aussie-web-main</code>
+            </div>
+
+            <p>Now you're inside the project! It's like opening a folder on your computer, but in the terminal.</p>
+
+            <div class="tip">
+                <span class="tip-icon">💡</span>
+                <strong>Pro tip:</strong> You can also drag and drop the folder into VS Code to open it directly!
+            </div>
+        </section>
+
+        <section class="step" data-step="4">
+            <div class="step-number">4</div>
+            <h3>📦 Install Dependencies</h3>
+            <p>Our app needs some helper libraries (we call them dependencies). Let's install them:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                <code>npm install</code>
+            </div>
+
+            <p>This might take a minute or two. npm is downloading all the tools our app needs to work properly. 
+            It's like gathering all the ingredients before cooking a meal! 🍳</p>
+
+            <div class="success">
+                <span class="tip-icon">✅</span>
+                <strong>Success looks like:</strong> You'll see lots of text scrolling by, then a message saying 
+                how many packages were installed. Don't worry about the warnings - they're normal!
+            </div>
+        </section>
+
+        <section class="step" data-step="5">
+            <div class="step-number">5</div>
+            <h3>🚀 Start the Development Server</h3>
+            <p>Now for the exciting part - let's see our app in action!</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                <code>npm run dev</code>
+            </div>
+
+            <p>This starts a local server that shows you the app as you build it. It's like having a live preview!</p>
+
+            <div class="success">
+                <span class="tip-icon">🎉</span>
+                <strong>You did it!</strong> Your browser should automatically open to 
+                <code>http://localhost:5173</code>. If it doesn't, just click that link!
+            </div>
+        </section>
+
+        <section class="step" data-step="6">
+            <div class="step-number">6</div>
+            <h3>🎨 Start Building!</h3>
+            <p>Congratulations! You now have a fully working development environment. Here's what you can do next:</p>
+            
+            <ul style="margin-left: 2rem; color: var(--text-light);">
+                <li>✨ Edit files in <code>src/</code> and see changes instantly</li>
+                <li>🎨 Customize styles with Tailwind CSS</li>
+                <li>🧩 Add new components and pages</li>
+                <li>📱 Test on different screen sizes</li>
+            </ul>
+
+            <div class="tip">
+                <span class="tip-icon">🔥</span>
+                <strong>Hot tip:</strong> Any changes you make to the code will automatically show up in your browser. 
+                No need to refresh! This is called "hot reloading" and it's pure magic ✨
+            </div>
+        </section>
+
+        <div class="next-steps">
+            <h3>🎯 What's Next?</h3>
+            <p>You're all set up! Ready to dive deeper?</p>
+            <a href="tutorials.html" class="btn">Start Building</a>
+            <a href="tools.html" class="btn">Learn the Tools</a>
+            <a href="components.html" class="btn">Browse Components</a>
+        </div>
+
+        <div id="installation-links" style="margin-top: 3rem;">
+            <h3>📥 Installation Links</h3>
+            <div class="prerequisites">
+                <div class="prerequisite">
+                    <span class="icon">💻</span>
+                    <h4>VS Code</h4>
+                    <a href="https://code.visualstudio.com/" target="_blank">Download VS Code →</a>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">🟢</span>
+                    <h4>Node.js</h4>
+                    <a href="https://nodejs.org/" target="_blank">Download Node.js →</a>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">📦</span>
+                    <h4>Git</h4>
+                    <a href="https://git-scm.com/" target="_blank">Download Git →</a>
+                </div>
+                <div class="prerequisite">
+                    <span class="icon">🌐</span>
+                    <h4>Browser</h4>
+                    <p>You probably already have this! 😄</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function copyToClipboard(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--primary)';
+                }, 2000);
+            });
+        }
+
+        // Progress bar animation
+        function updateProgress() {
+            const steps = document.querySelectorAll('.step');
+            const progressBar = document.getElementById('progressBar');
+            const viewportHeight = window.innerHeight;
+            
+            let completedSteps = 0;
+            
+            steps.forEach((step, index) => {
+                const rect = step.getBoundingClientRect();
+                if (rect.top < viewportHeight * 0.7) {
+                    completedSteps = index + 1;
+                }
+            });
+            
+            const progress = (completedSteps / steps.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        window.addEventListener('scroll', updateProgress);
+        updateProgress(); // Initial call
+
+        // Add some fun interactions
+        document.querySelectorAll('.step').forEach((step, index) => {
+            step.addEventListener('mouseenter', () => {
+                step.style.transform = 'translateY(-5px)';
+                step.style.transition = 'transform 0.3s ease';
+            });
+            
+            step.addEventListener('mouseleave', () => {
+                step.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

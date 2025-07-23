@@ -1,0 +1,55 @@
+{
+  "name": "riggerconnect-monorepo",
+  "version": "1.0.0",
+  "description": "RiggerConnect Enterprise Monorepo - Ethical rigging platform connecting professionals with projects",
+  "private": true,
+  "author": "ChaseWhiteRabbit NGO <tiatheone@protonmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*",
+    "docs/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present",
+    "dev": "npm run dev --workspaces --if-present",
+    "start": "npm run start --workspaces --if-present",
+    "preinstall": "npx only-allow npm",
+    "postinstall": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "rimraf": "^5.0.0",
+    "concurrently": "^8.0.0",
+    "lerna": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ChaseWhiteRabbit/RiggerConnect-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChaseWhiteRabbit/RiggerConnect-monorepo/issues"
+  },
+  "homepage": "https://github.com/ChaseWhiteRabbit/RiggerConnect-monorepo#readme",
+  "keywords": [
+    "rigging",
+    "construction",
+    "enterprise",
+    "monorepo",
+    "ethical",
+    "chasewhiterabbit",
+    "ngo"
+  ]
+}

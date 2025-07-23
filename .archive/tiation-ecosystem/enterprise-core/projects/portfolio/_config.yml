@@ -1,0 +1,76 @@
+title: "Tiation Portfolio - Enterprise Web Solutions"
+description: "Comprehensive portfolio showcasing enterprise-grade web applications: Company Intranet, D&D Dice Roller SaaS, and innovative digital solutions."
+url: "https://tiation.github.io"
+baseurl: "/tiation-portfolio"
+
+# Author information
+author:
+  name: "Tiation"
+  email: "tiatheone@protonmail.com"
+  github: "tiation"
+  url: "https://github.com/tiation"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# GitHub Pages settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Navigation
+navigation:
+  - title: "Home"
+    url: "/"
+  - title: "Projects"
+    url: "/projects"
+  - title: "Documentation"
+    url: "/docs"
+  - title: "Guides"
+    url: "/guides"
+  - title: "About"
+    url: "/about"
+
+# Project information
+projects:
+  intranet:
+    name: "Company Intranet Template"
+    description: "Modern enterprise intranet portal built with Vue 3 and TypeScript"
+    repo: "tiation-company-intranet-template"
+    demo: "https://tiation.github.io/company-intranet"
+    tech: ["Vue 3", "TypeScript", "Tailwind CSS", "Pinia"]
+    
+  dice_roller:
+    name: "D&D Dice Roller SaaS"
+    description: "Enterprise-grade dice rolling platform with subscription management"
+    repo: "tiation-dice-roller-marketing-site"
+    demo: "#api-test"
+    tech: ["Node.js", "React", "PostgreSQL", "Stripe"]
+    
+  framework:
+    name: "Enterprise Solution Framework"
+    description: "Professional enterprise solution template with comprehensive documentation"
+    repo: "dontbeacunt"
+    demo: "https://tiation.github.io/dontbeacunt"
+    tech: ["Modern Web", "Documentation", "Architecture"]
+
+# SEO settings
+google_analytics: UA-XXXXXXXX-X
+lang: en_US
+
+# Social media
+social:
+  github: tiation
+  linkedin: tiation-company
+  twitter: TiationTech
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - .jekyll-cache

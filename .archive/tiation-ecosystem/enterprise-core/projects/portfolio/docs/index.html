@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Tiation Portfolio</title>
+    <meta name="description" content="Comprehensive technical documentation for Tiation's enterprise web solutions and APIs.">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body class="docs-page">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html">
+                    <h1 class="brand-title">TIATION</h1>
+                    <span class="brand-subtitle">Enterprise Solutions</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="../pages/projects.html" class="nav-link">Projects</a></li>
+                <li><a href="index.html" class="nav-link active">Documentation</a></li>
+                <li><a href="../guides/index.html" class="nav-link">Guides</a></li>
+                <li><a href="../pages/about.html" class="nav-link">About</a></li>
+                <li><a href="../pages/contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Docs Layout -->
+    <div class="docs-layout">
+        <!-- Sidebar -->
+        <aside class="docs-sidebar">
+            <div class="sidebar-content">
+                <h3>Documentation</h3>
+                <nav class="docs-nav">
+                    <div class="nav-section">
+                        <h4>Getting Started</h4>
+                        <ul>
+                            <li><a href="index.html" class="active">Overview</a></li>
+                            <li><a href="quickstart.html">Quick Start</a></li>
+                            <li><a href="installation.html">Installation</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h4>Projects</h4>
+                        <ul>
+                            <li><a href="intranet.html">Company Intranet</a></li>
+                            <li><a href="dice-roller.html">Dice Roller SaaS</a></li>
+                            <li><a href="framework.html">Enterprise Framework</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h4>API Reference</h4>
+                        <ul>
+                            <li><a href="api/authentication.html">Authentication</a></li>
+                            <li><a href="api/dice-rolling.html">Dice Rolling API</a></li>
+                            <li><a href="api/subscriptions.html">Subscriptions</a></li>
+                            <li><a href="api/webhooks.html">Webhooks</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h4>Deployment</h4>
+                        <ul>
+                            <li><a href="deployment/github-pages.html">GitHub Pages</a></li>
+                            <li><a href="deployment/docker.html">Docker</a></li>
+                            <li><a href="deployment/vps.html">VPS Setup</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h4>Advanced</h4>
+                        <ul>
+                            <li><a href="architecture.html">Architecture</a></li>
+                            <li><a href="security.html">Security</a></li>
+                            <li><a href="monitoring.html">Monitoring</a></li>
+                            <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-main">
+            <div class="docs-content">
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Documentation</span>
+                </nav>
+
+                <!-- Documentation Header -->
+                <header class="docs-header">
+                    <h1>Technical Documentation</h1>
+                    <p class="docs-subtitle">
+                        Comprehensive guides and API references for Tiation's enterprise web solutions. 
+                        Learn how to integrate, deploy, and customize our platforms for your organization.
+                    </p>
+                    <div class="docs-meta">
+                        <span class="version">v1.0.0</span>
+                        <span class="updated">Last updated: July 2024</span>
+                        <a href="https://github.com/tiation" class="github-link">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </a>
+                    </div>
+                </header>
+
+                <!-- Quick Navigation -->
+                <section class="quick-nav">
+                    <h2>Quick Navigation</h2>
+                    <div class="nav-cards">
+                        <a href="intranet.html" class="nav-card">
+                            <div class="card-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Company Intranet</h3>
+                                <p>Vue 3 enterprise intranet with TypeScript, authentication, and real-time features</p>
+                                <div class="card-tech">
+                                    <span>Vue 3</span>
+                                    <span>TypeScript</span>
+                                    <span>Pinia</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="dice-roller.html" class="nav-card">
+                            <div class="card-icon">
+                                <i class="fas fa-dice-d20"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Dice Roller SaaS</h3>
+                                <p>Full-stack SaaS platform with API, subscriptions, and payment processing</p>
+                                <div class="card-tech">
+                                    <span>Node.js</span>
+                                    <span>React</span>
+                                    <span>PostgreSQL</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="framework.html" class="nav-card">
+                            <div class="card-icon">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Enterprise Framework</h3>
+                                <p>Professional solution template with comprehensive documentation structure</p>
+                                <div class="card-tech">
+                                    <span>Framework</span>
+                                    <span>Templates</span>
+                                    <span>Docs</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Getting Started -->
+                <section class="getting-started">
+                    <h2>Getting Started</h2>
+                    <p>
+                        Welcome to the Tiation documentation. Our enterprise solutions are built with modern 
+                        technologies and best practices to provide scalable, secure, and maintainable applications.
+                    </p>
+
+                    <div class="feature-highlights">
+                        <div class="highlight">
+                            <i class="fas fa-rocket"></i>
+                            <h3>Quick Setup</h3>
+                            <p>Get started in minutes with our comprehensive setup guides and automated deployment scripts.</p>
+                        </div>
+                        <div class="highlight">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Enterprise Security</h3>
+                            <p>Built-in security features including JWT authentication, rate limiting, and data encryption.</p>
+                        </div>
+                        <div class="highlight">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Scalable Architecture</h3>
+                            <p>Modern architecture patterns designed to scale from small teams to enterprise-level usage.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Technology Stack -->
+                <section class="tech-overview">
+                    <h2>Technology Stack Overview</h2>
+                    <p>Our solutions leverage cutting-edge technologies and proven frameworks:</p>
+                    
+                    <div class="tech-categories">
+                        <div class="tech-category">
+                            <h3>Frontend Technologies</h3>
+                            <div class="tech-grid">
+                                <div class="tech-item">
+                                    <i class="fab fa-vuejs"></i>
+                                    <div>
+                                        <h4>Vue 3</h4>
+                                        <p>Modern reactive framework with Composition API</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fab fa-react"></i>
+                                    <div>
+                                        <h4>React 18</h4>
+                                        <p>Component-based UI library with hooks</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-code"></i>
+                                    <div>
+                                        <h4>TypeScript</h4>
+                                        <p>Type-safe JavaScript for better development</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-paint-brush"></i>
+                                    <div>
+                                        <h4>Tailwind CSS</h4>
+                                        <p>Utility-first CSS framework</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tech-category">
+                            <h3>Backend Technologies</h3>
+                            <div class="tech-grid">
+                                <div class="tech-item">
+                                    <i class="fab fa-node-js"></i>
+                                    <div>
+                                        <h4>Node.js</h4>
+                                        <p>Server-side JavaScript runtime</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-server"></i>
+                                    <div>
+                                        <h4>Express.js</h4>
+                                        <p>Fast, unopinionated web framework</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-database"></i>
+                                    <div>
+                                        <h4>PostgreSQL</h4>
+                                        <p>Advanced open-source relational database</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-memory"></i>
+                                    <div>
+                                        <h4>Redis</h4>
+                                        <p>In-memory data structure store</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tech-category">
+                            <h3>DevOps & Deployment</h3>
+                            <div class="tech-grid">
+                                <div class="tech-item">
+                                    <i class="fab fa-docker"></i>
+                                    <div>
+                                        <h4>Docker</h4>
+                                        <p>Containerization platform</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fab fa-github"></i>
+                                    <div>
+                                        <h4>GitHub Actions</h4>
+                                        <p>CI/CD automation workflows</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-cloud"></i>
+                                    <div>
+                                        <h4>VPS Deployment</h4>
+                                        <p>Virtual private server hosting</p>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-lock"></i>
+                                    <div>
+                                        <h4>SSL/TLS</h4>
+                                        <p>Automatic HTTPS with Let's Encrypt</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- API Overview -->
+                <section class="api-overview">
+                    <h2>API Documentation</h2>
+                    <p>
+                        Our APIs are designed with RESTful principles and include comprehensive authentication, 
+                        rate limiting, and detailed error handling.
+                    </p>
+
+                    <div class="api-sections">
+                        <div class="api-section">
+                            <h3>Authentication API</h3>
+                            <p>JWT-based authentication with refresh tokens and role-based access control.</p>
+                            <pre><code class="language-bash">curl -X POST https://api.tiation.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secure_password"}'</code></pre>
+                            <a href="api/authentication.html" class="api-link">View Authentication Docs →</a>
+                        </div>
+
+                        <div class="api-section">
+                            <h3>Dice Rolling API</h3>
+                            <p>Comprehensive dice rolling with support for all D&D dice types and custom modifiers.</p>
+                            <pre><code class="language-bash">curl -X POST https://api.tiation.com/dice/roll \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"dice":{"d20":1,"d6":2},"modifier":5}'</code></pre>
+                            <a href="api/dice-rolling.html" class="api-link">View Dice API Docs →</a>
+                        </div>
+
+                        <div class="api-section">
+                            <h3>Subscription API</h3>
+                            <p>Stripe-integrated subscription management with webhook support.</p>
+                            <pre><code class="language-bash">curl -X GET https://api.tiation.com/subscriptions/current \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                            <a href="api/subscriptions.html" class="api-link">View Subscription Docs →</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Deployment Options -->
+                <section class="deployment-overview">
+                    <h2>Deployment Options</h2>
+                    <p>Multiple deployment strategies to fit your infrastructure needs:</p>
+
+                    <div class="deployment-options">
+                        <div class="deployment-option">
+                            <div class="option-icon">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="option-content">
+                                <h3>GitHub Pages</h3>
+                                <p>Perfect for static sites and documentation. Automatic deployment from your repository.</p>
+                                <ul>
+                                    <li>Free hosting for open source</li>
+                                    <li>Custom domain support</li>
+                                    <li>Automatic SSL certificates</li>
+                                    <li>CI/CD with GitHub Actions</li>
+                                </ul>
+                                <a href="deployment/github-pages.html" class="btn btn-sm">Setup Guide</a>
+                            </div>
+                        </div>
+
+                        <div class="deployment-option">
+                            <div class="option-icon">
+                                <i class="fab fa-docker"></i>
+                            </div>
+                            <div class="option-content">
+                                <h3>Docker Deployment</h3>
+                                <p>Containerized deployment for consistent environments across development and production.</p>
+                                <ul>
+                                    <li>Multi-stage builds</li>
+                                    <li>Docker Compose orchestration</li>
+                                    <li>Environment configuration</li>
+                                    <li>Health checks included</li>
+                                </ul>
+                                <a href="deployment/docker.html" class="btn btn-sm">Setup Guide</a>
+                            </div>
+                        </div>
+
+                        <div class="deployment-option">
+                            <div class="option-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="option-content">
+                                <h3>VPS Deployment</h3>
+                                <p>Full control with automated setup scripts for virtual private servers.</p>
+                                <ul>
+                                    <li>One-command deployment</li>
+                                    <li>Nginx reverse proxy</li>
+                                    <li>SSL certificate automation</li>
+                                    <li>Monitoring and logging</li>
+                                </ul>
+                                <a href="deployment/vps.html" class="btn btn-sm">Setup Guide</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Support Section -->
+                <section class="support-section">
+                    <h2>Support & Community</h2>
+                    <div class="support-grid">
+                        <div class="support-item">
+                            <i class="fab fa-github"></i>
+                            <h3>GitHub Issues</h3>
+                            <p>Report bugs, request features, or ask questions on our GitHub repositories.</p>
+                            <a href="https://github.com/tiation" class="btn btn-sm">Visit GitHub</a>
+                        </div>
+                        <div class="support-item">
+                            <i class="fas fa-envelope"></i>
+                            <h3>Email Support</h3>
+                            <p>Get in touch for enterprise support, custom development, or consulting.</p>
+                            <a href="mailto:tiatheone@protonmail.com" class="btn btn-sm">Contact Us</a>
+                        </div>
+                        <div class="support-item">
+                            <i class="fas fa-book"></i>
+                            <h3>Guides & Tutorials</h3>
+                            <p>Step-by-step guides for common tasks and advanced configurations.</p>
+                            <a href="../guides/index.html" class="btn btn-sm">View Guides</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>TIATION</h3>
+                    <p>Enterprise Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/tiation" target="_blank">GitHub</a>
+                    <a href="../pages/projects.html">Projects</a>
+                    <a href="index.html">Documentation</a>
+                    <a href="../pages/contact.html">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tiation. All rights reserved. Built with modern web technologies.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

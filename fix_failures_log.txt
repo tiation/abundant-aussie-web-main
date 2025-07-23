@@ -1,0 +1,22 @@
+[0;34m[2025-07-23 23:45:56] 🚀 Starting repository failure fixes...[0m
+[0;34m[2025-07-23 23:45:56] 🔧 Fixing repository: dnd-assets[0m
+[1;33m[2025-07-23 23:45:56] ⚠️  GitHub repository doesn't exist for dnd-assets[0m
+[1;33m[2025-07-23 23:45:56] ⚠️  Repository has minimal content - removing remote origin[0m
+[0;34m[2025-07-23 23:45:56] 🔧 Fixing repository: lovable-clone[0m
+[1;33m[2025-07-23 23:45:57] ⚠️  GitHub repository doesn't exist for lovable-clone[0m
+[0;34m[2025-07-23 23:45:57] 📁 Repository has    19614 files - attempting to create GitHub repo[0m
+[0;34m[2025-07-23 23:45:57] 🔧 Creating new GitHub repository: lovable-clone[0m
+[0;32m[2025-07-23 23:47:08] ✅ Created and pushed lovable-clone to GitHub[0m
+[0;34m[2025-07-23 23:47:08] 🔧 Fixing repository: new-project-default-react[0m
+[1;33m[2025-07-23 23:47:10] ⚠️  GitHub repository doesn't exist for new-project-default-react[0m
+[0;34m[2025-07-23 23:47:10] 📁 Repository has       40 files - attempting to create GitHub repo[0m
+[0;34m[2025-07-23 23:47:10] 🔧 Creating new GitHub repository: new-project-default-react[0m
+[0;32m[2025-07-23 23:47:27] ✅ Created and pushed new-project-default-react to GitHub[0m
+[0;34m[2025-07-23 23:47:27] 🔧 Fixing repository: tiation-monorepo[0m
+[1;33m[2025-07-23 23:47:32] ⚠️  GitHub repository doesn't exist for tiation-monorepo[0m
+[0;34m[2025-07-23 23:47:33] 📁 Repository has       49 files - attempting to create GitHub repo[0m
+[0;34m[2025-07-23 23:47:33] 🔧 Creating new GitHub repository: tiation-monorepo[0m
+[0;32m[2025-07-23 23:47:41] ✅ Created and pushed tiation-monorepo to GitHub[0m
+[0;34m[2025-07-23 23:47:41] 🔍 Running verification check...[0m
+[0;34m[2025-07-23 23:47:41] 📝 Detailed log: /Users/tiaastor/Github/tiation-repos/fix_failures_log.txt[0m
+[0;32m[2025-07-23 23:47:41] ✅ All repository failures have been addressed[0m

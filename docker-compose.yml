@@ -1,0 +1,551 @@
+version: '3.8'
+
+# ==============================================
+# RIGGER ECOSYSTEM - ENTERPRISE DOCKER COMPOSE
+# Production-ready setup for Hostinger VPS
+# ChaseWhiteRabbit NGO
+# ==============================================
+
+services:
+  # ==============================================
+  # INFRASTRUCTURE SERVICES
+  # ==============================================
+  
+  # Traefik - Reverse Proxy & Load Balancer
+  traefik:
+    image: traefik:v3.0
+    container_name: rigger-traefik
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --api.debug=false
+      - --log.level=INFO
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-tiatheone@protonmail.com}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-letsencrypt:/letsencrypt
+      - /opt/rigger/traefik:/etc/traefik:ro
+    networks:
+      - rigger-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL - Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: rigger-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-rigger}
+      - POSTGRES_USER=${POSTGRES_USER:-rigger}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_MULTIPLE_DATABASES=riggerhub,riggerconnect,riggerbackend
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
+      - ./scripts/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    networks:
+      - rigger-network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rigger} -d ${POSTGRES_DB:-rigger}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis - Caching & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: rigger-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+      - ./scripts/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - rigger-network
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # MongoDB - Document Store for Analytics
+  mongodb:
+    image: mongo:7.0
+    container_name: rigger-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB:-rigger_analytics}
+    volumes:
+      - mongodb-data:/data/db
+      - ./scripts/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - rigger-network
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==============================================
+  # RIGGER BACKEND SERVICES
+  # ==============================================
+  
+  # RiggerBackend - Core API Service
+  rigger-backend:
+    build:
+      context: ./RiggerBackend
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-latest}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-unknown}
+    image: rigger-backend:${BUILD_VERSION:-latest}
+    container_name: rigger-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-rigger}:${POSTGRES_PASSWORD}@postgres:5432/riggerbackend
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+      - MONGODB_URL=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD}@mongodb:27017/rigger_analytics?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.protonmail.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_USER=${EMAIL_USER:-tiatheone@protonmail.com}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+    volumes:
+      - rigger-backend-logs:/app/logs
+      - rigger-backend-uploads:/app/uploads
+      - /opt/rigger/backend/config:/app/config:ro
+    networks:
+      - rigger-network
+    depends_on:
+      - postgres
+      - redis
+      - mongodb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rigger-backend.rule=Host(`api.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.rigger-backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.rigger-backend.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.rigger-backend-cors.headers.accessControlAllowOrigin=*"
+      - "traefik.http.routers.rigger-backend.middlewares=rigger-backend-cors"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ==============================================
+  # RIGGER WEB APPLICATIONS
+  # ==============================================
+  
+  # RiggerHub-web - Business Portal
+  riggerhub-web:
+    build:
+      context: ./RiggerHub-web
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-latest}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-unknown}
+        - PLATFORM_MODE=hub
+    image: riggerhub-web:${BUILD_VERSION:-latest}
+    container_name: riggerhub-web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - VITE_APP_NAME=RiggerHub
+      - VITE_APP_URL=https://hub.${RIGGER_DOMAIN:-sxc.codes}
+      - VITE_API_BASE_URL=https://api.${RIGGER_DOMAIN:-sxc.codes}
+      - VITE_ENVIRONMENT=production
+    volumes:
+      - riggerhub-logs:/app/logs
+      - riggerhub-uploads:/app/uploads
+    networks:
+      - rigger-network
+    depends_on:
+      - rigger-backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.riggerhub-web.rule=Host(`hub.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.riggerhub-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.riggerhub-web.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # RiggerConnect-web - Worker Portal
+  riggerconnect-web:
+    build:
+      context: ./RiggerConnect-web
+      dockerfile: Dockerfile
+      args:
+        - BUILD_VERSION=${BUILD_VERSION:-latest}
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT:-unknown}
+        - PLATFORM_MODE=connect
+    image: riggerconnect-web:${BUILD_VERSION:-latest}
+    container_name: riggerconnect-web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - VITE_APP_NAME=RiggerConnect
+      - VITE_APP_URL=https://connect.${RIGGER_DOMAIN:-sxc.codes}
+      - VITE_API_BASE_URL=https://api.${RIGGER_DOMAIN:-sxc.codes}
+      - VITE_ENVIRONMENT=production
+    volumes:
+      - riggerconnect-logs:/app/logs
+      - riggerconnect-uploads:/app/uploads
+    networks:
+      - rigger-network
+    depends_on:
+      - rigger-backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.riggerconnect-web.rule=Host(`connect.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.riggerconnect-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.riggerconnect-web.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ==============================================
+  # OBSERVABILITY & MONITORING
+  # ==============================================
+  
+  # Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rigger-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - rigger-network
+    ports:
+      - "9090:9090"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`metrics.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.prometheus.tls.certresolver=letsencrypt"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+
+  # Grafana - Metrics Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rigger-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - rigger-network
+    depends_on:
+      - prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`dashboard.${RIGGER_DOMAIN:-sxc.codes}`)"
+      - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+
+  # Loki - Log Aggregation
+  loki:
+    image: grafana/loki:latest
+    container_name: rigger-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./config/loki/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - rigger-network
+    command: -config.file=/etc/loki/local-config.yaml
+
+  # Promtail - Log Shipping
+  promtail:
+    image: grafana/promtail:latest
+    container_name: rigger-promtail
+    restart: unless-stopped
+    volumes:
+      - ./config/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    networks:
+      - rigger-network
+    depends_on:
+      - loki
+    command: -config.file=/etc/promtail/config.yml
+
+  # ==============================================
+  # SECURITY & BACKUP
+  # ==============================================
+  
+  # ClamAV - Antivirus Scanning
+  clamav:
+    image: clamav/clamav:latest
+    container_name: rigger-clamav
+    restart: unless-stopped
+    volumes:
+      - clamav-data:/var/lib/clamav
+      - rigger-backend-uploads:/scan/backend:ro
+      - riggerhub-uploads:/scan/hub:ro
+      - riggerconnect-uploads:/scan/connect:ro
+    networks:
+      - rigger-network
+    healthcheck:
+      test: ["CMD", "clamdscan", "--version"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  # Backup Service
+  backup:
+    image: alpine:latest
+    container_name: rigger-backup
+    restart: "no"
+    volumes:
+      - postgres-data:/backup/postgres:ro
+      - mongodb-data:/backup/mongodb:ro
+      - redis-data:/backup/redis:ro
+      - /opt/rigger/backups:/backups
+      - ./scripts/backup:/scripts:ro
+    networks:
+      - rigger-network
+    command: /scripts/backup.sh
+    profiles:
+      - backup
+
+# ==============================================
+# NETWORKS
+# ==============================================
+networks:
+  rigger-network:
+    driver: bridge
+    name: rigger-network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ==============================================
+# VOLUMES - PERSISTENT DATA
+# ==============================================
+volumes:
+  # Database volumes
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/postgres
+
+  mongodb-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/mongodb
+
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/redis
+
+  # Application volumes
+  rigger-backend-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/logs/backend
+
+  rigger-backend-uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/uploads/backend
+
+  riggerhub-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/logs/hub
+
+  riggerhub-uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/uploads/hub
+
+  riggerconnect-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/logs/connect
+
+  riggerconnect-uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/uploads/connect
+
+  # Monitoring volumes
+  prometheus-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/prometheus
+
+  grafana-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/grafana
+
+  loki-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/loki
+
+  # Security volumes
+  clamav-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/clamav
+
+  traefik-letsencrypt:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/rigger/data/traefik

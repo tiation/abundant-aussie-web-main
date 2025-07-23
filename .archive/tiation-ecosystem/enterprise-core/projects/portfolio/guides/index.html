@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guides - Tiation Portfolio</title>
+    <meta name="description" content="Step-by-step guides and tutorials for deploying, customizing, and integrating Tiation's enterprise solutions.">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="guides-page">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html">
+                    <h1 class="brand-title">TIATION</h1>
+                    <span class="brand-subtitle">Enterprise Solutions</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="../pages/projects.html" class="nav-link">Projects</a></li>
+                <li><a href="../docs/index.html" class="nav-link">Documentation</a></li>
+                <li><a href="index.html" class="nav-link active">Guides</a></li>
+                <li><a href="../pages/about.html" class="nav-link">About</a></li>
+                <li><a href="../pages/contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Guides</span>
+            </div>
+            <h1 class="page-title">Implementation Guides</h1>
+            <p class="page-subtitle">
+                Comprehensive step-by-step tutorials to help you deploy, customize, and integrate our enterprise solutions
+            </p>
+            <div class="guides-search">
+                <input type="text" placeholder="Search guides..." class="search-input" id="guidesSearch">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guide Categories -->
+    <section class="guide-categories">
+        <div class="container">
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">All Guides</button>
+                <button class="filter-btn" data-category="setup">Setup & Installation</button>
+                <button class="filter-btn" data-category="deployment">Deployment</button>
+                <button class="filter-btn" data-category="customization">Customization</button>
+                <button class="filter-btn" data-category="integration">Integration</button>
+                <button class="filter-btn" data-category="troubleshooting">Troubleshooting</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guides Grid -->
+    <section class="guides-content">
+        <div class="container">
+            <div class="guides-grid">
+                <!-- Setup & Installation Guides -->
+                <div class="guide-card" data-category="setup" data-difficulty="beginner">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="guide-difficulty">Beginner</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Quick Start Guide</h3>
+                        <p>Get up and running with any Tiation project in under 10 minutes. Perfect for developers new to our ecosystem.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 10 min</span>
+                            <span class="guide-category">Setup</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. Clone repository</div>
+                            <div class="step">2. Install dependencies</div>
+                            <div class="step">3. Configure environment</div>
+                            <div class="step">4. Start development server</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="quick-start.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 1.2k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="setup" data-difficulty="intermediate">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="guide-difficulty intermediate">Intermediate</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Environment Configuration</h3>
+                        <p>Comprehensive guide to configuring development, staging, and production environments with best practices.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 25 min</span>
+                            <span class="guide-category">Setup</span>
+                        </div>
+                        <div class="guide-features">
+                            <span class="feature">Environment Variables</span>
+                            <span class="feature">Database Setup</span>
+                            <span class="feature">Security Config</span>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="environment-config.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 850 views
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Deployment Guides -->
+                <div class="guide-card" data-category="deployment" data-difficulty="intermediate">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="guide-difficulty intermediate">Intermediate</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>GitHub Pages Deployment</h3>
+                        <p>Deploy your portfolio or documentation site to GitHub Pages with automatic SSL and custom domains.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 15 min</span>
+                            <span class="guide-category">Deployment</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. Repository setup</div>
+                            <div class="step">2. GitHub Actions workflow</div>
+                            <div class="step">3. Custom domain configuration</div>
+                            <div class="step">4. SSL certificate setup</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="github-pages-deployment.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 2.1k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="deployment" data-difficulty="advanced">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fab fa-docker"></i>
+                        </div>
+                        <div class="guide-difficulty advanced">Advanced</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Production Docker Deployment</h3>
+                        <p>Complete guide to containerized deployment with Docker, including multi-stage builds and orchestration.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 45 min</span>
+                            <span class="guide-category">Deployment</span>
+                        </div>
+                        <div class="guide-features">
+                            <span class="feature">Multi-stage Builds</span>
+                            <span class="feature">Docker Compose</span>
+                            <span class="feature">Health Checks</span>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="docker-deployment.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 1.5k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="deployment" data-difficulty="advanced">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="guide-difficulty advanced">Advanced</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>VPS Production Setup</h3>
+                        <p>One-command VPS deployment with automated SSL, monitoring, backups, and production optimization.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 60 min</span>
+                            <span class="guide-category">Deployment</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. VPS preparation</div>
+                            <div class="step">2. Automated deployment script</div>
+                            <div class="step">3. SSL and security hardening</div>
+                            <div class="step">4. Monitoring setup</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="vps-deployment.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 980 views
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Customization Guides -->
+                <div class="guide-card" data-category="customization" data-difficulty="intermediate">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="guide-difficulty intermediate">Intermediate</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Brand Customization</h3>
+                        <p>Customize colors, logos, and branding across all Tiation projects to match your company identity.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 30 min</span>
+                            <span class="guide-category">Customization</span>
+                        </div>
+                        <div class="guide-features">
+                            <span class="feature">Color Schemes</span>
+                            <span class="feature">Logo Integration</span>
+                            <span class="feature">CSS Variables</span>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="brand-customization.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 1.3k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="customization" data-difficulty="advanced">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="guide-difficulty advanced">Advanced</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Component Customization</h3>
+                        <p>Deep dive into customizing Vue and React components, creating new features, and extending functionality.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 90 min</span>
+                            <span class="guide-category">Customization</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. Component architecture</div>
+                            <div class="step">2. Custom component creation</div>
+                            <div class="step">3. State management integration</div>
+                            <div class="step">4. Testing custom components</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="component-customization.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 720 views
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Integration Guides -->
+                <div class="guide-card" data-category="integration" data-difficulty="intermediate">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <div class="guide-difficulty intermediate">Intermediate</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>API Integration</h3>
+                        <p>Integrate external APIs, set up webhooks, and connect third-party services with our platforms.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 40 min</span>
+                            <span class="guide-category">Integration</span>
+                        </div>
+                        <div class="guide-features">
+                            <span class="feature">REST APIs</span>
+                            <span class="feature">Webhooks</span>
+                            <span class="feature">Authentication</span>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="api-integration.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 1.1k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="integration" data-difficulty="advanced">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="guide-difficulty advanced">Advanced</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Stripe Payment Integration</h3>
+                        <p>Complete implementation of Stripe payments, subscriptions, and webhook handling for SaaS applications.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 75 min</span>
+                            <span class="guide-category">Integration</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. Stripe account setup</div>
+                            <div class="step">2. Payment flow implementation</div>
+                            <div class="step">3. Subscription management</div>
+                            <div class="step">4. Webhook security</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="stripe-integration.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 890 views
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Troubleshooting Guides -->
+                <div class="guide-card" data-category="troubleshooting" data-difficulty="beginner">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="guide-difficulty">Beginner</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Common Issues & Solutions</h3>
+                        <p>Quick fixes for the most common problems encountered during setup and development.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 20 min</span>
+                            <span class="guide-category">Troubleshooting</span>
+                        </div>
+                        <div class="guide-features">
+                            <span class="feature">Build Errors</span>
+                            <span class="feature">Dependency Issues</span>
+                            <span class="feature">Config Problems</span>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="common-issues.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 2.3k views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="guide-card" data-category="troubleshooting" data-difficulty="advanced">
+                    <div class="guide-header">
+                        <div class="guide-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="guide-difficulty advanced">Advanced</div>
+                    </div>
+                    <div class="guide-content">
+                        <h3>Performance Optimization</h3>
+                        <p>Identify and resolve performance bottlenecks, optimize bundle sizes, and improve loading times.</p>
+                        <div class="guide-meta">
+                            <span class="guide-time"><i class="fas fa-clock"></i> 50 min</span>
+                            <span class="guide-category">Troubleshooting</span>
+                        </div>
+                        <div class="guide-steps">
+                            <div class="step">1. Performance profiling</div>
+                            <div class="step">2. Bundle analysis</div>
+                            <div class="step">3. Code splitting</div>
+                            <div class="step">4. Caching strategies</div>
+                        </div>
+                    </div>
+                    <div class="guide-footer">
+                        <a href="performance-optimization.html" class="btn btn-primary">Start Guide</a>
+                        <span class="guide-stats">
+                            <i class="fas fa-eye"></i> 650 views
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Guides -->
+    <section class="popular-guides">
+        <div class="container">
+            <h2>Most Popular Guides</h2>
+            <div class="popular-list">
+                <div class="popular-item">
+                    <span class="popular-rank">1</span>
+                    <div class="popular-content">
+                        <h4>GitHub Pages Deployment</h4>
+                        <p>Deploy your portfolio with automatic SSL</p>
+                    </div>
+                    <span class="popular-views">2.1k views</span>
+                </div>
+                <div class="popular-item">
+                    <span class="popular-rank">2</span>
+                    <div class="popular-content">
+                        <h4>Common Issues & Solutions</h4>
+                        <p>Quick fixes for setup problems</p>
+                    </div>
+                    <span class="popular-views">2.3k views</span>
+                </div>
+                <div class="popular-item">
+                    <span class="popular-rank">3</span>
+                    <div class="popular-content">
+                        <h4>Docker Production Deployment</h4>
+                        <p>Containerized deployment guide</p>
+                    </div>
+                    <span class="popular-views">1.5k views</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guide Request -->
+    <section class="guide-request">
+        <div class="container">
+            <div class="request-content">
+                <h2>Need a Specific Guide?</h2>
+                <p>Can't find what you're looking for? Request a new guide and we'll create it for the community.</p>
+                <div class="request-form">
+                    <input type="text" placeholder="What guide would you like to see?" class="request-input">
+                    <button class="btn btn-primary">Request Guide</button>
+                </div>
+                <p class="request-note">
+                    <i class="fas fa-info-circle"></i>
+                    Popular requests are prioritized and typically published within 2 weeks.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>TIATION</h3>
+                    <p>Enterprise Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/tiation" target="_blank">GitHub</a>
+                    <a href="../pages/projects.html">Projects</a>
+                    <a href="../docs/index.html">Documentation</a>
+                    <a href="../pages/contact.html">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tiation. All rights reserved. Built with modern web technologies.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        // Guide filtering and search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const guideCards = document.querySelectorAll('.guide-card');
+            const searchInput = document.getElementById('guidesSearch');
+
+            // Filter functionality
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    guideCards.forEach(card => {
+                        if (category === 'all' || card.dataset.category.includes(category)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                guideCards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            // Guide request functionality
+            const requestInput = document.querySelector('.request-input');
+            const requestBtn = document.querySelector('.guide-request .btn');
+            
+            requestBtn.addEventListener('click', function() {
+                const request = requestInput.value.trim();
+                if (request) {
+                    alert(`Thank you for your request: "${request}"\n\nWe'll consider it for our next guide release!`);
+                    requestInput.value = '';
+                } else {
+                    alert('Please enter a guide request.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

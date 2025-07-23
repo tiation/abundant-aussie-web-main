@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiation - Enterprise Web Solutions Portfolio</title>
+    <meta name="description" content="Showcasing enterprise-grade web applications: Company Intranet, D&D Dice Roller SaaS, and innovative digital solutions.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="additional-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <h1 class="brand-title">TIATION</h1>
+                <span class="brand-subtitle">Enterprise Solutions</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="pages/projects.html" class="nav-link">Projects</a></li>
+                <li><a href="docs/index.html" class="nav-link">Documentation</a></li>
+                <li><a href="guides/index.html" class="nav-link">Guides</a></li>
+                <li><a href="pages/about.html" class="nav-link">About</a></li>
+                <li><a href="pages/contact.html" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Enterprise-Grade
+                <span class="gradient-text">Web Solutions</span>
+            </h1>
+            <p class="hero-description">
+                Showcasing modern, scalable applications built with cutting-edge technologies.
+                From enterprise intranets to SaaS platforms, discover professional-grade solutions.
+            </p>
+            <div class="hero-buttons">
+                <a href="pages/projects.html" class="btn btn-primary">View Projects</a>
+                <a href="https://github.com/tiation" target="_blank" class="btn btn-secondary">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="docs/index.html" class="btn btn-outline">
+                    <i class="fas fa-book"></i> Documentation
+                </a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="floating-card">
+                <div class="card-content">
+                    <i class="fas fa-code"></i>
+                    <span>Modern Stack</span>
+                </div>
+            </div>
+            <div class="floating-card">
+                <div class="card-content">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Enterprise Security</span>
+                </div>
+            </div>
+            <div class="floating-card">
+                <div class="card-content">
+                    <i class="fas fa-rocket"></i>
+                    <span>Scalable Solutions</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="section-subtitle">Enterprise applications demonstrating full-stack expertise</p>
+            
+            <div class="projects-grid">
+                <!-- Company Intranet -->
+                <div class="project-card" data-project="intranet">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="https://tiation.github.io/company-intranet" target="_blank" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                                <a href="https://github.com/tiation/tiation-company-intranet-template" target="_blank" class="project-link">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                            </div>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Company Intranet Portal</h3>
+                        <p class="project-description">
+                            Modern enterprise intranet built with Vue 3 and TypeScript. Features employee directory, 
+                            project management, real-time dashboard, and JWT authentication.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Vue 3</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Tailwind CSS</span>
+                            <span class="tech-tag">Pinia</span>
+                        </div>
+                        <div class="project-features">
+                            <div class="feature">
+                                <i class="fas fa-users"></i>
+                                <span>Employee Management</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics Dashboard</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-lock"></i>
+                                <span>Secure Authentication</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dice Roller SaaS -->
+                <div class="project-card" data-project="dice">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" class="project-link" onclick="showTestingModal('dice')">
+                                    <i class="fas fa-vial"></i> Test API
+                                </a>
+                                <a href="https://github.com/tiation/tiation-dice-roller-marketing-site" target="_blank" class="project-link">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                            </div>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-dice-d20"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">D&D Dice Roller SaaS</h3>
+                        <p class="project-description">
+                            Enterprise-grade dice rolling platform with subscription management, team collaboration, 
+                            and comprehensive API access for D&D and tabletop RPGs.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Stripe</span>
+                        </div>
+                        <div class="project-features">
+                            <div class="feature">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Subscription Management</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-api"></i>
+                                <span>RESTful API</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-users-cog"></i>
+                                <span>Team Collaboration</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DontBeACunt -->
+                <div class="project-card" data-project="framework">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="https://tiation.github.io/dontbeacunt" target="_blank" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                                <a href="https://github.com/tiation/dontbeacunt" target="_blank" class="project-link">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                            </div>
+                        </div>
+                        <div class="project-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Enterprise Solution Framework</h3>
+                        <p class="project-description">
+                            Professional enterprise solution template with comprehensive documentation, 
+                            modern architecture, and scalable foundation for business applications.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Modern Web</span>
+                            <span class="tech-tag">Documentation</span>
+                            <span class="tech-tag">Architecture</span>
+                            <span class="tech-tag">Framework</span>
+                        </div>
+                        <div class="project-features">
+                            <div class="feature">
+                                <i class="fas fa-book"></i>
+                                <span>Complete Documentation</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-sitemap"></i>
+                                <span>Enterprise Architecture</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-cogs"></i>
+                                <span>Scalable Foundation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About Tiation</h2>
+                    <p class="about-description">
+                        Leading provider of enterprise-grade software solutions, specializing in automation, 
+                        productivity, and system integration tools. Our mission is to empower organizations 
+                        with cutting-edge technology that drives efficiency and innovation.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <h3 class="stat-number">3+</h3>
+                            <p class="stat-label">Enterprise Projects</p>
+                        </div>
+                        <div class="stat">
+                            <h3 class="stat-number">100%</h3>
+                            <p class="stat-label">Modern Stack</p>
+                        </div>
+                        <div class="stat">
+                            <h3 class="stat-number">24/7</h3>
+                            <p class="stat-label">Deployment Ready</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-skills">
+                    <h3>Technology Expertise</h3>
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <i class="fab fa-vue-js"></i>
+                            <span>Vue.js</span>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fab fa-react"></i>
+                            <span>React</span>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fab fa-node-js"></i>
+                            <span>Node.js</span>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fas fa-database"></i>
+                            <span>PostgreSQL</span>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fab fa-docker"></i>
+                            <span>Docker</span>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fas fa-cloud"></i>
+                            <span>Cloud Deployment</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle">Ready to discuss your next enterprise project?</p>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <a href="mailto:tiatheone@protonmail.com">tiatheone@protonmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <h4>GitHub</h4>
+                            <a href="https://github.com/tiation" target="_blank">github.com/tiation</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-globe"></i>
+                        <div>
+                            <h4>Projects</h4>
+                            <span>View live demonstrations above</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testing Modal -->
+    <div id="testingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>API Testing Interface</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="test-section">
+                    <h4>Dice Roller API Test</h4>
+                    <p>Test the dice rolling functionality:</p>
+                    <div class="test-controls">
+                        <button class="btn btn-primary" onclick="testDiceRoll()">Roll d20</button>
+                        <button class="btn btn-secondary" onclick="testCustomRoll()">Custom Roll</button>
+                    </div>
+                    <div class="test-results" id="testResults">
+                        Results will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>TIATION</h3>
+                    <p>Enterprise Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/tiation" target="_blank">GitHub</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tiation. All rights reserved. Built with modern web technologies.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

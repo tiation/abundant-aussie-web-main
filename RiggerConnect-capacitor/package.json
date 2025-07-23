@@ -1,0 +1,61 @@
+{
+  "name": "riggerconnect-capacitor",
+  "version": "1.0.0",
+  "description": "RiggerConnect Cross-Platform Mobile App with Capacitor",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "cap:sync": "npx cap sync",
+    "cap:run:ios": "npx cap run ios",
+    "cap:run:android": "npx cap run android",
+    "cap:build:ios": "npm run build && npx cap copy ios && npx cap open ios",
+    "cap:build:android": "npm run build && npx cap copy android && npx cap open android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:add:android": "npx cap add android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/keyboard": "^6.0.0",
+    "@capacitor/network": "^6.0.0",
+    "@capacitor/push-notifications": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/storage": "^1.2.5",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/geolocation": "^6.0.0",
+    "@capacitor/device": "^6.0.0",
+    "@supabase/supabase-js": "^2.52.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
+    "framer-motion": "^12.23.6",
+    "lucide-react": "^0.525.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1"
+  },
+  "keywords": [
+    "capacitor",
+    "react",
+    "supabase",
+    "rigger",
+    "construction",
+    "mobile"
+  ],
+  "author": "ChaseWhiteRabbit NGO",
+  "license": "MIT"
+}

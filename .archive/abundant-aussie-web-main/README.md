@@ -14,7 +14,10 @@ Abundant Aussie Web is a cutting-edge platform designed to empower communities t
 
 ## 🚀 Live Demo
 
-Check out the live deployment of this project [here](https://abundant-aussie-web.vercel.app).
+**🌐 Live Deployments:**
+
+- **Netlify**: [https://abundant-aussie-web.netlify.app](https://abundant-aussie-web.netlify.app)
+- **Vercel**: [https://abundant-aussie-web.vercel.app](https://abundant-aussie-web.vercel.app)
 
 ### Key Objectives
 - 🌍 **Community Engagement**: Foster meaningful connections through modern, accessible technology

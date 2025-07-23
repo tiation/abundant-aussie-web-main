@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Tiation Portfolio</title>
+    <meta name="description" content="Comprehensive overview of Tiation's enterprise-grade web applications and solutions.">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body class="projects-page">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html">
+                    <h1 class="brand-title">TIATION</h1>
+                    <span class="brand-subtitle">Enterprise Solutions</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="projects.html" class="nav-link active">Projects</a></li>
+                <li><a href="../docs/index.html" class="nav-link">Documentation</a></li>
+                <li><a href="../guides/index.html" class="nav-link">Guides</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Projects</span>
+            </div>
+            <h1 class="page-title">Enterprise Projects</h1>
+            <p class="page-subtitle">Comprehensive showcase of modern, scalable web applications built with cutting-edge technologies</p>
+            <div class="page-stats">
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Active Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5+</span>
+                    <span class="stat-label">Technologies</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Open Source</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Filters -->
+    <section class="project-filters">
+        <div class="container">
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="frontend">Frontend</button>
+                <button class="filter-btn" data-filter="fullstack">Full Stack</button>
+                <button class="filter-btn" data-filter="saas">SaaS</button>
+                <button class="filter-btn" data-filter="framework">Framework</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Projects -->
+    <section class="detailed-projects">
+        <div class="container">
+            <!-- Company Intranet Project -->
+            <div class="project-detail" data-category="frontend fullstack">
+                <div class="project-header">
+                    <div class="project-info">
+                        <div class="project-badge">
+                            <i class="fas fa-building"></i>
+                            Enterprise Solution
+                        </div>
+                        <h2 class="project-title">Company Intranet Portal</h2>
+                        <p class="project-tagline">Modern enterprise intranet built with Vue 3 and TypeScript</p>
+                        <div class="project-links">
+                            <a href="https://tiation.github.io/company-intranet" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                            <a href="https://github.com/tiation/tiation-company-intranet-template" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-github"></i> Source Code
+                            </a>
+                            <a href="../docs/intranet.html" class="btn btn-outline">
+                                <i class="fas fa-book"></i> Documentation
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-building"></i>
+                            <span>Intranet Screenshot</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-content">
+                    <div class="project-overview">
+                        <h3>Project Overview</h3>
+                        <p>
+                            A comprehensive enterprise intranet portal designed to streamline internal business operations 
+                            and enhance team productivity. Built with modern Vue 3 architecture and TypeScript for type safety, 
+                            this solution provides employee directory management, project collaboration tools, department 
+                            organization, and real-time dashboards.
+                        </p>
+                        <p>
+                            The application demonstrates advanced frontend architecture patterns including the Composition API, 
+                            state management with Pinia, and responsive design principles. It's designed to scale from small 
+                            teams to enterprise-level organizations with thousands of employees.
+                        </p>
+                    </div>
+
+                    <div class="project-features">
+                        <h3>Key Features</h3>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <i class="fas fa-users"></i>
+                                <h4>Employee Directory</h4>
+                                <p>Comprehensive employee management with advanced search, filtering, and profile management capabilities.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-chart-bar"></i>
+                                <h4>Real-time Dashboard</h4>
+                                <p>Executive dashboards with metrics, project overviews, and company-wide statistics.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-project-diagram"></i>
+                                <h4>Project Management</h4>
+                                <p>Integrated project tracking, collaboration tools, and progress monitoring.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-lock"></i>
+                                <h4>Secure Authentication</h4>
+                                <p>JWT-based authentication with role-based access control (RBAC).</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-mobile-alt"></i>
+                                <h4>Responsive Design</h4>
+                                <p>Fully responsive interface that works seamlessly across all devices.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-palette"></i>
+                                <h4>Theme System</h4>
+                                <p>Dark/light themes with customizable company branding options.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-tech-stack">
+                        <h3>Technology Stack</h3>
+                        <div class="tech-categories">
+                            <div class="tech-category">
+                                <h4>Frontend</h4>
+                                <div class="tech-tags">
+                                    <span class="tech-tag vue">Vue 3</span>
+                                    <span class="tech-tag typescript">TypeScript</span>
+                                    <span class="tech-tag css">Tailwind CSS</span>
+                                    <span class="tech-tag build">Vite</span>
+                                </div>
+                            </div>
+                            <div class="tech-category">
+                                <h4>State Management</h4>
+                                <div class="tech-tags">
+                                    <span class="tech-tag state">Pinia</span>
+                                    <span class="tech-tag router">Vue Router 4</span>
+                                </div>
+                            </div>
+                            <div class="tech-category">
+                                <h4>Development</h4>
+                                <div class="tech-tags">
+                                    <span class="tech-tag lint">ESLint</span>
+                                    <span class="tech-tag format">Prettier</span>
+                                    <span class="tech-tag test">Vitest</span>
+                                </div>
+                            </div>
+                            <div class="tech-category">
+                                <h4>Deployment</h4>
+                                <div class="tech-tags">
+                                    <span class="tech-tag deploy">GitHub Pages</span>
+                                    <span class="tech-tag ci">GitHub Actions</span>
+                                    <span class="tech-tag container">Docker Ready</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-code-example">
+                        <h3>Code Example</h3>
+                        <pre><code class="language-typescript">// Employee store with Pinia
+import { defineStore } from 'pinia'
+import type { Employee } from '@/types'
+
+export const useEmployeeStore = defineStore('employee', () => {
+  const employees = ref&lt;Employee[]&gt;([])
+  const loading = ref(false)
+  const searchQuery = ref('')
+
+  const searchEmployees = async (query: string) => {
+    loading.value = true
+    try {
+      const response = await api.get('/employees/search', {
+        params: { q: query }
+      })
+      employees.value = response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const filteredEmployees = computed(() => {
+    if (!searchQuery.value) return employees.value
+    return employees.value.filter(emp => 
+      emp.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+  })
+
+  return {
+    employees,
+    loading,
+    searchQuery,
+    searchEmployees,
+    filteredEmployees
+  }
+})</code></pre>
+                    </div>
+
+                    <div class="project-metrics">
+                        <h3>Project Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-number">20+</span>
+                                <span class="metric-label">Vue Components</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-number">5</span>
+                                <span class="metric-label">Store Modules</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-number">95%</span>
+                                <span class="metric-label">TypeScript Coverage</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-number">100%</span>
+                                <span class="metric-label">Mobile Responsive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dice Roller SaaS Project -->
+            <div class="project-detail" data-category="fullstack saas">
+                <div class="project-header">
+                    <div class="project-info">
+                        <div class="project-badge">
+                            <i class="fas fa-dice-d20"></i>
+                            SaaS Platform
+                        </div>
+                        <h2 class="project-title">D&D Dice Roller SaaS</h2>
+                        <p class="project-tagline">Enterprise-grade dice rolling platform with subscription management</p>
+                        <div class="project-links">
+                            <a href="#" onclick="showTestingModal('dice')" class="btn btn-primary">
+                                <i class="fas fa-vial"></i> Test API
+                            </a>
+                            <a href="https://github.com/tiation/tiation-dice-roller-marketing-site" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-github"></i> Source Code
+                            </a>
+                            <a href="../docs/dice-roller.html" class="btn btn-outline">
+                                <i class="fas fa-book"></i> API Docs
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-dice-d20"></i>
+                            <span>Dice Roller Interface</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-content">
+                    <div class="project-overview">
+                        <h3>Project Overview</h3>
+                        <p>
+                            A comprehensive SaaS platform designed for D&D and tabletop RPG enthusiasts, providing 
+                            enterprise-grade dice rolling services with subscription management, team collaboration, 
+                            and extensive API access. The platform supports all standard D&D dice and custom dice 
+                            configurations with advanced modifiers and calculations.
+                        </p>
+                        <p>
+                            Built with a modern full-stack architecture, the platform includes automated deployment 
+                            scripts, comprehensive monitoring, and production-ready infrastructure. It demonstrates 
+                            advanced backend development patterns, payment integration, and scalable SaaS architecture.
+                        </p>
+                    </div>
+
+                    <div class="subscription-tiers">
+                        <h3>Subscription Tiers</h3>
+                        <div class="tiers-grid">
+                            <div class="tier-card">
+                                <h4>Free Tier</h4>
+                                <div class="tier-price">$0<span>/month</span></div>
+                                <ul class="tier-features">
+                                    <li>100 API calls/month</li>
+                                    <li>Basic dice rolling</li>
+                                    <li>Roll history (24h)</li>
+                                    <li>Community support</li>
+                                </ul>
+                            </div>
+                            <div class="tier-card featured">
+                                <h4>Pro Tier</h4>
+                                <div class="tier-price">$19.99<span>/month</span></div>
+                                <ul class="tier-features">
+                                    <li>10,000 API calls/month</li>
+                                    <li>Advanced modifiers</li>
+                                    <li>Team collaboration</li>
+                                    <li>Priority support</li>
+                                    <li>Custom webhooks</li>
+                                </ul>
+                            </div>
+                            <div class="tier-card">
+                                <h4>Enterprise</h4>
+                                <div class="tier-price">$99.99<span>/month</span></div>
+                                <ul class="tier-features">
+                                    <li>100,000 API calls/month</li>
+                                    <li>White-label options</li>
+                                    <li>SSO integration</li>
+                                    <li>SLA guarantees</li>
+                                    <li>Custom development</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-endpoints">
+                        <h3>API Endpoints</h3>
+                        <div class="endpoints-list">
+                            <div class="endpoint">
+                                <div class="endpoint-method post">POST</div>
+                                <div class="endpoint-path">/api/v1/dice/roll</div>
+                                <div class="endpoint-description">Roll dice with custom configuration</div>
+                            </div>
+                            <div class="endpoint">
+                                <div class="endpoint-method post">POST</div>
+                                <div class="endpoint-path">/api/v1/dice/quick-roll/{type}</div>
+                                <div class="endpoint-description">Quick single die roll</div>
+                            </div>
+                            <div class="endpoint">
+                                <div class="endpoint-method get">GET</div>
+                                <div class="endpoint-path">/api/v1/dice/history</div>
+                                <div class="endpoint-description">Get roll history</div>
+                            </div>
+                            <div class="endpoint">
+                                <div class="endpoint-method post">POST</div>
+                                <div class="endpoint-path">/api/v1/subscriptions/create-checkout</div>
+                                <div class="endpoint-description">Create Stripe checkout session</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="deployment-features">
+                        <h3>Deployment Features</h3>
+                        <div class="deployment-grid">
+                            <div class="deployment-item">
+                                <i class="fas fa-rocket"></i>
+                                <h4>One-Command Deployment</h4>
+                                <p>Automated VPS setup with Docker and SSL certificates</p>
+                            </div>
+                            <div class="deployment-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Security Hardening</h4>
+                                <p>Rate limiting, HTTPS enforcement, and security headers</p>
+                            </div>
+                            <div class="deployment-item">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Monitoring & Alerts</h4>
+                                <p>Health checks, structured logging, and performance metrics</p>
+                            </div>
+                            <div class="deployment-item">
+                                <i class="fas fa-database"></i>
+                                <h4>Automated Backups</h4>
+                                <p>PostgreSQL dumps with retention policies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enterprise Framework Project -->
+            <div class="project-detail" data-category="framework">
+                <div class="project-header">
+                    <div class="project-info">
+                        <div class="project-badge">
+                            <i class="fas fa-magic"></i>
+                            Framework
+                        </div>
+                        <h2 class="project-title">Enterprise Solution Framework</h2>
+                        <p class="project-tagline">Professional enterprise solution template with comprehensive documentation</p>
+                        <div class="project-links">
+                            <a href="https://tiation.github.io/dontbeacunt" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                            <a href="https://github.com/tiation/dontbeacunt" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-github"></i> Source Code
+                            </a>
+                            <a href="../docs/framework.html" class="btn btn-outline">
+                                <i class="fas fa-book"></i> Documentation
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-magic"></i>
+                            <span>Framework Architecture</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-content">
+                    <div class="project-overview">
+                        <h3>Project Overview</h3>
+                        <p>
+                            A comprehensive enterprise solution framework designed to accelerate the development of 
+                            professional business applications. This template provides a solid foundation with 
+                            modern architecture patterns, complete documentation structure, and scalable design principles.
+                        </p>
+                        <p>
+                            The framework demonstrates best practices for enterprise software development, including 
+                            comprehensive documentation strategies, architectural decision records, and professional 
+                            project structure that can be adapted for various business domains.
+                        </p>
+                    </div>
+
+                    <div class="framework-structure">
+                        <h3>Framework Structure</h3>
+                        <div class="structure-tree">
+                            <div class="tree-item">
+                                <i class="fas fa-folder"></i>
+                                <span class="folder-name">docs/</span>
+                                <div class="tree-children">
+                                    <div class="tree-item">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>user-guide.md</span>
+                                    </div>
+                                    <div class="tree-item">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>api-reference.md</span>
+                                    </div>
+                                    <div class="tree-item">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>architecture.md</span>
+                                    </div>
+                                    <div class="tree-item">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>deployment.md</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tree-item">
+                                <i class="fas fa-folder"></i>
+                                <span class="folder-name">assets/</span>
+                                <div class="tree-children">
+                                    <div class="tree-item">
+                                        <i class="fas fa-folder"></i>
+                                        <span>architecture/</span>
+                                    </div>
+                                    <div class="tree-item">
+                                        <i class="fas fa-folder"></i>
+                                        <span>screenshots/</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="documentation-features">
+                        <h3>Documentation Features</h3>
+                        <div class="doc-features-grid">
+                            <div class="doc-feature">
+                                <i class="fas fa-book-open"></i>
+                                <h4>Complete User Guide</h4>
+                                <p>Comprehensive documentation for end users with step-by-step instructions</p>
+                            </div>
+                            <div class="doc-feature">
+                                <i class="fas fa-code"></i>
+                                <h4>API Reference</h4>
+                                <p>Detailed technical documentation for developers and integrators</p>
+                            </div>
+                            <div class="doc-feature">
+                                <i class="fas fa-sitemap"></i>
+                                <h4>Architecture Diagrams</h4>
+                                <p>Visual system architecture with Mermaid diagrams and flowcharts</p>
+                            </div>
+                            <div class="doc-feature">
+                                <i class="fas fa-rocket"></i>
+                                <h4>Deployment Guides</h4>
+                                <p>Production deployment instructions for various environments</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="enterprise-features">
+                        <h3>Enterprise Capabilities</h3>
+                        <div class="capabilities-list">
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Comprehensive security framework with best practices</span>
+                            </div>
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Scalable architecture patterns for growth</span>
+                            </div>
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Integration capabilities with existing systems</span>
+                            </div>
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Professional support and maintenance guidelines</span>
+                            </div>
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Compliance and audit trails</span>
+                            </div>
+                            <div class="capability">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Multi-environment deployment strategies</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="projects-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Explore More?</h2>
+                <p>Dive deeper into the technical documentation or get in touch to discuss your enterprise needs.</p>
+                <div class="cta-buttons">
+                    <a href="../docs/index.html" class="btn btn-primary">
+                        <i class="fas fa-book"></i> View Documentation
+                    </a>
+                    <a href="contact.html" class="btn btn-secondary">
+                        <i class="fas fa-envelope"></i> Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testing Modal -->
+    <div id="testingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>API Testing Interface</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Dynamic content loaded by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>TIATION</h3>
+                    <p>Enterprise Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/tiation" target="_blank">GitHub</a>
+                    <a href="projects.html">Projects</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tiation. All rights reserved. Built with modern web technologies.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiation Interactive Demos | Enterprise Solutions</title>
+    <meta name="description" content="Explore interactive demonstrations of Tiation's enterprise-grade applications and development tools.">
+    <meta name="author" content="TiaAstor (tiatheone@protonmail.com)">
+    
+    <!-- SEO & Open Graph -->
+    <meta property="og:title" content="Tiation Interactive Demos">
+    <meta property="og:description" content="Enterprise-grade interactive demonstrations showcasing cutting-edge technology solutions">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./assets/tiation-og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./assets/styles/main.css">
+    <link rel="stylesheet" href="./framework/demo-core.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="./framework/demo-core.js" as="script">
+    
+    <!-- Mobile optimization -->
+    <meta name="theme-color" content="#00ffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="dark-theme">
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="./assets/tiation-logo.svg" alt="Tiation" class="logo">
+                <span class="brand-text">Interactive Demos</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="#demos" class="nav-link">Demos</a>
+                <a href="#categories" class="nav-link">Categories</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="https://github.com/tiaastor" class="nav-link" target="_blank">GitHub</a>
+            </div>
+            
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Interactive Demos
+                    <span class="gradient-text">Enterprise Solutions</span>
+                </h1>
+                <p class="hero-description">
+                    Experience cutting-edge technology through immersive, interactive demonstrations. 
+                    Built with enterprise-grade architecture and mobile-first design.
+                </p>
+                <div class="hero-actions">
+                    <a href="#demos" class="btn btn-primary">Explore Demos</a>
+                    <a href="#categories" class="btn btn-secondary">Browse Categories</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="demo-preview" id="heroDemo">
+                    <!-- Hero demo will be injected here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animated background -->
+        <div class="hero-bg">
+            <div class="grid-overlay"></div>
+            <div class="floating-elements">
+                <div class="float-element" style="--delay: 0s;"></div>
+                <div class="float-element" style="--delay: 1s;"></div>
+                <div class="float-element" style="--delay: 2s;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Categories -->
+    <section class="demo-categories" id="categories">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title">Demo Categories</h2>
+                <p class="section-description">Explore our comprehensive suite of interactive demonstrations</p>
+            </header>
+            
+            <div class="categories-grid">
+                <div class="category-card" data-category="mobile-apps">
+                    <div class="category-icon">📱</div>
+                    <h3>Mobile Applications</h3>
+                    <p>iOS and React Native applications with enterprise features</p>
+                    <span class="category-count" data-count="mobile-apps">0 demos</span>
+                </div>
+                
+                <div class="category-card" data-category="web-apps">
+                    <div class="category-icon">🌐</div>
+                    <h3>Web Applications</h3>
+                    <p>React, Vue, and vanilla JavaScript applications</p>
+                    <span class="category-count" data-count="web-apps">0 demos</span>
+                </div>
+                
+                <div class="category-card" data-category="apis">
+                    <div class="category-icon">🔌</div>
+                    <h3>API & Backend</h3>
+                    <p>RESTful APIs, microservices, and backend solutions</p>
+                    <span class="category-count" data-count="apis">0 demos</span>
+                </div>
+                
+                <div class="category-card" data-category="infrastructure">
+                    <div class="category-icon">🏗️</div>
+                    <h3>Infrastructure</h3>
+                    <p>DevOps, Docker, Kubernetes, and deployment solutions</p>
+                    <span class="category-count" data-count="infrastructure">0 demos</span>
+                </div>
+                
+                <div class="category-card" data-category="ai-tools">
+                    <div class="category-icon">🤖</div>
+                    <h3>AI & Automation</h3>
+                    <p>AI agents, automation tools, and intelligent systems</p>
+                    <span class="category-count" data-count="ai-tools">0 demos</span>
+                </div>
+                
+                <div class="category-card" data-category="utilities">
+                    <div class="category-icon">🛠️</div>
+                    <h3>Developer Tools</h3>
+                    <p>SDKs, templates, and productivity utilities</p>
+                    <span class="category-count" data-count="utilities">0 demos</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Gallery -->
+    <section class="demo-gallery" id="demos">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title">Featured Demonstrations</h2>
+                <p class="section-description">Interactive showcases of our most advanced solutions</p>
+                
+                <div class="demo-filters">
+                    <button class="filter-btn active" data-filter="all">All Demos</button>
+                    <button class="filter-btn" data-filter="mobile-apps">Mobile</button>
+                    <button class="filter-btn" data-filter="web-apps">Web</button>
+                    <button class="filter-btn" data-filter="apis">APIs</button>
+                    <button class="filter-btn" data-filter="infrastructure">Infrastructure</button>
+                    <button class="filter-btn" data-filter="ai-tools">AI/Automation</button>
+                </div>
+            </header>
+            
+            <div class="demos-grid" id="demosGrid">
+                <!-- Demos will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="section-container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Tiation Interactive Demos</h2>
+                    <p>
+                        Our interactive demo platform showcases enterprise-grade solutions built with 
+                        cutting-edge technology. Each demonstration is designed to provide hands-on 
+                        experience with real-world applications, mobile-optimized interfaces, and 
+                        professional documentation.
+                    </p>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">📱</span>
+                            <div>
+                                <h4>Mobile-First Design</h4>
+                                <p>Optimized for all devices with responsive layouts</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <span class="feature-icon">🎨</span>
+                            <div>
+                                <h4>Dark Neon Theme</h4>
+                                <p>Modern aesthetic with cyan/magenta gradients</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <span class="feature-icon">🏢</span>
+                            <div>
+                                <h4>Enterprise Grade</h4>
+                                <p>Professional architecture and documentation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <span class="feature-icon">⚡</span>
+                            <div>
+                                <h4>High Performance</h4>
+                                <p>Optimized loading and smooth interactions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-visual">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalDemos">0</span>
+                            <span class="stat-label">Interactive Demos</span>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalCategories">6</span>
+                            <span class="stat-label">Categories</span>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalRepositories">50+</span>
+                            <span class="stat-label">Repositories</span>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Mobile Optimized</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SaaS Integration Section (as per your rules) -->
+    <section class="saas-section" id="saas">
+        <div class="section-container">
+            <div class="saas-content">
+                <h2>Enterprise Solutions</h2>
+                <p>Transform your business with our comprehensive suite of enterprise applications and development tools.</p>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Developer</h3>
+                        <div class="price">Free</div>
+                        <ul>
+                            <li>Access to all demos</li>
+                            <li>Documentation</li>
+                            <li>Community support</li>
+                        </ul>
+                        <button class="btn btn-outline" onclick="window.open('https://github.com/tiaastor', '_blank')">
+                            Get Started
+                        </button>
+                    </div>
+                    
+                    <div class="pricing-card featured">
+                        <h3>Enterprise</h3>
+                        <div class="price">Custom</div>
+                        <ul>
+                            <li>Custom implementations</li>
+                            <li>Priority support</li>
+                            <li>Advanced integrations</li>
+                            <li>SLA guarantee</li>
+                        </ul>
+                        <button class="btn btn-primary" id="enterpriseContactBtn">
+                            Contact Sales
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="./assets/tiation-logo.svg" alt="Tiation" class="footer-logo">
+                    <p>Enterprise-grade solutions with modern aesthetics</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>Products</h4>
+                        <a href="#demos">Interactive Demos</a>
+                        <a href="https://github.com/tiaastor/tiation-rigger-workspace">Rigger Platform</a>
+                        <a href="https://github.com/tiaastor/tiation-react-template">React Templates</a>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Resources</h4>
+                        <a href="#about">Documentation</a>
+                        <a href="https://github.com/tiaastor">GitHub</a>
+                        <a href="#categories">API Reference</a>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Contact</h4>
+                        <a href="mailto:tiatheone@protonmail.com">Email</a>
+                        <a href="https://github.com/tiaastor">GitHub Profile</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tiation. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="https://github.com/tiaastor" target="_blank" aria-label="GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./framework/demo-core.js"></script>
+    <script src="./assets/scripts/main.js"></script>
+    <script src="./assets/scripts/demos.js"></script>
+    
+    <!-- Analytics placeholder -->
+    <script>
+        // Add your analytics code here
+        console.log('Tiation Interactive Demos loaded successfully');
+    </script>
+</body>
+</html>

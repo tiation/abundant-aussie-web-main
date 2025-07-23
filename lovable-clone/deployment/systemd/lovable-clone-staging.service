@@ -1,0 +1,43 @@
+[Unit]
+Description=Lovable Clone Staging Environment
+Documentation=https://github.com/tiation-repos/lovable-clone
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/var/www/staging/lovable-clone
+ExecStartPre=-/usr/bin/docker-compose -f docker-compose.staging.yml down
+ExecStartPre=/usr/bin/docker-compose -f docker-compose.staging.yml pull
+ExecStart=/usr/bin/docker-compose -f docker-compose.staging.yml up -d
+ExecStop=/usr/bin/docker-compose -f docker-compose.staging.yml down
+ExecReload=/usr/bin/docker-compose -f docker-compose.staging.yml restart
+TimeoutStartSec=600
+TimeoutStopSec=300
+
+# Security settings
+User=root
+Group=docker
+RestartSec=15
+Restart=on-failure
+RestartPreventExitStatus=255
+
+# Resource constraints
+MemoryLimit=1.5G
+TasksMax=512
+
+# Environment
+Environment=NODE_ENV=staging
+Environment=COMPOSE_PROJECT_NAME=lovable-clone-staging
+Environment=DOCKER_BUILDKIT=1
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lovable-clone-staging
+
+[Install]
+WantedBy=multi-user.target

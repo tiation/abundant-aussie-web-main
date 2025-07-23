@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lovable Clone - Build something Lovable</title>
+    <meta name="description" content="Build software products, using only a chat interface">
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-background text-foreground">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 flex w-full items-center justify-between border-b border-transparent transition-all duration-200 ease-out backdrop-blur-sm">
+        <div class="container mx-auto flex h-16 w-full items-center justify-between px-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-8">
+                <div class="relative">
+                    <a class="transition-opacity hover:opacity-75" href="/">
+                        <div class="flex items-center gap-2">
+                            <div class="lovable-logo">
+                                <div class="logo-gradient"></div>
+                            </div>
+                            <span class="text-xl font-semibold">Lovable</span>
+                        </div>
+                    </a>
+                </div>
+                <!-- Navigation Links -->
+                <nav class="hidden items-center gap-6 md:flex">
+                    <a class="text-sm font-normal text-foreground transition-colors hover:text-foreground/80" href="#community">Community</a>
+                    <a class="text-sm font-normal text-foreground transition-colors hover:text-foreground/80" href="#pricing">Pricing</a>
+                    <a class="text-sm font-normal text-foreground transition-colors hover:text-foreground/80" href="#enterprise">Enterprise</a>
+                    <a class="text-sm font-normal text-foreground transition-colors hover:text-foreground/80" href="#learn">Learn</a>
+                    <a class="text-sm font-normal text-foreground transition-colors hover:text-foreground/80" href="#launched">Launched</a>
+                </nav>
+            </div>
+            <!-- Auth Buttons -->
+            <div class="flex items-center gap-4">
+                <div class="flex gap-2">
+                    <a class="btn btn-secondary" href="#login">Log in</a>
+                    <a class="btn btn-primary" href="#signup">Get started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background -->
+    <div class="relative min-h-screen w-full bg-background">
+        <!-- Gradient Background -->
+        <div class="absolute inset-0 w-full overflow-hidden">
+            <div class="gradient-background"></div>
+        </div>
+        <!-- Grain Overlay -->
+        <div class="grain-overlay"></div>
+
+        <!-- Main Content -->
+        <main class="container mx-auto overflow-x-hidden overflow-y-hidden px-4">
+            <div class="relative w-full">
+                <!-- Hero Section -->
+                <section class="flex w-full flex-col items-center justify-center py-32 md:py-64">
+                    <div class="mb-4 flex flex-col items-center px-4 text-center md:mb-6">
+                        <div class="flex w-full flex-col items-center justify-center gap-2">
+                            <h1 class="mb-2 flex items-center gap-1 text-4xl font-medium leading-none text-foreground md:text-6xl">
+                                <span class="tracking-tight">Build something</span>
+                                <span class="lovable-text gradient-text">Lovable</span>
+                            </h1>
+                            <p class="mb-6 max-w-2xl text-center text-lg leading-tight text-foreground/65 md:text-xl">
+                                Create apps and websites by chatting with AI
+                            </p>
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="w-full max-w-3xl">
+                            <div class="relative w-full">
+                                <div class="flex w-full flex-col items-center">
+                                    <div class="relative w-full">
+                                        <form class="group flex flex-col gap-2 p-3 w-full rounded-3xl border border-muted-border bg-muted text-base shadow-xl transition-all duration-150 ease-in-out focus-within:border-foreground/20 hover:border-foreground/10">
+                                            <div class="relative flex flex-1 items-center">
+                                                <textarea 
+                                                    class="chat-input"
+                                                    id="chatinput" 
+                                                    autofocus 
+                                                    placeholder="Ask Lovable to create an amazing web app..."
+                                                    maxlength="50000"
+                                                ></textarea>
+                                            </div>
+                                            <div class="flex gap-1 flex-wrap items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <button class="btn-icon" type="button" title="Add file">
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 5v14m-7-7h14"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="btn-small" type="button">
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                            <circle cx="12" cy="12" r="10"/>
+                                                            <path d="M12 6v6l4 2"/>
+                                                        </svg>
+                                                        <span class="hidden md:flex">Public</span>
+                                                    </button>
+                                                </div>
+                                                <div class="ml-auto flex items-center gap-1">
+                                                    <button id="send-button" type="submit" class="btn-send" disabled>
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 19l-7-7 7-7v4h8v6h-8v4z"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Community Section -->
+                <div class="flex w-full flex-col gap-12 rounded-[20px] bg-background px-8 py-8">
+                    <div class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-2 sm:gap-4">
+                            <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                                <div class="flex w-full items-center">
+                                    <p class="text-2xl font-medium">From the Community</p>
+                                </div>
+                            </div>
+                            <div class="flex w-full flex-col justify-between gap-2 sm:flex-row sm:gap-4">
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="tag tag-active">Discover</div>
+                                    <div class="tag">Internal Tools</div>
+                                    <div class="tag">Website</div>
+                                    <div class="tag">Personal</div>
+                                    <div class="tag">Consumer App</div>
+                                    <div class="tag">B2B App</div>
+                                    <div class="tag">Prototype</div>
+                                </div>
+                                <div class="ml-auto flex justify-end">
+                                    <button class="btn btn-ghost">
+                                        <a href="#view-all">View All</a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
+                            <!-- Project Cards - Skeleton Loading -->
+                            <div class="project-card">
+                                <div class="project-thumbnail skeleton"></div>
+                                <div class="project-info">
+                                    <div class="skeleton-text"></div>
+                                    <div class="skeleton-text-small"></div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumbnail skeleton"></div>
+                                <div class="project-info">
+                                    <div class="skeleton-text"></div>
+                                    <div class="skeleton-text-small"></div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumbnail skeleton"></div>
+                                <div class="project-info">
+                                    <div class="skeleton-text"></div>
+                                    <div class="skeleton-text-small"></div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumbnail skeleton"></div>
+                                <div class="project-info">
+                                    <div class="skeleton-text"></div>
+                                    <div class="skeleton-text-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div class="container mx-auto relative z-10 px-4">
+            <footer class="mx-auto mb-4 flex w-full flex-col justify-center rounded-[20px] border-2 border-border bg-background px-8 py-8 mt-6">
+                <nav class="grid w-full grid-cols-2 gap-4 gap-y-12 text-base sm:gap-12 md:grid-cols-6">
+                    <!-- Logo Section -->
+                    <div class="col-span-full mb-16 flex flex-col items-center sm:col-span-1 sm:mb-0 sm:items-start">
+                        <a class="self-center sm:self-start" href="/">
+                            <div class="lovable-logo">
+                                <div class="logo-gradient"></div>
+                            </div>
+                        </a>
+                        <div class="mt-4 self-center sm:self-start">
+                            <button class="flex items-center gap-1 text-muted-foreground hover:underline">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                                <span class="text-sm">EN</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer Links -->
+                    <div class="footer-section">
+                        <p class="footer-title">Company</p>
+                        <ul class="footer-links">
+                            <li><a href="#blog">Blog</a></li>
+                            <li><a href="#careers">Careers</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <p class="footer-title">Product</p>
+                        <ul class="footer-links">
+                            <li><a href="#figma">Import from Figma</a></li>
+                            <li><a href="#videos">Videos</a></li>
+                            <li><a href="#roadmap">Roadmap</a></li>
+                            <li><a href="#status">Status</a></li>
+                            <li><a href="#changelog">Changelog</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <p class="footer-title">Resources</p>
+                        <ul class="footer-links">
+                            <li><a href="#launched">Launched</a></li>
+                            <li><a href="#enterprise">Enterprise</a></li>
+                            <li><a href="#learn">Learn</a></li>
+                            <li><a href="#support">Support</a></li>
+                            <li><a href="#integrations">Integrations</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <p class="footer-title">Legal</p>
+                        <ul class="footer-links">
+                            <li><a href="#privacy">Privacy Policy</a></li>
+                            <li><a href="#terms">Terms & Conditions</a></li>
+                            <li><a href="#abuse">Report Abuse</a></li>
+                            <li><a href="#security">Report Security Concerns</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <p class="footer-title">Socials</p>
+                        <ul class="footer-links">
+                            <li><a href="#twitter">X / Twitter</a></li>
+                            <li><a href="#linkedin">LinkedIn</a></li>
+                            <li><a href="#discord">Discord</a></li>
+                            <li><a href="#reddit">Reddit</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </footer>
+        </div>
+    </div>
+
+    <script src="src/scripts/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+[0;34m[2025-07-23 22:45:56] 🚀 Starting comprehensive repository update...[0m
+[0;34m[2025-07-23 22:45:56] 📁 Base directory: /Users/tiaastor/Github/tiation-repos[0m
+[0;34m[2025-07-23 22:46:01] 📊 Found 0 git repositories[0m
+[0;32m[2025-07-23 22:46:01] ✅ Successfully updated: 0 repositories[0m
+[0;31m[2025-07-23 22:46:01] ❌ Failed to update: 0 repositories[0m
+[1;33m[2025-07-23 22:46:01] ⚠️  Skipped: 0 repositories[0m
+[0;34m[2025-07-23 22:46:01] 📝 Detailed log: /Users/tiaastor/Github/tiation-repos/comprehensive_update_log.txt[0m
+[0;34m[2025-07-23 22:47:54] 🚀 Starting comprehensive repository update...[0m
+[0;34m[2025-07-23 22:47:54] 📁 Base directory: /Users/tiaastor/Github/tiation-repos[0m
+[0;34m[2025-07-23 22:47:59] 📊 Found 78 git repositories[0m
+[0;34m[2025-07-23 22:47:59] 🔄 Processing abundant-aussie-web-main...[0m
+[0;32m[2025-07-23 22:48:03] ✅ abundant-aussie-web-main: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:03] ✅ abundant-aussie-web-main: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:03] 🔄 Processing AflFantasyManager...[0m
+[1;33m[2025-07-23 22:48:03] ⚠️  AflFantasyManager: Stashing uncommitted changes...[0m
+[0;32m[2025-07-23 22:48:07] ✅ AflFantasyManager: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:07] ✅ AflFantasyManager: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:07] 🔄 Processing ai-remix-platform...[0m
+[0;32m[2025-07-23 22:48:11] ✅ ai-remix-platform: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:11] ✅ ai-remix-platform: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:11] 🔄 Processing architecture-diagrams...[0m
+[0;32m[2025-07-23 22:48:16] ✅ architecture-diagrams: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:16] ✅ architecture-diagrams: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:16] 🔄 Processing AutomationServer...[0m
+[0;32m[2025-07-23 22:48:19] ✅ AutomationServer: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:20] ✅ AutomationServer: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:20] 🔄 Processing ChaseWhiteRabbit-Business-Overview...[0m
+[0;32m[2025-07-23 22:48:23] ✅ ChaseWhiteRabbit-Business-Overview: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:24] ✅ ChaseWhiteRabbit-Business-Overview: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:24] 🔄 Processing dnd-assets...[0m
+[0;31m[2025-07-23 22:48:27] ❌ dnd-assets: Failed to fetch from origin[0m
+[0;34m[2025-07-23 22:48:27] 🔄 Processing dnd-character-sheets-saas...[0m
+[0;32m[2025-07-23 22:48:31] ✅ dnd-character-sheets-saas: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:31] ✅ dnd-character-sheets-saas: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:31] 🔄 Processing dnd-dice-roller-ecosystem...[0m
+[0;32m[2025-07-23 22:48:35] ✅ dnd-dice-roller-ecosystem: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:35] ✅ dnd-dice-roller-ecosystem: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:35] 🔄 Processing dice-roller-ios-chasewhiterabbit...[0m
+[0;32m[2025-07-23 22:48:37] ✅ dice-roller-ios-chasewhiterabbit: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:37] ✅ dice-roller-ios-chasewhiterabbit: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:37] 🔄 Processing dnd-character-sheets-saas...[0m
+[0;32m[2025-07-23 22:48:42] ✅ dnd-character-sheets-saas: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:42] ✅ dnd-character-sheets-saas: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:42] 🔄 Processing dnddiceroller-android...[0m
+[0;32m[2025-07-23 22:48:46] ✅ dnddiceroller-android: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:46] ✅ dnddiceroller-android: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:46] 🔄 Processing dnddiceroller-enhanced...[0m
+[0;32m[2025-07-23 22:48:49] ✅ dnddiceroller-enhanced: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:49] ✅ dnddiceroller-enhanced: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:49] 🔄 Processing dontbeacunt...[0m
+[0;32m[2025-07-23 22:48:54] ✅ dontbeacunt: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:54] ✅ dontbeacunt: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:54] 🔄 Processing dotfiles...[0m
+[0;32m[2025-07-23 22:48:58] ✅ dotfiles: Fetched from origin[0m
+[0;32m[2025-07-23 22:48:59] ✅ dotfiles: Updated to latest main[0m
+[0;34m[2025-07-23 22:48:59] 🔄 Processing flutter-intl-vscode...[0m
+[0;32m[2025-07-23 22:49:02] ✅ flutter-intl-vscode: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:02] ✅ flutter-intl-vscode: Updated to latest master[0m
+[0;34m[2025-07-23 22:49:02] 🔄 Processing git-workspace...[0m
+[0;32m[2025-07-23 22:49:06] ✅ git-workspace: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:06] ✅ git-workspace: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:06] 🔄 Processing go-project-template...[0m
+[0;32m[2025-07-23 22:49:10] ✅ go-project-template: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:10] ✅ go-project-template: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:10] 🔄 Processing headscale-admin...[0m
+[0;32m[2025-07-23 22:49:14] ✅ headscale-admin: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:14] ✅ headscale-admin: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:14] 🔄 Processing home-safety-matrix-ai...[0m
+[0;32m[2025-07-23 22:49:18] ✅ home-safety-matrix-ai: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:18] ✅ home-safety-matrix-ai: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:18] 🔄 Processing huggingface-llama-recipes...[0m
+[0;32m[2025-07-23 22:49:22] ✅ huggingface-llama-recipes: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:22] ✅ huggingface-llama-recipes: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:22] 🔄 Processing Intermap...[0m
+[0;32m[2025-07-23 22:49:26] ✅ Intermap: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:26] ✅ Intermap: Updated to latest master[0m
+[0;34m[2025-07-23 22:49:26] 🔄 Processing k8s...[0m
+[0;32m[2025-07-23 22:49:30] ✅ k8s: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:30] ✅ k8s: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:30] 🔄 Processing lovable-clone...[0m
+[1;33m[2025-07-23 22:49:30] ⚠️  lovable-clone: Stashing uncommitted changes...[0m
+[0;31m[2025-07-23 22:49:34] ❌ lovable-clone: Failed to fetch from origin[0m
+[0;34m[2025-07-23 22:49:34] 🔄 Processing mark-photo-flare-site...[0m
+[0;32m[2025-07-23 22:49:38] ✅ mark-photo-flare-site: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:38] ✅ mark-photo-flare-site: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:38] 🔄 Processing MetricsDashboard...[0m
+[0;32m[2025-07-23 22:49:42] ✅ MetricsDashboard: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:42] ✅ MetricsDashboard: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:42] 🔄 Processing netmaker...[0m
+[0;32m[2025-07-23 22:49:48] ✅ netmaker: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:48] ✅ netmaker: Updated to latest master[0m
+[0;34m[2025-07-23 22:49:48] 🔄 Processing new-project...[0m
+[0;32m[2025-07-23 22:49:51] ✅ new-project: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:52] ✅ new-project: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:52] 🔄 Processing new-project-default-react...[0m
+[0;31m[2025-07-23 22:49:54] ❌ new-project-default-react: Failed to fetch from origin[0m
+[0;34m[2025-07-23 22:49:54] 🔄 Processing onedev...[0m
+[0;32m[2025-07-23 22:49:58] ✅ onedev: Fetched from origin[0m
+[0;32m[2025-07-23 22:49:58] ✅ onedev: Updated to latest main[0m
+[0;34m[2025-07-23 22:49:58] 🔄 Processing ProtectChildrenAustralia...[0m
+[0;32m[2025-07-23 22:50:02] ✅ ProtectChildrenAustralia: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:02] ✅ ProtectChildrenAustralia: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:02] 🔄 Processing rainbow-fish-dice-roller...[0m
+[0;32m[2025-07-23 22:50:06] ✅ rainbow-fish-dice-roller: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:06] ✅ rainbow-fish-dice-roller: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:06] 🔄 Processing rigger-connect-AutomationServer...[0m
+[0;32m[2025-07-23 22:50:10] ✅ rigger-connect-AutomationServer: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:10] ✅ rigger-connect-AutomationServer: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:10] 🔄 Processing rigger-connect-Infrastructure...[0m
+[0;32m[2025-07-23 22:50:14] ✅ rigger-connect-Infrastructure: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:14] ✅ rigger-connect-Infrastructure: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:14] 🔄 Processing rigger-connect-marketing...[0m
+[0;32m[2025-07-23 22:50:18] ✅ rigger-connect-marketing: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:18] ✅ rigger-connect-marketing: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:18] 🔄 Processing rigger-connect-MetricsDashboard...[0m
+[0;32m[2025-07-23 22:50:21] ✅ rigger-connect-MetricsDashboard: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:21] ✅ rigger-connect-MetricsDashboard: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:21] 🔄 Processing rigger-connect-RiggerConnect...[0m
+[0;32m[2025-07-23 22:50:25] ✅ rigger-connect-RiggerConnect: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:25] ✅ rigger-connect-RiggerConnect: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:25] 🔄 Processing rigger-connect-RiggerConnect-RiggerJobs-Workspace...[0m
+[0;32m[2025-07-23 22:50:29] ✅ rigger-connect-RiggerConnect-RiggerJobs-Workspace: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:29] ✅ rigger-connect-RiggerConnect-RiggerJobs-Workspace: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:29] 🔄 Processing rigger-enterprise-saas...[0m
+[0;32m[2025-07-23 22:50:33] ✅ rigger-enterprise-saas: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:33] ✅ rigger-enterprise-saas: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:33] 🔄 Processing rigger-saas...[0m
+[0;32m[2025-07-23 22:50:37] ✅ rigger-saas: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:37] ✅ rigger-saas: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:37] 🔄 Processing RiggerBackend...[0m
+[1;33m[2025-07-23 22:50:37] ⚠️  RiggerBackend: Stashing uncommitted changes...[0m
+[0;32m[2025-07-23 22:50:41] ✅ RiggerBackend: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:41] ✅ RiggerBackend: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:41] 🔄 Processing RiggerConnect-android...[0m
+[0;32m[2025-07-23 22:50:45] ✅ RiggerConnect-android: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:45] ✅ RiggerConnect-android: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:45] 🔄 Processing RiggerConnect-ios...[0m
+[0;32m[2025-07-23 22:50:50] ✅ RiggerConnect-ios: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:50] ✅ RiggerConnect-ios: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:50] 🔄 Processing RiggerConnect-mobile...[0m
+[0;32m[2025-07-23 22:50:54] ✅ RiggerConnect-mobile: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:54] ✅ RiggerConnect-mobile: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:54] 🔄 Processing RiggerConnect-web...[0m
+[0;32m[2025-07-23 22:50:57] ✅ RiggerConnect-web: Fetched from origin[0m
+[0;32m[2025-07-23 22:50:57] ✅ RiggerConnect-web: Updated to latest main[0m
+[0;34m[2025-07-23 22:50:57] 🔄 Processing riggerhireapp...[0m
+[0;32m[2025-07-23 22:51:01] ✅ riggerhireapp: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:01] ✅ riggerhireapp: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:01] 🔄 Processing RiggerHub-android...[0m
+[0;32m[2025-07-23 22:51:06] ✅ RiggerHub-android: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:06] ✅ RiggerHub-android: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:06] 🔄 Processing RiggerHub-ios...[0m
+[0;32m[2025-07-23 22:51:10] ✅ RiggerHub-ios: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:10] ✅ RiggerHub-ios: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:10] 🔄 Processing RiggerHub-web...[0m
+[0;32m[2025-07-23 22:51:15] ✅ RiggerHub-web: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:15] ✅ RiggerHub-web: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:15] 🔄 Processing RiggerShared...[0m
+[0;32m[2025-07-23 22:51:19] ✅ RiggerShared: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:19] ✅ RiggerShared: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:19] 🔄 Processing shattered-realms-nexus...[0m
+[0;32m[2025-07-23 22:51:23] ✅ shattered-realms-nexus: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:24] ✅ shattered-realms-nexus: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:24] 🔄 Processing spring-up-markers-web...[0m
+[0;32m[2025-07-23 22:51:27] ✅ spring-up-markers-web: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:27] ✅ spring-up-markers-web: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:27] 🔄 Processing tabletop-adventures-crafted-main...[0m
+[0;32m[2025-07-23 22:51:31] ✅ tabletop-adventures-crafted-main: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:31] ✅ tabletop-adventures-crafted-main: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:31] 🔄 Processing tiation-ai-platform...[0m
+[0;32m[2025-07-23 22:51:35] ✅ tiation-ai-platform: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:35] ✅ tiation-ai-platform: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:35] 🔄 Processing tiation-company-intranet-template...[0m
+[0;32m[2025-07-23 22:51:39] ✅ tiation-company-intranet-template: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:39] ✅ tiation-company-intranet-template: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:39] 🔄 Processing tiation-dice-roller-ios...[0m
+[0;32m[2025-07-23 22:51:43] ✅ tiation-dice-roller-ios: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:43] ✅ tiation-dice-roller-ios: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:43] 🔄 Processing tiation-dice-roller-marketing-site...[0m
+[0;32m[2025-07-23 22:51:47] ✅ tiation-dice-roller-marketing-site: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:47] ✅ tiation-dice-roller-marketing-site: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:47] 🔄 Processing tiation-dicedemo-workspace...[0m
+[0;32m[2025-07-23 22:51:51] ✅ tiation-dicedemo-workspace: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:51] ✅ tiation-dicedemo-workspace: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:51] 🔄 Processing tiation-ecosystem...[0m
+[0;32m[2025-07-23 22:51:55] ✅ tiation-ecosystem: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:55] ✅ tiation-ecosystem: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:55] 🔄 Processing tiation-github...[0m
+[0;32m[2025-07-23 22:51:59] ✅ tiation-github: Fetched from origin[0m
+[0;32m[2025-07-23 22:51:59] ✅ tiation-github: Updated to latest main[0m
+[0;34m[2025-07-23 22:51:59] 🔄 Processing tiation-kindness-web...[0m
+[0;32m[2025-07-23 22:52:02] ✅ tiation-kindness-web: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:02] ✅ tiation-kindness-web: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:02] 🔄 Processing tiation-monorepo...[0m
+[0;31m[2025-07-23 22:52:06] ❌ tiation-monorepo: Failed to fetch from origin[0m
+[0;34m[2025-07-23 22:52:06] 🔄 Processing tiation-portfolio...[0m
+[0;32m[2025-07-23 22:52:11] ✅ tiation-portfolio: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:11] ✅ tiation-portfolio: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:11] 🔄 Processing tiation-rigger-automation-server...[0m
+[0;32m[2025-07-23 22:52:16] ✅ tiation-rigger-automation-server: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:16] ✅ tiation-rigger-automation-server: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:16] 🔄 Processing tiation-rigger-connect-api...[0m
+[0;32m[2025-07-23 22:52:19] ✅ tiation-rigger-connect-api: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:19] ✅ tiation-rigger-connect-api: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:19] 🔄 Processing tiation-rigger-connect-app...[0m
+[0;32m[2025-07-23 22:52:23] ✅ tiation-rigger-connect-app: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:23] ✅ tiation-rigger-connect-app: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:23] 🔄 Processing tiation-rigger-ecosystem...[0m
+[0;32m[2025-07-23 22:52:27] ✅ tiation-rigger-ecosystem: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:27] ✅ tiation-rigger-ecosystem: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:27] 🔄 Processing tiation-rigger-infrastructure...[0m
+[0;32m[2025-07-23 22:52:31] ✅ tiation-rigger-infrastructure: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:31] ✅ tiation-rigger-infrastructure: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:31] 🔄 Processing tiation-rigger-jobs-app...[0m
+[0;32m[2025-07-23 22:52:35] ✅ tiation-rigger-jobs-app: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:35] ✅ tiation-rigger-jobs-app: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:35] 🔄 Processing tiation-rigger-metrics-dashboard...[0m
+[0;32m[2025-07-23 22:52:39] ✅ tiation-rigger-metrics-dashboard: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:39] ✅ tiation-rigger-metrics-dashboard: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:39] 🔄 Processing tiation-rigger-mobile-app...[0m
+[0;32m[2025-07-23 22:52:43] ✅ tiation-rigger-mobile-app: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:43] ✅ tiation-rigger-mobile-app: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:43] 🔄 Processing tiation-rigger-shared-libraries...[0m
+[0;32m[2025-07-23 22:52:47] ✅ tiation-rigger-shared-libraries: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:47] ✅ tiation-rigger-shared-libraries: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:47] 🔄 Processing tiation-rigger-workspace...[0m
+[0;32m[2025-07-23 22:52:50] ✅ tiation-rigger-workspace: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:50] ✅ tiation-rigger-workspace: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:50] 🔄 Processing tiation-rigger-workspace-docs...[0m
+[0;32m[2025-07-23 22:52:54] ✅ tiation-rigger-workspace-docs: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:54] ✅ tiation-rigger-workspace-docs: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:54] 🔄 Processing tiation-saas-template...[0m
+[0;32m[2025-07-23 22:52:58] ✅ tiation-saas-template: Fetched from origin[0m
+[0;32m[2025-07-23 22:52:58] ✅ tiation-saas-template: Updated to latest main[0m
+[0;34m[2025-07-23 22:52:58] 🔄 Processing tiation-secure-vpn-web...[0m
+[0;32m[2025-07-23 22:53:02] ✅ tiation-secure-vpn-web: Fetched from origin[0m
+[0;32m[2025-07-23 22:53:02] ✅ tiation-secure-vpn-web: Updated to latest main[0m
+[0;34m[2025-07-23 22:53:02] 🔄 Processing tiation-workspace-management...[0m
+[0;32m[2025-07-23 22:53:06] ✅ tiation-workspace-management: Fetched from origin[0m
+[0;32m[2025-07-23 22:53:06] ✅ tiation-workspace-management: Updated to latest main[0m
+[0;34m[2025-07-23 22:53:06] 🔄 Processing unit-22-clean-guide...[0m
+[0;32m[2025-07-23 22:53:11] ✅ unit-22-clean-guide: Fetched from origin[0m
+[0;32m[2025-07-23 22:53:11] ✅ unit-22-clean-guide: Updated to latest main[0m
+[0;32m[2025-07-23 22:53:11] ✅ Successfully updated: 74 repositories[0m
+[0;31m[2025-07-23 22:53:11] ❌ Failed to update: 4 repositories[0m
+[1;33m[2025-07-23 22:53:11] ⚠️  Skipped: 0 repositories[0m
+[0;34m[2025-07-23 22:53:11] 📝 Detailed log: /Users/tiaastor/Github/tiation-repos/comprehensive_update_log.txt[0m
+[0;34m[2025-07-23 23:48:18] 🚀 Starting comprehensive repository update...[0m
+[0;34m[2025-07-23 23:48:18] 📁 Base directory: /Users/tiaastor/Github/tiation-repos[0m
+[0;34m[2025-07-23 23:48:25] 📊 Found 59 git repositories[0m
+[0;34m[2025-07-23 23:48:25] 🔄 Processing abundant-aussie-web-main...[0m
+[0;32m[2025-07-23 23:48:29] ✅ abundant-aussie-web-main: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:29] ✅ abundant-aussie-web-main: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:29] 🔄 Processing AflFantasyManager...[0m
+[1;33m[2025-07-23 23:48:29] ⚠️  AflFantasyManager: Stashing uncommitted changes...[0m
+[0;32m[2025-07-23 23:48:33] ✅ AflFantasyManager: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:33] ✅ AflFantasyManager: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:33] 🔄 Processing ai-remix-platform...[0m
+[0;32m[2025-07-23 23:48:37] ✅ ai-remix-platform: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:37] ✅ ai-remix-platform: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:37] 🔄 Processing architecture-diagrams...[0m
+[0;32m[2025-07-23 23:48:41] ✅ architecture-diagrams: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:42] ✅ architecture-diagrams: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:42] 🔄 Processing AutomationServer...[0m
+[0;32m[2025-07-23 23:48:46] ✅ AutomationServer: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:46] ✅ AutomationServer: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:46] 🔄 Processing ChaseWhiteRabbit-Business-Overview...[0m
+[0;32m[2025-07-23 23:48:54] ✅ ChaseWhiteRabbit-Business-Overview: Fetched from origin[0m
+[0;32m[2025-07-23 23:48:54] ✅ ChaseWhiteRabbit-Business-Overview: Updated to latest main[0m
+[0;34m[2025-07-23 23:48:54] 🔄 Processing dnd-assets...[0m
+[0;31m[2025-07-23 23:48:54] ❌ dnd-assets: Failed to fetch from origin[0m
+[0;34m[2025-07-23 23:48:54] 🔄 Processing dnd-character-sheets-saas...[0m
+[0;32m[2025-07-23 23:49:07] ✅ dnd-character-sheets-saas: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:07] ✅ dnd-character-sheets-saas: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:07] 🔄 Processing dnd-dice-roller-ecosystem...[0m
+[0;32m[2025-07-23 23:49:14] ✅ dnd-dice-roller-ecosystem: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:14] ✅ dnd-dice-roller-ecosystem: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:14] 🔄 Processing dice-roller-ios-chasewhiterabbit...[0m
+[0;32m[2025-07-23 23:49:16] ✅ dice-roller-ios-chasewhiterabbit: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:16] ✅ dice-roller-ios-chasewhiterabbit: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:16] 🔄 Processing dnd-character-sheets-saas...[0m
+[0;32m[2025-07-23 23:49:21] ✅ dnd-character-sheets-saas: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:21] ✅ dnd-character-sheets-saas: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:21] 🔄 Processing dnddiceroller-android...[0m
+[0;32m[2025-07-23 23:49:26] ✅ dnddiceroller-android: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:26] ✅ dnddiceroller-android: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:26] 🔄 Processing dnddiceroller-enhanced...[0m
+[0;32m[2025-07-23 23:49:31] ✅ dnddiceroller-enhanced: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:31] ✅ dnddiceroller-enhanced: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:31] 🔄 Processing dontbeacunt...[0m
+[0;32m[2025-07-23 23:49:36] ✅ dontbeacunt: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:36] ✅ dontbeacunt: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:36] 🔄 Processing dotfiles...[0m
+[0;32m[2025-07-23 23:49:41] ✅ dotfiles: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:41] ✅ dotfiles: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:41] 🔄 Processing flutter-intl-vscode...[0m
+[0;32m[2025-07-23 23:49:44] ✅ flutter-intl-vscode: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:44] ✅ flutter-intl-vscode: Updated to latest master[0m
+[0;34m[2025-07-23 23:49:44] 🔄 Processing git-workspace...[0m
+[0;32m[2025-07-23 23:49:48] ✅ git-workspace: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:48] ✅ git-workspace: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:48] 🔄 Processing go-project-template...[0m
+[0;32m[2025-07-23 23:49:52] ✅ go-project-template: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:52] ✅ go-project-template: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:52] 🔄 Processing headscale-admin...[0m
+[0;32m[2025-07-23 23:49:56] ✅ headscale-admin: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:56] ✅ headscale-admin: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:56] 🔄 Processing home-safety-matrix-ai...[0m
+[0;32m[2025-07-23 23:49:59] ✅ home-safety-matrix-ai: Fetched from origin[0m
+[0;32m[2025-07-23 23:49:59] ✅ home-safety-matrix-ai: Updated to latest main[0m
+[0;34m[2025-07-23 23:49:59] 🔄 Processing huggingface-llama-recipes...[0m
+[0;32m[2025-07-23 23:50:04] ✅ huggingface-llama-recipes: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:04] ✅ huggingface-llama-recipes: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:04] 🔄 Processing Intermap...[0m
+[0;32m[2025-07-23 23:50:08] ✅ Intermap: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:08] ✅ Intermap: Updated to latest master[0m
+[0;34m[2025-07-23 23:50:08] 🔄 Processing k8s...[0m
+[0;32m[2025-07-23 23:50:19] ✅ k8s: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:19] ✅ k8s: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:19] 🔄 Processing lovable-clone...[0m
+[0;32m[2025-07-23 23:50:21] ✅ lovable-clone: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:21] ✅ lovable-clone: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:21] 🔄 Processing mark-photo-flare-site...[0m
+[0;32m[2025-07-23 23:50:28] ✅ mark-photo-flare-site: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:28] ✅ mark-photo-flare-site: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:28] 🔄 Processing MetricsDashboard...[0m
+[0;32m[2025-07-23 23:50:31] ✅ MetricsDashboard: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:31] ✅ MetricsDashboard: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:31] 🔄 Processing netmaker...[0m
+[0;32m[2025-07-23 23:50:35] ✅ netmaker: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:35] ✅ netmaker: Updated to latest master[0m
+[0;34m[2025-07-23 23:50:35] 🔄 Processing new-project...[0m
+[0;32m[2025-07-23 23:50:38] ✅ new-project: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:38] ✅ new-project: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:38] 🔄 Processing new-project-default-react...[0m
+[0;32m[2025-07-23 23:50:40] ✅ new-project-default-react: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:40] ✅ new-project-default-react: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:40] 🔄 Processing onedev...[0m
+[0;32m[2025-07-23 23:50:44] ✅ onedev: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:44] ✅ onedev: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:44] 🔄 Processing ProtectChildrenAustralia...[0m
+[0;32m[2025-07-23 23:50:47] ✅ ProtectChildrenAustralia: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:48] ✅ ProtectChildrenAustralia: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:48] 🔄 Processing rainbow-fish-dice-roller...[0m
+[0;32m[2025-07-23 23:50:51] ✅ rainbow-fish-dice-roller: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:51] ✅ rainbow-fish-dice-roller: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:51] 🔄 Processing RiggerBackend...[0m
+[0;32m[2025-07-23 23:50:55] ✅ RiggerBackend: Fetched from origin[0m
+[0;32m[2025-07-23 23:50:55] ✅ RiggerBackend: Updated to latest main[0m
+[0;34m[2025-07-23 23:50:55] 🔄 Processing RiggerConnect-android...[0m
+[0;32m[2025-07-23 23:51:00] ✅ RiggerConnect-android: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:00] ✅ RiggerConnect-android: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:00] 🔄 Processing RiggerConnect-ios...[0m
+[0;32m[2025-07-23 23:51:03] ✅ RiggerConnect-ios: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:03] ✅ RiggerConnect-ios: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:03] 🔄 Processing RiggerConnect-mobile...[0m
+[0;32m[2025-07-23 23:51:07] ✅ RiggerConnect-mobile: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:07] ✅ RiggerConnect-mobile: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:07] 🔄 Processing RiggerConnect-web...[0m
+[0;32m[2025-07-23 23:51:11] ✅ RiggerConnect-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:11] ✅ RiggerConnect-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:11] 🔄 Processing RiggerHub-android...[0m
+[0;32m[2025-07-23 23:51:14] ✅ RiggerHub-android: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:14] ✅ RiggerHub-android: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:14] 🔄 Processing RiggerHub-ios...[0m
+[0;32m[2025-07-23 23:51:18] ✅ RiggerHub-ios: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:18] ✅ RiggerHub-ios: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:18] 🔄 Processing RiggerHub-web...[0m
+[0;32m[2025-07-23 23:51:22] ✅ RiggerHub-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:22] ✅ RiggerHub-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:22] 🔄 Processing RiggerShared...[0m
+[0;32m[2025-07-23 23:51:27] ✅ RiggerShared: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:27] ✅ RiggerShared: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:27] 🔄 Processing shattered-realms-nexus...[0m
+[0;32m[2025-07-23 23:51:30] ✅ shattered-realms-nexus: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:30] ✅ shattered-realms-nexus: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:30] 🔄 Processing spring-up-markers-web...[0m
+[0;32m[2025-07-23 23:51:34] ✅ spring-up-markers-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:34] ✅ spring-up-markers-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:34] 🔄 Processing standing-strong-web...[0m
+[0;32m[2025-07-23 23:51:37] ✅ standing-strong-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:37] ✅ standing-strong-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:37] 🔄 Processing tabletop-adventures-crafted-main...[0m
+[0;32m[2025-07-23 23:51:41] ✅ tabletop-adventures-crafted-main: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:41] ✅ tabletop-adventures-crafted-main: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:41] 🔄 Processing tiation-ai-platform...[0m
+[0;32m[2025-07-23 23:51:45] ✅ tiation-ai-platform: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:45] ✅ tiation-ai-platform: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:45] 🔄 Processing tiation-company-intranet-template...[0m
+[0;32m[2025-07-23 23:51:49] ✅ tiation-company-intranet-template: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:49] ✅ tiation-company-intranet-template: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:49] 🔄 Processing tiation-dice-roller-ios...[0m
+[0;32m[2025-07-23 23:51:52] ✅ tiation-dice-roller-ios: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:52] ✅ tiation-dice-roller-ios: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:52] 🔄 Processing tiation-dice-roller-marketing-site...[0m
+[0;32m[2025-07-23 23:51:57] ✅ tiation-dice-roller-marketing-site: Fetched from origin[0m
+[0;32m[2025-07-23 23:51:57] ✅ tiation-dice-roller-marketing-site: Updated to latest main[0m
+[0;34m[2025-07-23 23:51:57] 🔄 Processing tiation-dicedemo-workspace...[0m
+[0;32m[2025-07-23 23:52:00] ✅ tiation-dicedemo-workspace: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:00] ✅ tiation-dicedemo-workspace: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:00] 🔄 Processing tiation-ecosystem...[0m
+[0;32m[2025-07-23 23:52:04] ✅ tiation-ecosystem: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:04] ✅ tiation-ecosystem: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:04] 🔄 Processing tiation-github...[0m
+[0;32m[2025-07-23 23:52:07] ✅ tiation-github: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:07] ✅ tiation-github: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:07] 🔄 Processing tiation-kindness-web...[0m
+[0;32m[2025-07-23 23:52:11] ✅ tiation-kindness-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:11] ✅ tiation-kindness-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:11] 🔄 Processing tiation-monorepo...[0m
+[0;32m[2025-07-23 23:52:12] ✅ tiation-monorepo: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:12] ✅ tiation-monorepo: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:12] 🔄 Processing tiation-portfolio...[0m
+[0;32m[2025-07-23 23:52:16] ✅ tiation-portfolio: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:16] ✅ tiation-portfolio: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:16] 🔄 Processing tiation-saas-template...[0m
+[0;32m[2025-07-23 23:52:20] ✅ tiation-saas-template: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:20] ✅ tiation-saas-template: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:20] 🔄 Processing tiation-secure-vpn-web...[0m
+[0;32m[2025-07-23 23:52:24] ✅ tiation-secure-vpn-web: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:24] ✅ tiation-secure-vpn-web: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:24] 🔄 Processing tiation-workspace-management...[0m
+[0;32m[2025-07-23 23:52:31] ✅ tiation-workspace-management: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:31] ✅ tiation-workspace-management: Updated to latest main[0m
+[0;34m[2025-07-23 23:52:31] 🔄 Processing unit-22-clean-guide...[0m
+[0;32m[2025-07-23 23:52:40] ✅ unit-22-clean-guide: Fetched from origin[0m
+[0;32m[2025-07-23 23:52:40] ✅ unit-22-clean-guide: Updated to latest main[0m
+[0;32m[2025-07-23 23:52:40] ✅ Successfully updated: 58 repositories[0m
+[0;31m[2025-07-23 23:52:40] ❌ Failed to update: 1 repositories[0m
+[1;33m[2025-07-23 23:52:40] ⚠️  Skipped: 0 repositories[0m
+[0;34m[2025-07-23 23:52:40] 📝 Detailed log: /Users/tiaastor/Github/tiation-repos/comprehensive_update_log.txt[0m

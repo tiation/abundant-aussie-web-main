@@ -1,0 +1,34 @@
+[Unit]
+Description=Lovable Clone Web Application
+Documentation=https://github.com/tiation-repos/lovable-clone
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/var/www/lovable-clone
+ExecStartPre=/usr/bin/docker-compose -f docker-compose.prod.yml pull
+ExecStart=/usr/bin/docker-compose -f docker-compose.prod.yml up -d
+ExecStop=/usr/bin/docker-compose -f docker-compose.prod.yml down
+ExecReload=/usr/bin/docker-compose -f docker-compose.prod.yml restart
+TimeoutStartSec=600
+TimeoutStopSec=600
+
+# Security settings
+User=root
+Group=docker
+RestartSec=10
+Restart=on-failure
+
+# Resource constraints
+MemoryLimit=2G
+TasksMax=1024
+
+# Environment
+Environment=NODE_ENV=production
+Environment=COMPOSE_PROJECT_NAME=lovable-clone
+
+[Install]
+WantedBy=multi-user.target

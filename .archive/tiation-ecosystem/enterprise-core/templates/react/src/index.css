@@ -1,0 +1,129 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MUPAN Wellness Design System */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+
+    --primary: 269 100% 45%; /* Rich Purple */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 30 15% 92%; /* Warm Cream */
+    --secondary-foreground: 0 0% 15%;
+
+    --muted: 30 10% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 269 70% 85%; /* Light Purple */
+    --accent-foreground: 0 0% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 10% 90%;
+    --input: 30 10% 90%;
+    --ring: 269 100% 45%;
+
+    --radius: 0.75rem;
+
+    /* Custom MUPAN Colors - Now with configurable transparency */
+    --leopard-primary: 35 25% 80%; /* Warm Beige */
+    --leopard-accent: 30 30% 60%; /* Tan */
+    --leopard-opacity: 0.2; /* 80% transparent (20% visible) */
+    --leopard-opacity-subtle: 0.08; /* Even more subtle for backgrounds */
+    
+    --purple-light: 269 70% 85%;
+    --purple-medium: 269 80% 65%;
+    --purple-dark: 269 100% 45%;
+    --cream: 30 15% 95%;
+    --warm-white: 30 10% 98%;
+  }
+}
+
+/* Custom Leopard Pattern - Now with configurable transparency */
+.leopard-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, hsl(var(--leopard-accent) / var(--leopard-opacity)) 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, hsl(var(--leopard-accent) / var(--leopard-opacity)) 2px, transparent 2px),
+    radial-gradient(circle at 40% 40%, hsl(var(--leopard-primary) / var(--leopard-opacity)) 3px, transparent 3px);
+  background-size: 30px 30px, 40px 40px, 25px 25px;
+  background-position: 0 0, 15px 15px, 8px 8px;
+}
+
+.leopard-pattern-subtle {
+  background-image: 
+    radial-gradient(circle at 25% 75%, hsl(var(--leopard-accent) / var(--leopard-opacity-subtle)) 1px, transparent 1px),
+    radial-gradient(circle at 75% 25%, hsl(var(--leopard-accent) / var(--leopard-opacity-subtle)) 1px, transparent 1px);
+  background-size: 20px 20px, 30px 30px;
+  background-position: 0 0, 10px 10px;
+}
+
+/* Mobile-specific leopard patterns for better performance and visibility */
+@media (max-width: 768px) {
+  .leopard-pattern {
+    background-size: 20px 20px, 25px 25px, 18px 18px;
+  }
+  
+  .leopard-pattern-subtle {
+    background-size: 15px 15px, 20px 20px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+}
+
+@layer utilities {
+  .text-gradient-purple {
+    background: linear-gradient(135deg, hsl(var(--purple-dark)), hsl(var(--purple-medium)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Mobile optimization utilities */
+  .mobile-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .mobile-text-lg {
+    @apply text-base sm:text-lg;
+  }
+  
+  .mobile-text-xl {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .mobile-text-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .mobile-text-4xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
+  
+  .mobile-text-5xl {
+    @apply text-3xl sm:text-4xl lg:text-5xl;
+  }
+}

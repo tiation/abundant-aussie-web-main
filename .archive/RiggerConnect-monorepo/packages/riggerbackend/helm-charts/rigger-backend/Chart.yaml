@@ -1,0 +1,22 @@
+apiVersion: v2
+name: rigger-backend
+description: RiggerBackend - Core API Services for Blue-Collar Excellence
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://github.com/chasewhiterabbit/riggerbackend
+sources:
+  - https://github.com/chasewhiterabbit/riggerbackend
+maintainers:
+  - name: ChaseWhiteRabbit NGO
+    email: tech@chasewhiterabbit.org
+keywords:
+  - rigger
+  - backend
+  - api
+  - construction
+  - mining
+  - compliance
+annotations:
+  category: Infrastructure
+  licenses: GPL-3.0

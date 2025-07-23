@@ -1,0 +1,21 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tiationGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="20" cy="20" r="18" fill="url(#tiationGradient)" opacity="0.1"/>
+  <circle cx="20" cy="20" r="18" stroke="url(#tiationGradient)" stroke-width="2" fill="none"/>
+  
+  <!-- "T" letter design -->
+  <rect x="8" y="8" width="24" height="4" fill="url(#tiationGradient)"/>
+  <rect x="18" y="8" width="4" height="24" fill="url(#tiationGradient)"/>
+  
+  <!-- Tech accent dots -->
+  <circle cx="12" cy="28" r="2" fill="#00ffff" opacity="0.8"/>
+  <circle cx="28" cy="28" r="2" fill="#ff00ff" opacity="0.8"/>
+  <circle cx="20" cy="35" r="1.5" fill="url(#tiationGradient)"/>
+</svg>
