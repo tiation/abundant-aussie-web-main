@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Abundant Aussie Web - Documentation Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌟</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            background: var(--white);
+            border-radius: 20px;
+            margin: -50px auto 4rem;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 10;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .intro-section h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .feature-card .btn:hover {
+            background: var(--primary-light);
+        }
+
+        .quick-links {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            color: var(--white);
+        }
+
+        .quick-links h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-link {
+            display: block;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: background 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-link .emoji {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .live-demo {
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            color: var(--white);
+            margin: 3rem 0;
+        }
+
+        .live-demo h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .live-demo p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .demo-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--white);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .demo-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--white);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                margin: -30px 20px 2rem;
+                padding: 2rem;
+            }
+            
+            .intro-section h2 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
+    <header class="header">
+        <div class="container">
+            <h1>🌟 Abundant Aussie Web</h1>
+            <p>Your friendly guide to building amazing web experiences with enterprise-grade tools!</p>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <section class="intro-section">
+            <h2>Welcome, Future Web Developer! 👋</h2>
+            <p>
+                Ready to dive into the exciting world of modern web development? You've found the perfect place to start! 
+                Our documentation is designed to make learning fun, engaging, and totally achievable - even if you're just starting out.
+            </p>
+        </section>
+
+        <div class="live-demo">
+            <h3>🚀 See It Live!</h3>
+            <p>Want to see the magic in action? Check out our live demo deployment!</p>
+            <a href="https://abundant-aussie-web.vercel.app" class="demo-btn" target="_blank">
+                🌐 Visit Live Demo
+            </a>
+        </div>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <span class="icon">🚀</span>
+                <h3>Quick Start Guide <span class="badge">Beginner Friendly</span></h3>
+                <p>Jump right in with our step-by-step guide! We'll help you set up everything you need to start building awesome web apps.</p>
+                <a href="setup.html" class="btn">Get Started</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="icon">🎮</span>
+                <h3>Interactive Tutorials <span class="badge">Fun!</span></h3>
+                <p>Learn by doing with our hands-on tutorials. Build real features while understanding how everything works!</p>
+                <a href="tutorials.html" class="btn">Start Learning</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="icon">🛠️</span>
+                <h3>Developer Tools <span class="badge">Pro Tips</span></h3>
+                <p>Discover the amazing tools that make development faster, easier, and more enjoyable. From VS Code to Tailwind CSS!</p>
+                <a href="tools.html" class="btn">Explore Tools</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="icon">🎨</span>
+                <h3>UI Components <span class="badge">Beautiful</span></h3>
+                <p>Explore our collection of gorgeous, ready-to-use components. Make your apps look professional with just a few clicks!</p>
+                <a href="components.html" class="btn">Browse Components</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="icon">📚</span>
+                <h3>API Reference <span class="badge">Complete</span></h3>
+                <p>Everything you need to know about our APIs, with examples that actually work. Perfect for when you're ready to build bigger!</p>
+                <a href="api.html" class="btn">Read Docs</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="icon">💡</span>
+                <h3>Tips & Tricks <span class="badge">Insider Secrets</span></h3>
+                <p>Learn from our mistakes and successes! Pro tips that will save you hours and make you look like a coding wizard.</p>
+                <a href="tips.html" class="btn">Get Insights</a>
+            </div>
+        </section>
+
+        <section class="quick-links">
+            <h3>🔗 Quick Links</h3>
+            <div class="links-grid">
+                <a href="https://github.com/tiation/abundant-aussie-web-main" class="quick-link" target="_blank">
+                    <span class="emoji">📦</span> GitHub Repository
+                </a>
+                <a href="https://github.com/tiation" class="quick-link" target="_blank">
+                    <span class="emoji">🏢</span> Tiation Organization
+                </a>
+                <a href="https://github.com/ChaseWhiteRabbit" class="quick-link" target="_blank">
+                    <span class="emoji">🐰</span> ChaseWhiteRabbit NGO
+                </a>
+                <a href="mailto:tiatheone@protonmail.com" class="quick-link">
+                    <span class="emoji">📧</span> Contact Support
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Built with ❤️ by <a href="https://github.com/tiation">Tiation</a> in partnership with <a href="https://github.com/ChaseWhiteRabbit">ChaseWhiteRabbit NGO</a></p>
+            <p>Enterprise-grade • Ethical • Community-driven</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('scrollIndicator').style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Add some interactive fun
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const icon = card.querySelector('.icon');
+                icon.style.transform = 'scale(1.2) rotate(10deg)';
+                icon.style.transition = 'transform 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const icon = card.querySelector('.icon');
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Add floating animation to badges
+        document.querySelectorAll('.badge').forEach((badge, index) => {
+            badge.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`;
+        });
+
+        // Add CSS animation for floating badges
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-3px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
