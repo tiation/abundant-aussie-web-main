@@ -68,6 +68,14 @@ Abundant Aussie Web is a cutting-edge platform designed to empower communities t
 ![Dashboard](./screenshots/dashboard.png)
 *Comprehensive administrative tools with user-friendly interface*
 
+### Share Vision - Community Engagement Platform
+![Share Vision Page](./screenshots/share-vision.png)
+*Interactive platform for sharing community visions and collaborative planning*
+
+### Contact & Support - Professional Communication Hub
+![Contact Page](./screenshots/contact.png)
+*Comprehensive contact interface with multiple communication channels and support options*
+
 ### Advanced Analytics - Deep Insights
 ![Analytics](./screenshots/analytics.png)
 *Advanced reporting and analytics capabilities*
