@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions 
+    xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    
+    <!-- ChaseWhiteRabbit NGO - OWASP Dependency Check Suppressions -->
+    <!-- Only suppress known false positives or accepted risks -->
+    
+    <!-- Example: Suppress specific CVE for a package where we've verified it's not applicable -->
+    <!--
+    <suppress>
+        <notes>False positive - this vulnerability doesn't apply to our usage</notes>
+        <cve>CVE-2021-XXXXX</cve>
+        <gav regex="true">^org\.example:example-package:.*$</gav>
+    </suppress>
+    -->
+    
+    <!-- Suppress development-only dependencies -->
+    <suppress>
+        <notes>Development dependency - not present in production</notes>
+        <gav regex="true">.*:.*test.*:.*</gav>
+        <cpe>cpe:/a:nodejs:node.js</cpe>
+    </suppress>
+    
+    <!-- Suppress webpack dev server vulnerabilities (dev only) -->
+    <suppress>
+        <notes>Webpack dev server - development only</notes>
+        <packageUrl regex="true">^pkg:npm/webpack-dev-server@.*$</packageUrl>
+    </suppress>
+    
+    <!-- Suppress lodash prototype pollution in dev dependencies -->
+    <suppress>
+        <notes>Lodash in dev dependencies only</notes>
+        <packageUrl regex="true">^pkg:npm/lodash@.*$</packageUrl>
+        <cve>CVE-2019-10744</cve>
+        <!-- Only suppress if it's in devDependencies -->
+    </suppress>
+    
+    <!-- Template for project-specific suppressions -->
+    <!--
+    <suppress>
+        <notes>Reason for suppression</notes>
+        <gav>groupId:artifactId:version</gav>
+        <cve>CVE-YYYY-NNNNN</cve>
+    </suppress>
+    -->
+    
+</suppressions>

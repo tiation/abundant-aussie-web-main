@@ -11,10 +11,8 @@ const nextConfig = {
   
   // Enable experimental features
   experimental: {
-    appDir: true,
     serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
-  
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Handle SVG files
@@ -85,23 +83,14 @@ const nextConfig = {
     ];
   },
   
-  // Rewrites for API routes
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: '/api/:path*',
-      },
-    ];
-  },
   
   // Compiler options
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   
-  // Output configuration for static export
-  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  // Output configuration for static export (disabled during development)
+  // output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   
   // Disable x-powered-by header
   poweredByHeader: false,

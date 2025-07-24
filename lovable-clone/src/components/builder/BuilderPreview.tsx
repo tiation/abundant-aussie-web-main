@@ -51,7 +51,7 @@ export function BuilderPreview() {
   return (
     <div className="flex flex-col h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex items-center justify-between p-4 border-b border">
         <div className="flex items-center space-x-2">
           <EyeIcon className="w-5 h-5" />
           <h2 className="font-semibold">Preview</h2>
@@ -64,7 +64,7 @@ export function BuilderPreview() {
         
         <div className="flex items-center space-x-2">
           {/* Device toggle */}
-          <div className="flex rounded-lg border border-border p-1">
+          <div className="flex rounded-lg border border p-1">
             <Button
               variant={previewMode === 'desktop' ? 'default' : 'ghost'}
               size="sm"
@@ -170,7 +170,7 @@ export function BuilderPreview() {
       
       {/* Footer */}
       {currentProject && (
-        <div className="border-t border-border p-4">
+        <div className="border-t border p-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center space-x-4">
               <span>Framework: {currentProject.metadata.framework}</span>

@@ -1,19 +1,19 @@
 # Enterprise GitLab CI/CD Pipeline
 # ChaseWhiteRabbit NGO - Ethical Technology Standards
+# Enhanced Version 2.0
 
-stages:
-  - security
-  - quality
-  - test
-  - build
-  - deploy-staging
-  - deploy-production
+include:
+  - local: '.enterprise-cicd/templates/gitlab-ci-master.yml'
 
 variables:
-  NODE_VERSION: "20"
-  PYTHON_VERSION: "3.11"
-  GO_VERSION: "1.21"
-  DOCKER_REGISTRY: "docker.sxc.codes"
+  # Override default settings if needed
+  PROJECT_TYPE: "multi-stack"
+  ENABLE_SECURITY_SCANS: "true"
+  ENABLE_PERFORMANCE_TESTS: "true"
+  ENABLE_BLUE_GREEN_DEPLOYMENT: "true"
+  
+  # ChaseWhiteRabbit specific settings
+  NOTIFICATION_CHANNELS: "tiatheone@protonmail.com,garrett@sxc.codes,garrett.dillman@gmail.com"
 
 # Templates
 .node_template: &node_template

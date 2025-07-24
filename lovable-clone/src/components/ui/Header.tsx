@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export function Header({ onMenuClick, onNewProject }: HeaderProps) {
   return (
-    <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-border flex items-center justify-between px-4">
+    <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border flex items-center justify-between px-4">
       <div className="flex items-center space-x-4">
         <Button variant="ghost" size="icon" onClick={onMenuClick}>
           <Bars3Icon className="w-5 h-5" />

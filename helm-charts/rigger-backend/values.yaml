@@ -1,0 +1,339 @@
+# ==========================================================================
+# RiggerBackend Helm Chart Values
+# ChaseWhiteRabbit NGO Initiative
+# ==========================================================================
+
+# Global configuration
+global:
+  imageRegistry: "docker.sxc.codes"
+  imagePullSecrets: []
+  storageClass: ""
+
+# ==========================================================================
+# Application Configuration
+# ==========================================================================
+
+replicaCount: 3
+
+image:
+  repository: docker.sxc.codes/rigger-backend
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# ==========================================================================
+# Service Account
+# ==========================================================================
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# ==========================================================================
+# Pod Security Context
+# ==========================================================================
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1001
+  runAsNonRoot: true
+  runAsUser: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+
+# ==========================================================================
+# Service Configuration
+# ==========================================================================
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+  annotations: {}
+
+# ==========================================================================
+# Ingress Configuration
+# ==========================================================================
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+  hosts:
+    - host: api.sxc.codes
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: api-staging.sxc.codes
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: rigger-backend-staging
+              port:
+                number: 80
+  tls:
+    - secretName: rigger-backend-tls
+      hosts:
+        - api.sxc.codes
+        - api-staging.sxc.codes
+
+# ==========================================================================
+# Resource Management
+# ==========================================================================
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+
+# ==========================================================================
+# Autoscaling
+# ==========================================================================
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# ==========================================================================
+# Pod Disruption Budget
+# ==========================================================================
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# ==========================================================================
+# Node Selection
+# ==========================================================================
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - rigger-backend
+          topologyKey: kubernetes.io/hostname
+
+# ==========================================================================
+# Environment Variables
+# ==========================================================================
+
+env:
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  
+# Environment variables from secrets
+envFrom:
+  - secretRef:
+      name: rigger-backend-secrets
+  - configMapRef:
+      name: rigger-backend-config
+
+# ==========================================================================
+# Volume Mounts
+# ==========================================================================
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}
+
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: logs
+    mountPath: /app/logs
+
+# ==========================================================================
+# Health Checks
+# ==========================================================================
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+    httpHeaders:
+    - name: Custom-Header
+      value: liveness-probe
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: http
+    httpHeaders:
+    - name: Custom-Header
+      value: readiness-probe
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+  successThreshold: 1
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+    httpHeaders:
+    - name: Custom-Header
+      value: startup-probe
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 30
+  successThreshold: 1
+
+# ==========================================================================
+# Monitoring and Observability
+# ==========================================================================
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    interval: 30s
+    path: /metrics
+    labels:
+      app: rigger-backend
+
+# ==========================================================================
+# Dependencies
+# ==========================================================================
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "rigger-postgres-password"
+    username: "rigger"
+    password: "rigger-password"
+    database: "rigger"
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "rigger-redis-password"
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+elasticsearch:
+  enabled: false
+  clusterName: "rigger-elastic"
+  nodeGroup: "master"
+  replicas: 1
+  minimumMasterNodes: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+# ==========================================================================
+# ConfigMap Data
+# ==========================================================================
+
+configMap:
+  data:
+    app.yaml: |
+      app:
+        name: "RiggerBackend"
+        version: "1.0.0"
+        environment: "production"
+      
+      server:
+        host: "0.0.0.0"
+        port: 3000
+        
+      cors:
+        origin: "*"
+        credentials: true
+        
+      rate_limit:
+        window_ms: 900000
+        max_requests: 100
+        
+      security:
+        bcrypt_rounds: 12
+        session_secret: "rigger-session-secret"
+        
+      logging:
+        level: "info"
+        format: "json"
+
+# ==========================================================================
+# Secrets (Base64 encoded values)
+# ==========================================================================
+
+secrets:
+  database_url: "postgresql://rigger:password@rigger-backend-postgresql:5432/rigger"
+  redis_url: "redis://:password@rigger-backend-redis-master:6379"
+  jwt_secret: "your-super-secret-jwt-key-here"
+  stripe_secret_key: "sk_test_your_stripe_secret_key"
+  stripe_webhook_secret: "whsec_your_webhook_secret"
+  email_password: "your-email-password"
+  supabase_url: "https://your-project.supabase.co"
+  supabase_key: "your-supabase-anon-key"

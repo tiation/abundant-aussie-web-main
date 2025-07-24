@@ -1,0 +1,57 @@
+# Production Environment Configuration
+# ChaseWhiteRabbit NGO - Enterprise Grade Configuration
+
+environment: production
+domain: sxc.codes
+database:
+  host: supabase.sxc.codes
+  ssl: true
+  connection_pool: 20
+
+docker:
+  registry: docker.sxc.codes
+  build_host: docker.sxc.codes
+  tag_prefix: v
+
+kubernetes:
+  cluster: helm.sxc.codes
+  namespace: rigger-production
+  resource_limits:
+    cpu: 2000m
+    memory: 2Gi
+
+monitoring:
+  grafana_host: grafana.sxc.codes
+  elasticsearch_host: elastic.sxc.codes
+  log_level: info
+
+security:
+  owasp_scanning: true
+  security_headers: true
+  ssl_required: true
+  vulnerability_scanning: true
+
+deployment:
+  auto_deploy: false
+  rollback_enabled: true
+  health_check_timeout: 600
+  blue_green_enabled: true
+
+notifications:
+  email: 
+    - tiatheone@protonmail.com
+    - garrett@sxc.codes
+    - garrett.dillman@gmail.com
+  slack_webhook: ""
+  pager_duty: true
+
+backup:
+  enabled: true
+  retention_days: 90
+  schedule: "0 1 * * *"
+  redundancy: 3
+
+scaling:
+  auto_scaling: true
+  min_replicas: 2
+  max_replicas: 10

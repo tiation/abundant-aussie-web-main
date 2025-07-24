@@ -1,0 +1,270 @@
+# Testing Template
+# ChaseWhiteRabbit NGO - Enterprise Testing Standards
+
+.test_base: &test_base
+  stage: test
+  artifacts:
+    expire_in: 7 days
+    reports:
+      junit: test-reports/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - test-reports/
+      - coverage/
+    when: always
+
+# Unit Testing
+test:unit:node:
+  <<: *test_base
+  extends: .node_template
+  script:
+    - mkdir -p test-reports coverage
+    - echo "🧪 Running Node.js unit tests..."
+    - npm run test:unit -- --coverage --coverageReporters=cobertura --coverageReporters=html --coverageReporters=text
+    - npm run test:unit -- --reporters=jest-junit --outputFile=test-reports/junit.xml
+    - echo "📊 Unit test coverage: $(grep -o 'line-rate="[^"]*"' coverage/cobertura-coverage.xml | head -1 | cut -d'"' -f2 | awk '{print int($1*100)}')%"
+  coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
+  rules:
+    - exists:
+        - package.json
+    - if: '$CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+test:unit:python:
+  <<: *test_base
+  extends: .python_template
+  script:
+    - mkdir -p test-reports coverage
+    - echo "🧪 Running Python unit tests..."
+    - pytest --junitxml=test-reports/junit.xml --cov=. --cov-report=xml:coverage/coverage.xml --cov-report=html:coverage/html --cov-report=term
+    - echo "📊 Python test coverage completed"
+  coverage: '/TOTAL.+?(\d+\%)$/'
+  rules:
+    - exists:
+        - requirements.txt
+        - test_*.py
+    - if: '$CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+test:unit:go:
+  <<: *test_base
+  extends: .go_template
+  script:
+    - mkdir -p test-reports coverage
+    - echo "🧪 Running Go unit tests..."
+    - go test -v -race -coverprofile=coverage/coverage.out -covermode=atomic ./...
+    - go tool cover -html=coverage/coverage.out -o coverage/coverage.html
+    - go tool cover -func=coverage/coverage.out | tail -1 | awk '{print "Coverage: " $3}'
+  coverage: '/coverage: \d+.\d+% of statements/'
+  rules:
+    - exists:
+        - go.mod
+    - if: '$CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+# Integration Testing
+test:integration:
+  <<: *test_base
+  extends: .node_template
+  services:
+    - postgres:13
+    - redis:6-alpine
+  variables:
+    POSTGRES_DB: test_db
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test_password
+    REDIS_URL: redis://redis:6379
+  script:
+    - mkdir -p test-reports
+    - echo "🔗 Running integration tests..."
+    - .enterprise-cicd/scripts/setup-test-database.sh
+    - npm run test:integration -- --reporters=jest-junit --outputFile=test-reports/integration-junit.xml
+    - echo "🔗 Integration tests completed"
+  rules:
+    - exists:
+        - package.json
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+
+# End-to-End Testing
+test:e2e:
+  <<: *test_base
+  image: cypress/included:latest
+  script:
+    - mkdir -p test-reports
+    - echo "🎭 Running E2E tests..."
+    - .enterprise-cicd/scripts/start-test-server.sh &
+    - sleep 30  # Wait for server to start
+    - cypress run --reporter junit --reporter-options "mochaFile=test-reports/e2e-junit.xml"
+    - echo "🎭 E2E tests completed"
+  artifacts:
+    <<: *test_base
+    paths:
+      - test-reports/
+      - cypress/videos/
+      - cypress/screenshots/
+  rules:
+    - exists:
+        - cypress.json
+        - cypress.config.js
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# Performance Testing
+test:performance:
+  <<: *test_base
+  image: loadimpact/k6:latest
+  script:
+    - mkdir -p test-reports
+    - echo "⚡ Running performance tests..."
+    - k6 run --out json=test-reports/k6-results.json .enterprise-cicd/tests/performance/load-test.js
+    - .enterprise-cicd/scripts/analyze-performance-results.sh
+    - echo "⚡ Performance tests completed"
+  rules:
+    - if: '$ENABLE_PERFORMANCE_TESTS == "true"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# API Testing
+test:api:
+  <<: *test_base
+  image: postman/newman:latest
+  script:
+    - mkdir -p test-reports
+    - echo "🌐 Running API tests..."
+    - newman run .enterprise-cicd/tests/api/collection.json \
+        --environment .enterprise-cicd/tests/api/environment.json \
+        --reporters junit,html \
+        --reporter-junit-export test-reports/api-junit.xml \
+        --reporter-html-export test-reports/api-report.html
+    - echo "🌐 API tests completed"
+  rules:
+    - exists:
+        - .enterprise-cicd/tests/api/collection.json
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+
+# Security Testing
+test:security:
+  <<: *test_base
+  image: owasp/zap2docker-stable
+  variables:
+    ZAP_BASELINE_URL: "http://localhost:3000"
+  script:
+    - mkdir -p test-reports
+    - echo "🛡️ Running security tests..."
+    - .enterprise-cicd/scripts/start-test-server.sh &
+    - sleep 30
+    - zap-baseline.py -t $ZAP_BASELINE_URL -J test-reports/zap-baseline.json -r test-reports/zap-baseline.html
+    - echo "🛡️ Security tests completed"
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# Accessibility Testing
+test:accessibility:
+  <<: *test_base
+  image: node:20-alpine
+  before_script:
+    - npm install -g @axe-core/cli lighthouse-ci
+  script:
+    - mkdir -p test-reports
+    - echo "♿ Running accessibility tests..."
+    - .enterprise-cicd/scripts/start-test-server.sh &
+    - sleep 30
+    - axe http://localhost:3000 --save test-reports/axe-results.json
+    - lhci autorun --config=.enterprise-cicd/configs/lighthouse-ci.json
+    - echo "♿ Accessibility tests completed"
+  rules:
+    - exists:
+        - .enterprise-cicd/configs/lighthouse-ci.json
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# Mobile Testing (if applicable)
+test:mobile:
+  <<: *test_base
+  image: appium/appium:latest
+  script:
+    - mkdir -p test-reports
+    - echo "📱 Running mobile tests..."
+    - .enterprise-cicd/scripts/run-mobile-tests.sh
+    - echo "📱 Mobile tests completed"
+  rules:
+    - exists:
+        - mobile-tests/
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# Cross-browser Testing
+test:cross-browser:
+  <<: *test_base
+  image: selenoid/vnc:chrome_78.0
+  script:
+    - mkdir -p test-reports
+    - echo "🌐 Running cross-browser tests..."
+    - .enterprise-cicd/scripts/run-cross-browser-tests.sh
+    - echo "🌐 Cross-browser tests completed"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  allow_failure: true
+
+# Test Coverage Analysis
+test:coverage:
+  stage: test
+  extends: .node_template
+  dependencies:
+    - test:unit:node
+    - test:integration
+  script:
+    - mkdir -p test-reports
+    - echo "📊 Analyzing test coverage..."
+    - .enterprise-cicd/scripts/merge-coverage-reports.sh
+    - .enterprise-cicd/scripts/analyze-coverage.sh
+    - echo "📊 Coverage analysis completed"
+  coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
+  rules:
+    - if: '$CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+# Test Report Generation
+test:report:
+  stage: test
+  image: alpine:latest
+  dependencies:
+    - test:unit:node
+    - test:integration
+    - test:e2e
+    - test:performance
+    - test:api
+  before_script:
+    - apk add --no-cache python3 py3-pip jq
+    - pip3 install jinja2 requests
+  script:
+    - mkdir -p test-reports
+    - echo "📊 Generating comprehensive test report..."
+    - .enterprise-cicd/scripts/generate-test-report.sh
+    - .enterprise-cicd/scripts/upload-test-results.sh
+    - echo "📊 Test report generation completed"
+  artifacts:
+    expire_in: 30 days
+    paths:
+      - test-reports/comprehensive-report.html
+      - test-reports/test-summary.json
+  rules:
+    - when: always
+
+# Test Quality Gates
+test:gate:
+  stage: test
+  image: alpine:latest
+  dependencies:
+    - test:coverage
+    - test:report
+  before_script:
+    - apk add --no-cache jq python3
+  script:
+    - echo "🚦 Evaluating test quality gates..."
+    - .enterprise-cicd/scripts/evaluate-test-gates.sh
+    - echo "✅ Test gates evaluation completed"
+  rules:
+    - when: always

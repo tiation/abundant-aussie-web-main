@@ -1,0 +1,232 @@
+# Quality Assurance Template
+# ChaseWhiteRabbit NGO - Enterprise Quality Standards
+
+.quality_base: &quality_base
+  stage: quality
+  artifacts:
+    expire_in: 7 days
+    reports:
+      junit: quality-reports/junit.xml
+      codequality: quality-reports/codequality.json
+    paths:
+      - quality-reports/
+    when: always
+
+# Code Formatting & Linting
+quality:eslint:
+  <<: *quality_base
+  extends: .node_template
+  script:
+    - mkdir -p quality-reports
+    - echo "🔍 Running ESLint analysis..."
+    - npm run lint -- --format=json --output-file=quality-reports/eslint.json || true
+    - npm run lint -- --format=junit --output-file=quality-reports/eslint-junit.xml || true
+    - npm run lint || echo "ESLint issues found"
+    - echo "📊 ESLint analysis completed"
+  rules:
+    - exists:
+        - package.json
+        - .eslintrc.*
+  allow_failure: true
+
+quality:prettier:
+  <<: *quality_base
+  extends: .node_template
+  script:
+    - mkdir -p quality-reports
+    - echo "🎨 Checking code formatting with Prettier..."
+    - npm run format:check || echo "Formatting issues found"
+    - npx prettier --check . --write-file quality-reports/prettier-results.txt || true
+    - echo "📊 Prettier check completed"
+  rules:
+    - exists:
+        - package.json
+        - .prettierrc.*
+  allow_failure: true
+
+quality:python:
+  <<: *quality_base
+  extends: .python_template
+  script:
+    - mkdir -p quality-reports
+    - echo "🐍 Running Python quality checks..."
+    
+    # Black formatting
+    - black --check --diff . | tee quality-reports/black-report.txt || echo "Black formatting issues found"
+    
+    # Flake8 linting
+    - flake8 . --format=json --output-file=quality-reports/flake8.json || true
+    - flake8 . --tee --output-file=quality-reports/flake8.txt || echo "Flake8 issues found"
+    
+    # MyPy type checking
+    - mypy . --junit-xml quality-reports/mypy-junit.xml || echo "MyPy type issues found"
+    
+    # Bandit security linting
+    - bandit -r . -f json -o quality-reports/bandit.json || true
+    - bandit -r . | tee quality-reports/bandit.txt || echo "Bandit security issues found"
+    
+    echo "📊 Python quality analysis completed"
+  rules:
+    - exists:
+        - requirements.txt
+        - "*.py"
+  allow_failure: true
+
+quality:go:
+  <<: *quality_base
+  extends: .go_template
+  script:
+    - mkdir -p quality-reports
+    - echo "🔧 Running Go quality checks..."
+    
+    # Go formatting
+    - gofmt -l . | tee quality-reports/gofmt.txt
+    - test -z "$(gofmt -l .)" || echo "Go formatting issues found"
+    
+    # Go vet
+    - go vet ./... | tee quality-reports/govet.txt || echo "Go vet issues found"
+    
+    # golint
+    - go install golang.org/x/lint/golint@latest
+    - golint ./... | tee quality-reports/golint.txt || echo "Go lint issues found"
+    
+    # ineffassign
+    - go install github.com/gordonklaus/ineffassign@latest
+    - ineffassign ./... | tee quality-reports/ineffassign.txt || echo "Ineffassign issues found"
+    
+    echo "📊 Go quality analysis completed"
+  rules:
+    - exists:
+        - go.mod
+  allow_failure: true
+
+# Code Complexity Analysis
+quality:complexity:
+  <<: *quality_base
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache nodejs npm python3 py3-pip
+  script:
+    - mkdir -p quality-reports
+    - echo "📊 Analyzing code complexity..."
+    
+    # JavaScript/TypeScript complexity
+    - |
+      if [ -f "package.json" ]; then
+        npm install -g complexity-report
+        cr --format json --output quality-reports/complexity.json . || true
+        cr --format plain . | tee quality-reports/complexity.txt || true
+      fi
+    
+    # Python complexity
+    - |
+      if find . -name "*.py" -type f | head -1 | grep -q .; then
+        pip3 install radon
+        radon cc . --json -s | tee quality-reports/python-complexity.json || true
+        radon cc . -s | tee quality-reports/python-complexity.txt || true
+      fi
+    
+    echo "📊 Complexity analysis completed"
+  allow_failure: true
+
+# Dependency Analysis
+quality:dependencies:
+  <<: *quality_base
+  extends: .node_template
+  script:
+    - mkdir -p quality-reports
+    - echo "🔍 Analyzing dependencies..."
+    
+    # Dependency vulnerabilities
+    - npm audit --json > quality-reports/npm-audit.json || true
+    - npm audit | tee quality-reports/npm-audit.txt || true
+    
+    # Outdated packages
+    - npm outdated --json > quality-reports/npm-outdated.json || true
+    - npm outdated | tee quality-reports/npm-outdated.txt || true
+    
+    # Bundle analysis
+    - npx bundlesize || echo "Bundle size analysis completed"
+    
+    echo "📊 Dependency analysis completed"
+  rules:
+    - exists:
+        - package.json
+  allow_failure: true
+
+# Documentation Quality
+quality:docs:
+  <<: *quality_base
+  image: node:20-alpine
+  script:
+    - mkdir -p quality-reports
+    - echo "📚 Checking documentation quality..."
+    
+    # README analysis
+    - .enterprise-cicd/scripts/analyze-readme.sh | tee quality-reports/readme-analysis.txt
+    
+    # API documentation
+    - |
+      if [ -f "package.json" ]; then
+        npm install -g jsdoc
+        jsdoc -r . -d quality-reports/api-docs/ || echo "JSDoc generation completed"
+      fi
+    
+    # Check for required files
+    - .enterprise-cicd/scripts/check-required-files.sh | tee quality-reports/required-files.txt
+    
+    echo "📚 Documentation quality check completed"
+  allow_failure: true
+
+# Performance Analysis 
+quality:performance:
+  <<: *quality_base
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - mkdir -p quality-reports
+    - echo "⚡ Running performance analysis..."
+    
+    # Check bundle sizes
+    - .enterprise-cicd/scripts/analyze-bundle-size.sh | tee quality-reports/bundle-analysis.txt
+    
+    # Check for performance anti-patterns
+    - .enterprise-cicd/scripts/check-performance-patterns.sh | tee quality-reports/performance-patterns.txt
+    
+    echo "⚡ Performance analysis completed"
+  rules:
+    - if: '$ENABLE_PERFORMANCE_TESTS == "true"'
+  allow_failure: true
+
+# Code Duplication Detection
+quality:duplication:
+  <<: *quality_base
+  image: node:20-alpine
+  script:
+    - mkdir -p quality-reports
+    - echo "🔄 Detecting code duplication..."
+    - npm install -g jscpd
+    - jscpd . --format json --output quality-reports/duplication.json || true
+    - jscpd . --format html --output quality-reports/duplication.html || true
+    - jscpd . | tee quality-reports/duplication.txt || true
+    - echo "🔄 Code duplication analysis completed"
+  allow_failure: true
+
+# Quality Gates
+quality:gate:
+  stage: quality
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache jq python3
+  script:
+    - echo "🚦 Evaluating quality gates..."
+    - .enterprise-cicd/scripts/evaluate-quality-gates.sh
+    - echo "✅ Quality gates evaluation completed"
+  dependencies:
+    - quality:eslint
+    - quality:complexity
+    - quality:dependencies
+    - quality:duplication
+  rules:
+    - when: always

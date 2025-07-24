@@ -1,0 +1,268 @@
+# Privacy & Encryption Configuration
+# ChaseWhiteRabbit NGO - RiggerConnect Ecosystem
+# Enhanced Privacy Protection & Encryption Standards
+
+# General Privacy Settings
+privacy:
+  data_retention:
+    user_data_max_age: "7 years"  # Comply with employment law requirements
+    audit_logs_max_age: "10 years"
+    session_logs_max_age: "1 year"
+    analytics_data_max_age: "2 years"
+    
+  gdpr_compliance:
+    enabled: true
+    data_processing_lawful_basis: "legitimate_interest"  # For employment matching
+    consent_mechanisms:
+      - explicit_consent: true
+      - granular_consent: true
+      - withdraw_consent: true
+    
+  data_minimization:
+    collect_only_necessary: true
+    pseudonymization: true
+    anonymization_delay: "90 days"  # For analytics data
+    
+  user_rights:
+    right_to_access: true
+    right_to_rectification: true
+    right_to_erasure: true
+    right_to_portability: true
+    right_to_object: true
+    
+  privacy_by_design:
+    default_privacy_settings: "strict"
+    data_protection_impact_assessment: true
+    privacy_notices: "clear_and_concise"
+
+# Encryption Configuration
+encryption:
+  # Encryption at Rest
+  data_at_rest:
+    algorithm: "AES-256-GCM"
+    key_management:
+      provider: "HashiCorp Vault"  # Or AWS KMS, Azure Key Vault
+      key_rotation_interval: "90 days"
+      key_derivation: "PBKDF2"
+      key_derivation_iterations: 100000
+      
+    database_encryption:
+      enabled: true
+      transparent_data_encryption: true
+      column_level_encryption:
+        - "users.ssn"
+        - "users.drivers_license"
+        - "users.banking_details"
+        - "user_profiles.sensitive_notes"
+        
+    file_storage_encryption:
+      enabled: true
+      encryption_at_upload: true
+      client_side_encryption: true
+      
+  # Encryption in Transit
+  data_in_transit:
+    tls_version: "1.3"  # Minimum TLS 1.2, prefer 1.3
+    cipher_suites:
+      - "TLS_AES_256_GCM_SHA384"
+      - "TLS_CHACHA20_POLY1305_SHA256"
+      - "TLS_AES_128_GCM_SHA256"
+      
+    certificate_management:
+      auto_renewal: true
+      certificate_transparency: true
+      hsts_enabled: true
+      hsts_max_age: "31536000"  # 1 year
+      
+    api_security:
+      enforce_https: true
+      secure_headers:
+        strict_transport_security: true
+        content_security_policy: true
+        x_frame_options: "DENY"
+        x_content_type_options: "nosniff"
+        referrer_policy: "strict-origin-when-cross-origin"
+
+# JWT Configuration
+jwt:
+  algorithm: "RS256"  # Use RSA with SHA-256
+  issuer: "rigger-connect-api"
+  audience: "rigger-connect-clients"
+  
+  token_lifecycle:
+    access_token_ttl: "15 minutes"
+    refresh_token_ttl: "7 days"
+    refresh_token_rotation: true
+    
+  key_management:
+    key_rotation_interval: "30 days"
+    key_storage: "encrypted"
+    key_backup: true
+    
+  security_measures:
+    include_jti: true  # JWT ID for tracking
+    include_iat: true  # Issued at time
+    include_nbf: true  # Not before time
+    blacklist_support: true
+    
+  payload_restrictions:
+    max_payload_size: "8KB"
+    exclude_sensitive_data: true
+    minimal_claims: true
+
+# OAuth2 Configuration
+oauth2:
+  authorization_server:
+    pkce_required: true  # Proof Key for Code Exchange
+    state_parameter_required: true
+    
+  client_authentication:
+    client_secret_basic: true
+    client_secret_post: true
+    private_key_jwt: true
+    
+  grant_types:
+    authorization_code: true
+    refresh_token: true
+    client_credentials: false  # Disabled for security
+    password: false           # Disabled for security
+    
+  scopes:
+    - "profile:read"
+    - "profile:write"
+    - "jobs:read"
+    - "jobs:write"
+    - "applications:read"
+    - "applications:write"
+    - "payments:read"
+    
+  token_security:
+    access_token_format: "JWT"
+    refresh_token_format: "opaque"
+    token_binding: true
+    
+  consent_management:
+    explicit_consent: true
+    granular_scopes: true
+    consent_withdrawal: true
+
+# Session Management
+session:
+  security:
+    secure_flag: true
+    httponly_flag: true
+    samesite: "Strict"
+    
+  lifecycle:
+    session_timeout: "30 minutes"
+    absolute_timeout: "8 hours"
+    concurrent_sessions_limit: 3
+    
+  storage:
+    storage_type: "redis"
+    encryption_enabled: true
+    
+# Password Security
+password:
+  hashing:
+    algorithm: "Argon2id"
+    memory_cost: 65536  # 64 MB
+    time_cost: 3
+    parallelism: 4
+    salt_length: 32
+    
+  policy:
+    min_length: 12
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special_chars: true
+    prevent_common_passwords: true
+    prevent_personal_info: true
+    
+  breach_detection:
+    haveibeenpwned_check: true
+    custom_breach_db: true
+
+# Multi-Factor Authentication
+mfa:
+  enabled: true
+  required_for_admin: true
+  methods:
+    - "totp"      # Time-based One-Time Password
+    - "sms"       # SMS (backup only)
+    - "email"     # Email (backup only)
+    - "webauthn"  # Hardware security keys
+    
+  totp:
+    issuer: "RiggerConnect"
+    digits: 6
+    period: 30
+    algorithm: "SHA256"
+    
+  backup_codes:
+    enabled: true
+    count: 10
+    single_use: true
+
+# Audit & Monitoring
+audit:
+  logging:
+    security_events: true
+    authentication_events: true
+    authorization_events: true
+    data_access_events: true
+    
+  monitoring:
+    failed_login_threshold: 5
+    rate_limiting: true
+    suspicious_activity_detection: true
+    
+  retention:
+    security_logs: "10 years"
+    access_logs: "2 years"
+    
+# Compliance Frameworks
+compliance:
+  frameworks:
+    - "GDPR"
+    - "CCPA"
+    - "SOC2"
+    - "ISO27001"
+    
+  reporting:
+    automated_compliance_reports: true
+    data_breach_notification: true
+    privacy_impact_assessments: true
+
+# Environment Specific Settings
+environments:
+  development:
+    encryption:
+      reduced_key_rotation: "180 days"
+    jwt:
+      access_token_ttl: "60 minutes"  # Longer for dev convenience
+      
+  staging:
+    # Mirror production settings for accurate testing
+    
+  production:
+    # All security measures enforced
+    strict_mode: true
+    security_headers_enforced: true
+    
+# Integration Settings
+integrations:
+  supabase:
+    row_level_security: true
+    encryption_at_rest: true
+    ssl_enforcement: true
+    
+  docker:
+    secrets_management: true
+    encrypted_storage: true
+    
+  kubernetes:
+    network_policies: true
+    pod_security_standards: true
+    secrets_encryption: true

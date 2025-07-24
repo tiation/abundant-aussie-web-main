@@ -25,12 +25,12 @@ export function Sidebar({ isOpen, onToggle, projects, currentProject }: SidebarP
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed left-0 top-0 h-full w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-r border-border transform transition-transform duration-300 z-50',
+          'fixed left-0 top-0 h-full w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-r border transform transition-transform duration-300 z-50',
           'lg:relative lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center justify-between p-4 border-b border">
           <h2 className="text-lg font-semibold">Projects</h2>
           <button
             onClick={onToggle}

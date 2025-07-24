@@ -140,7 +140,7 @@ export function ChatInterface() {
       </div>
       
       {/* Input */}
-      <div className="border-t border-border p-4">
+      <div className="border-t border p-4">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <div className="flex-1 relative">
             <textarea

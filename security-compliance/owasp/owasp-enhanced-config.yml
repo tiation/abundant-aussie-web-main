@@ -1,0 +1,185 @@
+# Enhanced OWASP Security Scanning Configuration
+# ChaseWhiteRabbit NGO - RiggerConnect Ecosystem
+# Step 6: Security & Ethical Compliance
+
+# OWASP ZAP Configuration
+owasp_zap:
+  enabled: true
+  docker_image: "owasp/zap2docker-stable:latest"
+  baseline_scan:
+    enabled: true
+    target_urls:
+      - "http://localhost:3000"  # RiggerConnect Web
+      - "http://localhost:3001"  # RiggerHub Web
+      - "http://localhost:8000"  # RiggerBackend API
+    options:
+      - "-T 60"  # Timeout in minutes
+      - "-z '-addonupdate; -addoninstall ascanrulesAlpha; -addoninstall ascanrulesBeta'"
+      - "-J zap-baseline-report.json"
+      - "-H zap-baseline-report.html"
+      - "-x zap-baseline-report.xml"
+  
+  full_scan:
+    enabled: true
+    authentication:
+      type: "form"
+      login_url: "/api/auth/login"
+      username_field: "email"
+      password_field: "password"
+      success_indicator: "dashboard"
+    spider:
+      max_depth: 5
+      max_children: 10
+      exclude_patterns:
+        - "/logout"
+        - "/api/admin"
+        - "/test"
+    active_scan:
+      scan_policy: "Default Policy"
+      max_scan_time: 120  # minutes
+      exclude_scanners:
+        - "40014"  # Cross Site Scripting (Persistent) - Prime
+        - "40016"  # Cross Site Scripting (Persistent) - Spider
+
+# OWASP Dependency Check
+dependency_check:
+  enabled: true
+  docker_image: "owasp/dependency-check:latest"
+  formats:
+    - "JSON"
+    - "HTML" 
+    - "XML"
+    - "SARIF"
+  suppression_file: "security-compliance/configs/owasp-suppressions.xml"
+  nvd_api_key: "${NVD_API_KEY}"
+  scan_paths:
+    - "."
+    - "RiggerConnect-capacitor"
+    - "RiggerBackend"
+    - "helm-charts"
+  exclude_patterns:
+    - "node_modules"
+    - ".git"
+    - "*.log"
+    - "coverage"
+    - "dist"
+    - "build"
+
+# OWASP Top 10 Compliance Checks
+owasp_top10:
+  A01_broken_access_control:
+    checks:
+      - "authorization_middleware"
+      - "role_based_access"
+      - "path_traversal_protection"
+      - "cors_configuration"
+  
+  A02_cryptographic_failures:
+    checks:
+      - "encryption_at_rest"
+      - "encryption_in_transit" 
+      - "password_hashing"
+      - "jwt_security"
+      - "tls_configuration"
+  
+  A03_injection:
+    checks:
+      - "sql_injection_protection"
+      - "nosql_injection_protection"
+      - "command_injection_protection"
+      - "ldap_injection_protection"
+  
+  A04_insecure_design:
+    checks:
+      - "security_requirements"
+      - "threat_modeling"
+      - "secure_coding_standards"
+      - "security_testing"
+  
+  A05_security_misconfiguration:
+    checks:
+      - "security_headers"
+      - "error_handling"
+      - "default_credentials"
+      - "unnecessary_features"
+  
+  A06_vulnerable_components:
+    checks:
+      - "dependency_scanning"
+      - "component_inventory"
+      - "update_process"
+      - "vulnerability_monitoring"
+  
+  A07_identification_failures:
+    checks:
+      - "session_management"
+      - "authentication_failures"
+      - "password_policies"
+      - "multi_factor_auth"
+  
+  A08_software_integrity_failures:
+    checks:
+      - "code_signing"
+      - "supply_chain_security"
+      - "ci_cd_security"
+      - "package_verification"
+  
+  A09_logging_monitoring_failures:
+    checks:
+      - "audit_logging"
+      - "security_monitoring"
+      - "incident_response"
+      - "log_analysis"
+  
+  A10_server_side_request_forgery:
+    checks:
+      - "url_validation"
+      - "network_segmentation"
+      - "allowlist_configuration"
+      - "response_validation"
+
+# Reporting Configuration
+reporting:
+  formats:
+    - "json"
+    - "html"
+    - "pdf"
+    - "sarif"
+  
+  output_directory: "security-reports/owasp"
+  
+  thresholds:
+    critical: 0
+    high: 5
+    medium: 20
+    low: 50
+  
+  notifications:
+    email:
+      enabled: true
+      recipients:
+        - "tiatheone@protonmail.com"
+        - "garrett@sxc.codes"
+        - "garrett.dillman@gmail.com"
+    
+    slack:
+      enabled: true
+      webhook_url: "${SLACK_SECURITY_WEBHOOK}"
+      channel: "#security-alerts"
+    
+    defectdojo:
+      enabled: true
+      url: "${DEFECTDOJO_URL}"
+      api_key: "${DEFECTDOJO_API_KEY}"
+      product_name: "RiggerConnect Ecosystem"
+
+# Scan Scheduling
+scheduling:
+  baseline_scan:
+    cron: "0 2 * * *"  # Daily at 2 AM
+  
+  full_scan:
+    cron: "0 1 * * 0"  # Weekly on Sunday at 1 AM
+  
+  dependency_scan:
+    cron: "0 3 * * *"  # Daily at 3 AM

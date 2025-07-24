@@ -13,7 +13,7 @@ export function Analytics() {
   useEffect(() => {
     // Track page views
     if (pathname) {
-      const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+      const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
       trackPageView(url)
     }
   }, [pathname, searchParams, trackPageView])

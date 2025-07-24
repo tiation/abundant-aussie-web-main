@@ -56,7 +56,7 @@ export default function HomePage() {
         {/* Main Area */}
         <div className="flex-1 flex overflow-hidden">
           {/* Chat/Builder Toggle Bar */}
-          <div className="flex flex-col w-16 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-r border-border">
+          <div className="flex flex-col w-16 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-r border">
             <div className="flex flex-col space-y-2 p-2">
               <Button
                 variant={activeView === 'chat' ? 'default' : 'ghost'}
@@ -86,7 +86,7 @@ export default function HomePage() {
 
             {/* Builder Preview */}
             {activeView === 'preview' && (
-              <div className="flex-1 border-l border-border">
+              <div className="flex-1 border-l border">
                 <BuilderPreview />
               </div>
             )}
@@ -94,7 +94,7 @@ export default function HomePage() {
         </div>
 
         {/* Status Bar */}
-        <div className="h-8 bg-slate-100 dark:bg-slate-800 border-t border-border flex items-center px-4 text-xs text-muted-foreground">
+        <div className="h-8 bg-slate-100 dark:bg-slate-800 border-t border flex items-center px-4 text-xs text-muted-foreground">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
               <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`} />

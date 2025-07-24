@@ -1,0 +1,374 @@
+# Deployment Template
+# ChaseWhiteRabbit NGO - Enterprise Deployment Strategies
+
+.deploy_base: &deploy_base
+  stage: staging-deploy
+  image: alpine/helm:latest
+  before_script:
+    - apk add --no-cache curl openssh-client jq kubectl
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H $DOCKER_REGISTRY_HOST >> ~/.ssh/known_hosts
+    - ssh-keyscan -H $HELM_REGISTRY_HOST >> ~/.ssh/known_hosts
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - deployment-reports/
+    when: always
+
+# Build Stage
+build:docker:
+  stage: build
+  extends: .docker_template
+  script:
+    - mkdir -p deployment-reports
+    - echo "🏗️ Building Docker image..."
+    
+    # Multi-stage build with optimization
+    - |
+      docker build \
+        --build-arg NODE_VERSION=$NODE_VERSION \
+        --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+        --build-arg VCS_REF=$CI_COMMIT_SHORT_SHA \
+        --build-arg VERSION=$CI_COMMIT_TAG \
+        --target production \
+        --cache-from $DOCKER_REGISTRY/$CI_PROJECT_NAME:cache \
+        --tag $DOCKER_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHA \
+        --tag $DOCKER_REGISTRY/$CI_PROJECT_NAME:latest \
+        .
+    
+    # Security scan of built image
+    - trivy image --exit-code 0 --format json --output deployment-reports/image-scan.json $DOCKER_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHA
+    
+    # Push images
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME:latest
+    
+    # Update cache
+    - docker tag $DOCKER_REGISTRY/$CI_PROJECT_NAME:latest $DOCKER_REGISTRY/$CI_PROJECT_NAME:cache
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME:cache
+    
+    echo "🏗️ Docker build completed"
+  rules:
+    - exists:
+        - Dockerfile
+  needs:
+    - job: test:gate
+      artifacts: false
+
+# Staging Deployment
+deploy:staging:
+  <<: *deploy_base
+  variables:
+    ENVIRONMENT: "staging"
+    NAMESPACE: "$K8S_NAMESPACE_STAGING"
+    REPLICAS: "2"
+  script:
+    - mkdir -p deployment-reports
+    - echo "🚀 Deploying to staging environment..."
+    
+    # Prepare Helm values
+    - |
+      cat > values-staging.yaml << EOF
+      image:
+        repository: $DOCKER_REGISTRY/$CI_PROJECT_NAME
+        tag: $CI_COMMIT_SHA
+        pullPolicy: Always
+      
+      replicaCount: $REPLICAS
+      environment: $ENVIRONMENT
+      namespace: $NAMESPACE
+      
+      service:
+        type: ClusterIP
+        port: 80
+      
+      ingress:
+        enabled: true
+        host: $CI_PROJECT_NAME-staging.sxc.codes
+        tls: true
+      
+      resources:
+        limits:
+          memory: "512Mi"
+          cpu: "500m"
+        requests:
+          memory: "256Mi"
+          cpu: "250m"
+      
+      monitoring:
+        enabled: true
+        serviceMonitor: true
+      
+      configMap:
+        NODE_ENV: staging
+        LOG_LEVEL: debug
+      EOF
+    
+    # Deploy with Helm
+    - |
+      helm upgrade --install $CI_PROJECT_NAME-staging ./helm-chart \
+        --namespace $NAMESPACE \
+        --create-namespace \
+        --values values-staging.yaml \
+        --set image.tag=$CI_COMMIT_SHA \
+        --set deployment.strategy.type=RollingUpdate \
+        --wait --timeout=10m
+    
+    # Verify deployment
+    - kubectl get pods -n $NAMESPACE -l app=$CI_PROJECT_NAME-staging
+    - kubectl wait --for=condition=ready pod -l app=$CI_PROJECT_NAME-staging -n $NAMESPACE --timeout=300s
+    
+    # Health check
+    - .enterprise-cicd/scripts/health-check.sh https://$CI_PROJECT_NAME-staging.sxc.codes
+    
+    # Generate deployment report
+    - .enterprise-cicd/scripts/generate-deployment-report.sh staging > deployment-reports/staging-report.json
+    
+    echo "🚀 Staging deployment completed"
+  environment:
+    name: staging
+    url: https://$CI_PROJECT_NAME-staging.sxc.codes
+    deployment_tier: staging
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_MERGE_REQUEST_IID'
+  needs:
+    - job: build:docker
+      artifacts: false
+
+# Staging Tests
+test:staging:
+  stage: staging-test
+  image: node:20-alpine
+  before_script:
+    - npm install -g newman lighthouse
+  script:
+    - mkdir -p deployment-reports
+    - echo "🧪 Running staging environment tests..."
+    
+    # Smoke tests
+    - .enterprise-cicd/scripts/smoke-tests.sh https://$CI_PROJECT_NAME-staging.sxc.codes
+    
+    # API tests against staging
+    - |
+      if [ -f ".enterprise-cicd/tests/api/staging-collection.json" ]; then
+        newman run .enterprise-cicd/tests/api/staging-collection.json \
+          --environment .enterprise-cicd/tests/api/staging-environment.json \
+          --reporters json \
+          --reporter-json-export deployment-reports/staging-api-results.json
+      fi
+    
+    # Performance tests
+    - lighthouse https://$CI_PROJECT_NAME-staging.sxc.codes --output json --output-path deployment-reports/lighthouse-staging.json
+    
+    echo "🧪 Staging tests completed"
+  dependencies:
+    - deploy:staging
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_MERGE_REQUEST_IID'
+
+# Blue-Green Production Deployment
+deploy:production:blue-green:
+  <<: *deploy_base
+  stage: production-deploy
+  variables:
+    ENVIRONMENT: "production"
+    NAMESPACE: "$K8S_NAMESPACE_PRODUCTION"
+    REPLICAS: "5"
+  script:
+    - mkdir -p deployment-reports
+    - echo "🔵🟢 Starting Blue-Green deployment to production..."
+    
+    # Determine current active environment
+    - ACTIVE_ENV=$(kubectl get service $CI_PROJECT_NAME-production -n $NAMESPACE -o jsonpath='{.spec.selector.version}' 2>/dev/null || echo "blue")
+    - NEW_ENV=$([ "$ACTIVE_ENV" = "blue" ] && echo "green" || echo "blue")
+    - echo "Current active: $ACTIVE_ENV, Deploying to: $NEW_ENV"
+    
+    # Prepare Helm values for new environment
+    - |
+      cat > values-production-$NEW_ENV.yaml << EOF
+      image:
+        repository: $DOCKER_REGISTRY/$CI_PROJECT_NAME
+        tag: $CI_COMMIT_SHA
+        pullPolicy: Always
+      
+      replicaCount: $REPLICAS
+      environment: $ENVIRONMENT
+      namespace: $NAMESPACE
+      version: $NEW_ENV
+      
+      service:
+        type: ClusterIP
+        port: 80
+      
+      ingress:
+        enabled: false  # Will be enabled after validation
+        host: $CI_PROJECT_NAME.sxc.codes
+        tls: true
+      
+      resources:
+        limits:
+          memory: "1Gi"
+          cpu: "1000m"
+        requests:
+          memory: "512Mi"
+          cpu: "500m"
+      
+      monitoring:
+        enabled: true
+        serviceMonitor: true
+      
+      configMap:
+        NODE_ENV: production
+        LOG_LEVEL: info
+      EOF
+    
+    # Deploy new version
+    - |
+      helm upgrade --install $CI_PROJECT_NAME-$NEW_ENV ./helm-chart \
+        --namespace $NAMESPACE \
+        --create-namespace \
+        --values values-production-$NEW_ENV.yaml \
+        --set image.tag=$CI_COMMIT_SHA \
+        --set version=$NEW_ENV \
+        --wait --timeout=15m
+    
+    # Wait for new environment to be ready
+    - kubectl wait --for=condition=ready pod -l app=$CI_PROJECT_NAME,version=$NEW_ENV -n $NAMESPACE --timeout=600s
+    
+    # Health check new environment
+    - .enterprise-cicd/scripts/health-check.sh http://$CI_PROJECT_NAME-$NEW_ENV.$NAMESPACE.svc.cluster.local
+    
+    # Run validation tests
+    - .enterprise-cicd/scripts/validate-deployment.sh $NEW_ENV
+    
+    # Switch traffic (Blue-Green cutover)
+    - echo "🔄 Switching traffic to $NEW_ENV environment..."
+    - kubectl patch service $CI_PROJECT_NAME-production -n $NAMESPACE -p '{"spec":{"selector":{"version":"'$NEW_ENV'"}}}'
+    
+    # Verify traffic switch
+    - sleep 30
+    - .enterprise-cicd/scripts/verify-traffic-switch.sh https://$CI_PROJECT_NAME.sxc.codes
+    
+    # Keep old environment for rollback (cleanup after 24h)
+    - echo "✅ Blue-Green deployment completed. Old environment ($ACTIVE_ENV) kept for rollback."
+    
+    # Generate deployment report
+    - .enterprise-cicd/scripts/generate-deployment-report.sh production > deployment-reports/production-report.json
+  environment:
+    name: production
+    url: https://$CI_PROJECT_NAME.sxc.codes
+    deployment_tier: production
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $ENABLE_BLUE_GREEN_DEPLOYMENT == "true"'
+  when: manual
+  needs:
+    - job: test:staging
+      artifacts: false
+
+# Canary Production Deployment  
+deploy:production:canary:
+  <<: *deploy_base
+  stage: production-deploy
+  variables:
+    ENVIRONMENT: "production"
+    NAMESPACE: "$K8S_NAMESPACE_PRODUCTION"
+    CANARY_WEIGHT: "10"  # Start with 10% traffic
+  script:
+    - mkdir -p deployment-reports
+    - echo "🐦 Starting Canary deployment to production..."
+    
+    # Deploy canary version
+    - |
+      cat > values-canary.yaml << EOF
+      image:
+        repository: $DOCKER_REGISTRY/$CI_PROJECT_NAME
+        tag: $CI_COMMIT_SHA
+        pullPolicy: Always
+      
+      replicaCount: 2
+      environment: $ENVIRONMENT
+      namespace: $NAMESPACE
+      version: canary
+      
+      service:
+        type: ClusterIP
+        port: 80
+      
+      canary:
+        enabled: true
+        weight: $CANARY_WEIGHT
+      
+      resources:
+        limits:
+          memory: "1Gi"
+          cpu: "1000m"
+        requests:
+          memory: "512Mi"
+          cpu: "500m"
+      EOF
+    
+    # Deploy canary
+    - |
+      helm upgrade --install $CI_PROJECT_NAME-canary ./helm-chart \
+        --namespace $NAMESPACE \
+        --values values-canary.yaml \
+        --set image.tag=$CI_COMMIT_SHA \
+        --set version=canary \
+        --wait --timeout=10m
+    
+    # Configure traffic splitting (using Istio/Nginx)
+    - .enterprise-cicd/scripts/configure-canary-traffic.sh $CANARY_WEIGHT
+    
+    # Monitor canary for 10 minutes
+    - echo "📊 Monitoring canary deployment..."
+    - .enterprise-cicd/scripts/monitor-canary.sh 600  # 10 minutes
+    
+    # Evaluate canary metrics
+    - .enterprise-cicd/scripts/evaluate-canary-metrics.sh
+    
+    # Gradual traffic increase (if metrics are good)
+    - .enterprise-cicd/scripts/gradual-canary-rollout.sh
+    
+    echo "🐦 Canary deployment completed"
+  environment:
+    name: production-canary
+    url: https://$CI_PROJECT_NAME.sxc.codes
+    deployment_tier: production
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $ENABLE_CANARY_DEPLOYMENT == "true"'
+  when: manual
+  needs:
+    - job: test:staging
+      artifacts: false
+
+# Rollback Mechanism
+rollback:production:
+  <<: *deploy_base
+  stage: production-deploy
+  script:
+    - echo "🔄 Rolling back production deployment..."
+    - helm rollback $CI_PROJECT_NAME-production -n $K8S_NAMESPACE_PRODUCTION
+    - kubectl wait --for=condition=ready pod -l app=$CI_PROJECT_NAME -n $K8S_NAMESPACE_PRODUCTION --timeout=300s
+    - .enterprise-cicd/scripts/verify-rollback.sh
+    - echo "🔄 Rollback completed"
+  rules:
+    - when: manual
+  environment:
+    name: production
+    url: https://$CI_PROJECT_NAME.sxc.codes
+
+# Cleanup old deployments
+cleanup:deployments:
+  stage: cleanup
+  <<: *deploy_base
+  script:
+    - echo "🧹 Cleaning up old deployments..."
+    - .enterprise-cicd/scripts/cleanup-old-deployments.sh
+    - echo "🧹 Cleanup completed"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  when: manual

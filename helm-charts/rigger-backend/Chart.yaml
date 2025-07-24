@@ -1,0 +1,44 @@
+apiVersion: v2
+name: rigger-backend
+description: RiggerBackend - Enterprise-grade API services for the Rigger ecosystem
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - rigger
+  - backend
+  - api
+  - construction
+  - mining
+  - enterprise
+
+home: https://github.com/tiation/RiggerBackend
+sources:
+  - https://github.com/tiation/RiggerBackend
+
+maintainers:
+  - name: ChaseWhiteRabbit NGO
+    email: tech@chasewhiterabbit.org
+    url: https://chasewhiterabbit.org
+
+annotations:
+  category: Backend Services
+  licenses: MIT
+  images: |
+    - name: rigger-backend
+      image: docker.sxc.codes/rigger-backend:1.0.0
+
+dependencies:
+  - name: postgresql
+    version: 12.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 18.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  - name: elasticsearch
+    version: 8.x.x
+    repository: https://helm.elastic.co
+    condition: elasticsearch.enabled

@@ -1,0 +1,55 @@
+# Enterprise-Grade Web Application Dockerfile
+# ChaseWhiteRabbit NGO - Optimized for production deployment
+
+ARG NODE_VERSION=20-alpine
+FROM node:${NODE_VERSION} AS base
+
+# Install security updates and basic tools
+RUN apk update && apk upgrade && \
+    apk add --no-cache dumb-init && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S rigger -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies stage
+FROM base AS deps
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Build stage
+FROM base AS builder
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM base AS runner
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Copy built application
+COPY --from=deps --chown=rigger:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=rigger:nodejs /app/dist ./dist
+COPY --from=builder --chown=rigger:nodejs /app/public ./public
+COPY --from=builder --chown=rigger:nodejs /app/package.json ./package.json
+
+# Security headers and health check
+COPY --from=builder --chown=rigger:nodejs /app/nginx.conf /etc/nginx/nginx.conf
+
+USER rigger
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+EXPOSE ${PORT}
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["npm", "start"]

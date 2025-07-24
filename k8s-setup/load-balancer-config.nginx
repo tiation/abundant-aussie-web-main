@@ -1,0 +1,190 @@
+# Nginx Load Balancer Configuration for Hostinger VPS Infrastructure
+# Place this in /etc/nginx/sites-available/load-balancer
+
+# Rate limiting configuration
+limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+limit_req_zone $binary_remote_addr zone=web:10m rate=50r/s;
+
+# Upstream server pools
+upstream backend_api_servers {
+    least_conn;
+    server 145.223.22.7:3000 weight=3 max_fails=3 fail_timeout=30s;  # docker.sxc.codes
+    server 145.223.22.9:3000 weight=2 max_fails=3 fail_timeout=30s;  # docker.tiation.net
+    keepalive 32;
+}
+
+upstream backend_web_servers {
+    ip_hash;  # Session persistence for web apps
+    server 145.223.22.7:80 weight=3 max_fails=3 fail_timeout=30s;
+    server 145.223.22.9:80 weight=2 max_fails=3 fail_timeout=30s;
+    keepalive 32;
+}
+
+upstream supabase_backend {
+    server 93.127.167.157:8000 weight=5 max_fails=2 fail_timeout=10s;  # supabase.sxc.codes
+    keepalive 16;
+}
+
+upstream grafana_backend {
+    server 153.92.214.1:3000 max_fails=2 fail_timeout=30s;  # grafana.sxc.codes
+}
+
+# Cache configuration
+proxy_cache_path /var/cache/nginx/api levels=1:2 keys_zone=api_cache:10m max_size=1g inactive=60m use_temp_path=off;
+proxy_cache_path /var/cache/nginx/static levels=1:2 keys_zone=static_cache:10m max_size=2g inactive=1d use_temp_path=off;
+
+# Main server block for API traffic
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.sxc.codes;
+
+    # Security headers
+    add_header X-Frame-Options DENY always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Rate limiting
+    limit_req zone=api burst=20 nodelay;
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+
+    # API endpoints
+    location /api/ {
+        # Cache configuration for API responses
+        proxy_cache api_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_valid 404 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
+
+        # Proxy settings
+        proxy_pass http://backend_api_servers;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Timeouts
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+        
+        # Buffer settings
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 8 4k;
+    }
+
+    # Supabase endpoints
+    location /supabase/ {
+        proxy_pass http://supabase_backend/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Longer timeouts for database operations
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+    }
+}
+
+# Main server block for web traffic  
+server {
+    listen 80;
+    listen [::]:80;
+    server_name web.sxc.codes www.sxc.codes;
+
+    # Rate limiting
+    limit_req zone=web burst=100 nodelay;
+
+    # Static file serving with caching
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg)$ {
+        proxy_cache static_cache;
+        proxy_cache_valid 200 1d;
+        proxy_cache_valid 404 1h;
+        
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header X-Cache-Status $upstream_cache_status;
+        
+        proxy_pass http://backend_web_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Dynamic content
+    location / {
+        proxy_pass http://backend_web_servers;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # No caching for dynamic content
+        proxy_cache_bypass 1;
+        proxy_no_cache 1;
+        
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+
+# Grafana monitoring dashboard
+server {
+    listen 80;
+    listen [::]:80;
+    server_name monitoring.sxc.codes;
+
+    # Basic auth for security (configure htpasswd file)
+    auth_basic "Monitoring Dashboard";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://grafana_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# SSL redirect (when SSL certificates are configured)
+# server {
+#     listen 80;
+#     server_name api.sxc.codes web.sxc.codes www.sxc.codes monitoring.sxc.codes;
+#     return 301 https://$server_name$request_uri;
+# }
+
+# Default server to handle undefined domains
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    
+    return 444;  # Close connection without response
+}

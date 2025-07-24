@@ -231,3 +231,6 @@ compliance-reports/
 !LICENSE*
 !CONTRIBUTING*
 !CODE_OF_CONDUCT*
+
+# Local Netlify folder
+.netlify

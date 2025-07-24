@@ -1,0 +1,56 @@
+# Enterprise-Grade Backend Service Dockerfile
+# ChaseWhiteRabbit NGO - Optimized for microservices deployment
+
+ARG NODE_VERSION=20-alpine
+FROM node:${NODE_VERSION} AS base
+
+# Install security updates and required tools
+RUN apk update && apk upgrade && \
+    apk add --no-cache dumb-init curl && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S backend && \
+    adduser -S rigger -u 1001 -G backend
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies stage
+FROM base AS deps
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Build stage
+FROM base AS builder
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build 2>/dev/null || npm run compile 2>/dev/null || echo "No build step required"
+
+# Production stage
+FROM base AS runner
+ENV NODE_ENV=production
+ENV PORT=8000
+
+# Copy application files
+COPY --from=deps --chown=rigger:backend /app/node_modules ./node_modules
+COPY --from=builder --chown=rigger:backend /app/dist ./dist 2>/dev/null || true
+COPY --from=builder --chown=rigger:backend /app/src ./src 2>/dev/null || true
+COPY --from=builder --chown=rigger:backend /app/package.json ./package.json
+COPY --from=builder --chown=rigger:backend /app/*.js ./ 2>/dev/null || true
+
+# Create logs directory
+RUN mkdir -p /app/logs && chown rigger:backend /app/logs
+
+USER rigger
+
+# Health check endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+EXPOSE ${PORT}
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["npm", "start"]

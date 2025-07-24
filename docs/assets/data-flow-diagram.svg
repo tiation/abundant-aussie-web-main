@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: bold 24px sans-serif; fill: #2c3e50; }
+      .layer-title { font: bold 16px sans-serif; fill: #34495e; }
+      .component { font: 12px sans-serif; fill: #2c3e50; }
+      .box { fill: #ecf0f1; stroke: #34495e; stroke-width: 2; rx: 8; }
+      .client-box { fill: #3498db; stroke: #2980b9; stroke-width: 2; rx: 8; }
+      .api-box { fill: #e74c3c; stroke: #c0392b; stroke-width: 2; rx: 8; }
+      .service-box { fill: #f39c12; stroke: #e67e22; stroke-width: 2; rx: 8; }
+      .shared-box { fill: #9b59b6; stroke: #8e44ad; stroke-width: 2; rx: 8; }
+      .data-box { fill: #1abc9c; stroke: #16a085; stroke-width: 2; rx: 8; }
+      .external-box { fill: #95a5a6; stroke: #7f8c8d; stroke-width: 2; rx: 8; }
+      .arrow { stroke: #34495e; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .white-text { fill: white; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="700" y="30" text-anchor="middle" class="title">Rigger Platform Data Flow Architecture</text>
+  
+  <!-- Client Layer -->
+  <rect x="50" y="70" width="1300" height="120" class="box" fill="#e8f4fd" stroke="#3498db"/>
+  <text x="70" y="90" class="layer-title" fill="#3498db">Client Layer</text>
+  
+  <rect x="100" y="110" width="120" height="60" class="client-box"/>
+  <text x="160" y="135" text-anchor="middle" class="component white-text">RiggerConnect</text>
+  <text x="160" y="150" text-anchor="middle" class="component white-text">Web</text>
+  
+  <rect x="280" y="110" width="120" height="60" class="client-box"/>
+  <text x="340" y="135" text-anchor="middle" class="component white-text">RiggerHub</text>
+  <text x="340" y="150" text-anchor="middle" class="component white-text">Web</text>
+  
+  <rect x="460" y="110" width="120" height="60" class="client-box"/>
+  <text x="520" y="135" text-anchor="middle" class="component white-text">RiggerConnect</text>
+  <text x="520" y="150" text-anchor="middle" class="component white-text">iOS</text>
+  
+  <rect x="640" y="110" width="120" height="60" class="client-box"/>
+  <text x="700" y="135" text-anchor="middle" class="component white-text">RiggerConnect</text>
+  <text x="700" y="150" text-anchor="middle" class="component white-text">Android</text>
+  
+  <!-- API Layer -->
+  <rect x="50" y="220" width="1300" height="100" class="box" fill="#fdf2f2" stroke="#e74c3c"/>
+  <text x="70" y="240" class="layer-title" fill="#e74c3c">API Layer</text>
+  
+  <rect x="300" y="260" width="180" height="50" class="api-box"/>
+  <text x="390" y="280" text-anchor="middle" class="component white-text">API Gateway</text>
+  <text x="390" y="295" text-anchor="middle" class="component white-text">Load Balancer</text>
+  
+  <rect x="550" y="260" width="120" height="50" class="api-box"/>
+  <text x="610" y="280" text-anchor="middle" class="component white-text">Authentication</text>
+  <text x="610" y="295" text-anchor="middle" class="component white-text">Service</text>
+  
+  <!-- Microservices Layer -->
+  <rect x="50" y="350" width="1300" height="140" class="box" fill="#fef9e7" stroke="#f39c12"/>
+  <text x="70" y="370" class="layer-title" fill="#f39c12">Microservices Layer</text>
+  
+  <rect x="100" y="390" width="100" height="80" class="service-box"/>
+  <text x="150" y="415" text-anchor="middle" class="component white-text">User</text>
+  <text x="150" y="430" text-anchor="middle" class="component white-text">Service</text>
+  <text x="150" y="445" text-anchor="middle" class="component white-text">Auth/Profile</text>
+  
+  <rect x="220" y="390" width="100" height="80" class="service-box"/>
+  <text x="270" y="415" text-anchor="middle" class="component white-text">Job</text>
+  <text x="270" y="430" text-anchor="middle" class="component white-text">Service</text>
+  <text x="270" y="445" text-anchor="middle" class="component white-text">Matching</text>
+  
+  <rect x="340" y="390" width="100" height="80" class="service-box"/>
+  <text x="390" y="415" text-anchor="middle" class="component white-text">Notification</text>
+  <text x="390" y="430" text-anchor="middle" class="component white-text">Service</text>
+  <text x="390" y="445" text-anchor="middle" class="component white-text">Push/Email</text>
+  
+  <rect x="460" y="390" width="100" height="80" class="service-box"/>
+  <text x="510" y="415" text-anchor="middle" class="component white-text">Payment</text>
+  <text x="510" y="430" text-anchor="middle" class="component white-text">Service</text>
+  <text x="510" y="445" text-anchor="middle" class="component white-text">Billing</text>
+  
+  <rect x="580" y="390" width="100" height="80" class="service-box"/>
+  <text x="630" y="415" text-anchor="middle" class="component white-text">Compliance</text>
+  <text x="630" y="430" text-anchor="middle" class="component white-text">Service</text>
+  <text x="630" y="445" text-anchor="middle" class="component white-text">WorkSafe</text>
+  
+  <rect x="700" y="390" width="100" height="80" class="service-box"/>
+  <text x="750" y="415" text-anchor="middle" class="component white-text">Matching</text>
+  <text x="750" y="430" text-anchor="middle" class="component white-text">Engine</text>
+  <text x="750" y="445" text-anchor="middle" class="component white-text">ML/AI</text>
+  
+  <!-- Shared Layer -->
+  <rect x="50" y="520" width="1300" height="100" class="box" fill="#f4f0f7" stroke="#9b59b6"/>
+  <text x="70" y="540" class="layer-title" fill="#9b59b6">Shared Layer</text>
+  
+  <rect x="200" y="560" width="140" height="50" class="shared-box"/>
+  <text x="270" y="580" text-anchor="middle" class="component white-text">RiggerShared</text>
+  <text x="270" y="595" text-anchor="middle" class="component white-text">Libraries</text>
+  
+  <rect x="400" y="560" width="120" height="50" class="shared-box"/>
+  <text x="460" y="580" text-anchor="middle" class="component white-text">Redis</text>
+  <text x="460" y="595" text-anchor="middle" class="component white-text">Cache</text>
+  
+  <rect x="580" y="560" width="120" height="50" class="shared-box"/>
+  <text x="640" y="580" text-anchor="middle" class="component white-text">Message</text>
+  <text x="640" y="595" text-anchor="middle" class="component white-text">Queue</text>
+  
+  <!-- Data Layer -->
+  <rect x="50" y="650" width="1300" height="100" class="box" fill="#e8f6f3" stroke="#1abc9c"/>
+  <text x="70" y="670" class="layer-title" fill="#1abc9c">Data Layer</text>
+  
+  <rect x="200" y="690" width="140" height="50" class="data-box"/>
+  <text x="270" y="710" text-anchor="middle" class="component white-text">Supabase</text>
+  <text x="270" y="725" text-anchor="middle" class="component white-text">PostgreSQL</text>
+  
+  <rect x="400" y="690" width="120" height="50" class="data-box"/>
+  <text x="460" y="710" text-anchor="middle" class="component white-text">Elasticsearch</text>
+  <text x="460" y="725" text-anchor="middle" class="component white-text">Logs/Search</text>
+  
+  <rect x="580" y="690" width="120" height="50" class="data-box"/>
+  <text x="640" y="710" text-anchor="middle" class="component white-text">File</text>
+  <text x="640" y="725" text-anchor="middle" class="component white-text">Storage</text>
+  
+  <!-- External Services -->
+  <rect x="50" y="780" width="1300" height="100" class="box" fill="#f8f9fa" stroke="#95a5a6"/>
+  <text x="70" y="800" class="layer-title" fill="#95a5a6">External Services</text>
+  
+  <rect x="150" y="820" width="120" height="50" class="external-box"/>
+  <text x="210" y="840" text-anchor="middle" class="component white-text">WorkSafe WA</text>
+  <text x="210" y="855" text-anchor="middle" class="component white-text">API</text>
+  
+  <rect x="300" y="820" width="120" height="50" class="external-box"/>
+  <text x="360" y="840" text-anchor="middle" class="component white-text">Payment</text>
+  <text x="360" y="855" text-anchor="middle" class="component white-text">Gateways</text>
+  
+  <rect x="450" y="820" width="120" height="50" class="external-box"/>
+  <text x="510" y="840" text-anchor="middle" class="component white-text">Email</text>
+  <text x="510" y="855" text-anchor="middle" class="component white-text">Service</text>
+  
+  <rect x="600" y="820" width="120" height="50" class="external-box"/>
+  <text x="660" y="840" text-anchor="middle" class="component white-text">SMS</text>
+  <text x="660" y="855" text-anchor="middle" class="component white-text">Service</text>
+  
+  <!-- Infrastructure Info -->
+  <rect x="950" y="110" width="380" height="480" class="box" fill="#f8f9fa" stroke="#7f8c8d"/>
+  <text x="970" y="135" class="layer-title" fill="#34495e">Infrastructure Components</text>
+  
+  <text x="970" y="165" class="component" fill="#2c3e50">🚀 Kubernetes (helm.sxc.codes)</text>
+  <text x="970" y="180" class="component" fill="#7f8c8d">   Container orchestration - 145.223.21.248</text>
+  
+  <text x="970" y="205" class="component" fill="#2c3e50">🐳 Docker Registry (docker.sxc.codes)</text>
+  <text x="970" y="220" class="component" fill="#7f8c8d">   Container hosting - 145.223.22.7</text>
+  
+  <text x="970" y="245" class="component" fill="#2c3e50">🔄 GitLab CI/CD (gitlab.sxc.codes)</text>
+  <text x="970" y="260" class="component" fill="#7f8c8d">   Automation pipeline - 145.223.22.10</text>
+  
+  <text x="970" y="285" class="component" fill="#2c3e50">📊 Grafana (grafana.sxc.codes)</text>
+  <text x="970" y="300" class="component" fill="#7f8c8d">   Monitoring dashboards - 153.92.214.1</text>
+  
+  <text x="970" y="325" class="component" fill="#2c3e50">🔍 ELK Stack (elastic.sxc.codes)</text>
+  <text x="970" y="340" class="component" fill="#7f8c8d">   Log aggregation - 145.223.22.14</text>
+  
+  <text x="970" y="365" class="component" fill="#2c3e50">🗄️ Supabase (supabase.sxc.codes)</text>
+  <text x="970" y="380" class="component" fill="#7f8c8d">   Database services - 93.127.167.157</text>
+  
+  <text x="970" y="405" class="component" fill="#2c3e50">🛠️ General Purpose (ubuntu.sxc.codes)</text>
+  <text x="970" y="420" class="component" fill="#7f8c8d">   Scripts & backups - 89.116.191.60</text>
+  
+  <text x="970" y="450" class="layer-title" fill="#e74c3c">Key Features:</text>
+  <text x="970" y="470" class="component" fill="#2c3e50">✅ Enterprise-grade security</text>
+  <text x="970" y="485" class="component" fill="#2c3e50">✅ Auto-scaling capabilities</text>
+  <text x="970" y="500" class="component" fill="#2c3e50">✅ High availability design</text>
+  <text x="970" y="515" class="component" fill="#2c3e50">✅ Real-time monitoring</text>
+  <text x="970" y="530" class="component" fill="#2c3e50">✅ Automated deployments</text>
+  <text x="970" y="545" class="component" fill="#2c3e50">✅ Compliance ready</text>
+  <text x="970" y="560" class="component" fill="#2c3e50">✅ ChaseWhiteRabbit NGO ethical standards</text>
+  
+  <!-- Connection Arrows -->
+  <!-- Client to API -->
+  <line x1="160" y1="170" x2="390" y2="260" class="arrow"/>
+  <line x1="340" y1="170" x2="390" y2="260" class="arrow"/>
+  <line x1="520" y1="170" x2="390" y2="260" class="arrow"/>
+  <line x1="700" y1="170" x2="390" y2="260" class="arrow"/>
+  
+  <!-- API to Services -->
+  <line x1="390" y1="310" x2="150" y2="390" class="arrow"/>
+  <line x1="390" y1="310" x2="270" y2="390" class="arrow"/>
+  <line x1="390" y1="310" x2="390" y2="390" class="arrow"/>
+  <line x1="390" y1="310" x2="510" y2="390" class="arrow"/>
+  <line x1="390" y1="310" x2="630" y2="390" class="arrow"/>
+  <line x1="390" y1="310" x2="750" y2="390" class="arrow"/>
+  
+  <!-- Services to Shared -->
+  <line x1="150" y1="470" x2="270" y2="560" class="arrow"/>
+  <line x1="270" y1="470" x2="460" y2="560" class="arrow"/>
+  <line x1="390" y1="470" x2="640" y2="560" class="arrow"/>
+  
+  <!-- Services to Data -->
+  <line x1="150" y1="470" x2="270" y2="690" class="arrow"/>
+  <line x1="270" y1="470" x2="270" y2="690" class="arrow"/>
+  <line x1="390" y1="470" x2="460" y2="690" class="arrow"/>
+  <line x1="510" y1="470" x2="270" y2="690" class="arrow"/>
+  <line x1="630" y1="470" x2="270" y2="690" class="arrow"/>
+  <line x1="750" y1="470" x2="270" y2="690" class="arrow"/>
+  
+  <!-- Services to External -->
+  <line x1="630" y1="470" x2="210" y2="820" class="arrow"/>
+  <line x1="510" y1="470" x2="360" y2="820" class="arrow"/>
+  <line x1="390" y1="470" x2="510" y2="820" class="arrow"/>
+  <line x1="390" y1="470" x2="660" y2="820" class="arrow"/>
+  
+</svg>

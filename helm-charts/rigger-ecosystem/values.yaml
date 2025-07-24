@@ -1,0 +1,120 @@
+# ==========================================================================
+# Rigger Ecosystem Helm Chart Values
+# ChaseWhiteRabbit NGO Initiative
+# ==========================================================================
+
+# ===========================================================================
+# Global configuration
+# ==========================================================================
+
+global:
+  imageRegistry: "docker.sxc.codes"
+  ingressClassName: nginx
+  certIssuerName: letsencrypt-cluster-issuer
+
+# ==========================================================================
+# Core Services
+# ==========================================================================
+
+riggerBackend:
+  enabled: true
+  replicaCount: 3
+  
+riggerHubWeb:
+  enabled: true
+  replicaCount: 2
+  
+riggerConnectWeb:
+  enabled: true
+  replicaCount: 2
+
+# ==========================================================================
+# Infrastructure Services
+# ==========================================================================
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: rigger-postgres-password
+    username: rigger
+    password: rigger-password
+    database: rigger
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: rigger-redis-password
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+nginx-ingress:
+  enabled: true
+  controller:
+    replicaCount: 2
+    service:
+      externalTrafficPolicy: Local
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+certManager:
+  enabled: true
+  installCRDs: true
+  extraArgs: ["--enable-certificate-owner-ref=true", "--v=2"]
+
+# ==========================================================================
+# Monitoring Configuration
+# ==========================================================================
+
+monitoring:
+  prometheus:
+    enabled: true
+    alertmanager:
+      enabled: false
+    pushgateway:
+      enabled: false
+    server:
+      replicaCount: 1
+      persistentVolume:
+        enabled: true
+        size: 8Gi
+  grafana:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 8Gi
+    adminPassword: "rigger_grafana_2025"
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+# ==========================================================================

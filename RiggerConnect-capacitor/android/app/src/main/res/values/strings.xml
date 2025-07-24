@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">RiggerConnect</string>
+    <string name="title_activity_main">RiggerConnect</string>
+    <string name="package_name">net.tiation.riggerconnect</string>
+    <string name="custom_url_scheme">net.tiation.riggerconnect</string>
+</resources>

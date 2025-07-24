@@ -1,0 +1,231 @@
+/* Enhanced Contact Sales Button - Enterprise Grade Styling */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff006e 100%);
+  --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --accent-color: #ff006e;
+  --accent-hover: #e6006a;
+  --text-light: #ffffff;
+  --shadow-color: rgba(255, 107, 53, 0.4);
+  --glow-color: rgba(255, 107, 53, 0.6);
+  --animation-speed: 0.3s;
+  --pulse-duration: 2s;
+}
+
+/* Main Contact Sales Button */
+.contact-sales-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-light);
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--animation-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 25px var(--shadow-color),
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+}
+
+/* Glowing border effect */
+.contact-sales-btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--primary-gradient);
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity var(--animation-speed) ease;
+}
+
+/* Hover effects */
+.contact-sales-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 15px 35px var(--shadow-color),
+    0 8px 20px rgba(0, 0, 0, 0.15),
+    0 0 30px var(--glow-color);
+}
+
+.contact-sales-btn:hover::before {
+  opacity: 1;
+}
+
+/* Active state */
+.contact-sales-btn:active {
+  transform: translateY(-1px) scale(1.02);
+  transition-duration: 0.1s;
+}
+
+/* Pulsing animation */
+.contact-sales-btn--pulse {
+  animation: contactSalesPulse var(--pulse-duration) infinite;
+}
+
+@keyframes contactSalesPulse {
+  0%, 100% {
+    box-shadow: 
+      0 8px 25px var(--shadow-color),
+      0 4px 10px rgba(0, 0, 0, 0.1),
+      0 0 0 0 var(--glow-color);
+  }
+  50% {
+    box-shadow: 
+      0 8px 25px var(--shadow-color),
+      0 4px 10px rgba(0, 0, 0, 0.1),
+      0 0 20px 10px transparent;
+  }
+}
+
+/* Floating/Sticky Contact Sales Button */
+.contact-sales-floating {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 18px 28px;
+  font-size: 16px;
+  border-radius: 50px;
+  box-shadow: 
+    0 12px 30px var(--shadow-color),
+    0 6px 15px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Header Contact Sales Button */
+.contact-sales-header {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 20px;
+}
+
+/* Large CTA Contact Sales Button */
+.contact-sales-cta {
+  padding: 24px 48px;
+  font-size: 22px;
+  font-weight: 800;
+  border-radius: 16px;
+  min-width: 280px;
+  text-align: center;
+}
+
+/* Contact Sales Button with Icon */
+.contact-sales-btn--with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contact-sales-btn--with-icon::after {
+  content: '→';
+  font-size: 20px;
+  font-weight: bold;
+  transition: transform var(--animation-speed) ease;
+}
+
+.contact-sales-btn--with-icon:hover::after {
+  transform: translateX(4px);
+}
+
+/* Alternative Gradient Styles */
+.contact-sales-btn--secondary {
+  background: var(--secondary-gradient);
+  --shadow-color: rgba(102, 126, 234, 0.4);
+  --glow-color: rgba(102, 126, 234, 0.6);
+}
+
+.contact-sales-btn--dark {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  --shadow-color: rgba(45, 55, 72, 0.4);
+  --glow-color: rgba(45, 55, 72, 0.6);
+  border: 2px solid var(--accent-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contact-sales-floating {
+    bottom: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    font-size: 14px;
+  }
+  
+  .contact-sales-cta {
+    padding: 20px 36px;
+    font-size: 18px;
+    min-width: 240px;
+  }
+  
+  .contact-sales-header {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-sales-floating {
+    bottom: 15px;
+    right: 15px;
+    padding: 14px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Accessibility improvements */
+.contact-sales-btn:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.contact-sales-btn:focus-visible {
+  box-shadow: 
+    0 8px 25px var(--shadow-color),
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    0 0 0 3px var(--accent-color);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .contact-sales-btn {
+    border: 2px solid currentColor;
+    background: var(--accent-color);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .contact-sales-btn,
+  .contact-sales-btn::before {
+    transition: none;
+  }
+  
+  .contact-sales-btn--pulse {
+    animation: none;
+  }
+  
+  .contact-sales-floating {
+    animation: none;
+  }
+}

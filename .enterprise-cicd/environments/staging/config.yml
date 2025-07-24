@@ -1,0 +1,47 @@
+# Staging Environment Configuration
+# ChaseWhiteRabbit NGO - Enterprise Grade Configuration
+
+environment: staging
+domain: staging.sxc.codes
+database:
+  host: supabase.sxc.codes
+  ssl: true
+  connection_pool: 10
+
+docker:
+  registry: docker.sxc.codes
+  build_host: docker.tiation.net
+  tag_prefix: staging
+
+kubernetes:
+  cluster: helm.sxc.codes
+  namespace: rigger-staging
+  resource_limits:
+    cpu: 1000m
+    memory: 1Gi
+
+monitoring:
+  grafana_host: grafana.sxc.codes
+  elasticsearch_host: elastic.sxc.codes
+  log_level: debug
+
+security:
+  owasp_scanning: true
+  security_headers: true
+  ssl_required: true
+
+deployment:
+  auto_deploy: true
+  rollback_enabled: true
+  health_check_timeout: 300
+
+notifications:
+  email: 
+    - tiatheone@protonmail.com
+    - garrett@sxc.codes
+  slack_webhook: ""
+
+backup:
+  enabled: true
+  retention_days: 30
+  schedule: "0 2 * * *"

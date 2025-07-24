@@ -1,0 +1,203 @@
+# Security Scanning Template
+# ChaseWhiteRabbit NGO - Enterprise Security Standards
+
+.security_base: &security_base
+  stage: security
+  allow_failure: false
+  artifacts:
+    expire_in: 7 days
+    reports:
+      junit: security-reports/junit.xml
+    paths:
+      - security-reports/
+    when: always
+
+# Container Security Scanning
+security:trivy:
+  <<: *security_base
+  image: aquasec/trivy:latest
+  variables:
+    TRIVY_NO_PROGRESS: "true"
+    TRIVY_CACHE_DIR: ".trivy-cache"
+  cache:
+    key: trivy-cache
+    paths:
+      - .trivy-cache/
+  script:
+    - mkdir -p security-reports
+    - echo "🔒 Running Trivy security scans..."
+    
+    # Filesystem scan
+    - trivy fs --exit-code 0 --format table . | tee security-reports/trivy-fs.txt
+    - trivy fs --exit-code 0 --format json --output security-reports/trivy-fs.json .
+    
+    # Configuration scan
+    - trivy config --exit-code 0 --format table . | tee security-reports/trivy-config.txt
+    - trivy config --exit-code 0 --format json --output security-reports/trivy-config.json .
+    
+    # Docker image scan (if Dockerfile exists)
+    - |
+      if [ -f "Dockerfile" ]; then
+        docker build -t temp-image:${CI_COMMIT_SHORT_SHA} .
+        trivy image --exit-code 0 --format table temp-image:${CI_COMMIT_SHORT_SHA} | tee security-reports/trivy-image.txt
+        trivy image --exit-code 0 --format json --output security-reports/trivy-image.json temp-image:${CI_COMMIT_SHORT_SHA}
+        
+        # Fail on critical vulnerabilities
+        trivy image --exit-code 1 --severity CRITICAL temp-image:${CI_COMMIT_SHORT_SHA}
+      fi
+    
+    # Generate summary report
+    - echo "📊 Generating security summary..."
+    - .enterprise-cicd/scripts/generate-security-summary.sh
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# Secret Detection
+security:gitleaks:
+  <<: *security_base
+  image: zricethezav/gitleaks:latest
+  script:
+    - mkdir -p security-reports
+    - echo "🔍 Scanning for secrets with GitLeaks..."
+    - gitleaks detect --source . --report-format json --report-path security-reports/gitleaks.json --verbose || true
+    - gitleaks detect --source . --report-format sarif --report-path security-reports/gitleaks.sarif --verbose
+    - echo "📊 Secret scan completed"
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# SAST (Static Application Security Testing)
+security:semgrep:
+  <<: *security_base
+  image: returntocorp/semgrep:latest
+  script:
+    - mkdir -p security-reports
+    - echo "🔒 Running SAST with Semgrep..."
+    - semgrep --config=auto --json --output=security-reports/semgrep.json . || true
+    - semgrep --config=auto --sarif --output=security-reports/semgrep.sarif . || true
+    - semgrep --config=auto --text . | tee security-reports/semgrep.txt || true
+    - echo "📊 SAST scan completed"
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# License Compliance
+security:license:
+  <<: *security_base
+  image: node:20-alpine
+  before_script:
+    - npm install -g license-checker
+  script:
+    - mkdir -p security-reports
+    - echo "📋 Checking license compliance..."
+    - |
+      if [ -f "package.json" ]; then
+        license-checker --json --out security-reports/licenses.json || true
+        license-checker --csv --out security-reports/licenses.csv || true
+        license-checker --summary | tee security-reports/license-summary.txt || true
+      fi
+    
+    # Check for problematic licenses
+    - .enterprise-cicd/scripts/check-license-compliance.sh
+  rules:
+    - exists:
+        - package.json
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# OWASP Dependency Check
+security:owasp:
+  <<: *security_base
+  image: owasp/dependency-check:latest
+  script:
+    - mkdir -p security-reports
+    - echo "🛡️ Running OWASP Dependency Check..."
+    - |
+      /usr/share/dependency-check/bin/dependency-check.sh \
+        --project "$CI_PROJECT_NAME" \
+        --scan . \
+        --format JSON \
+        --format HTML \
+        --format XML \
+        --out security-reports/ \
+        --suppression .enterprise-cicd/configs/owasp-suppressions.xml || true
+    - echo "📊 OWASP scan completed"
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# SonarQube Security Analysis
+security:sonarqube:
+  <<: *security_base
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - mkdir -p security-reports
+    - echo "🔍 Running SonarQube security analysis..."
+    - |
+      sonar-scanner \
+        -Dsonar.projectKey=$CI_PROJECT_NAME \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=$SONAR_HOST_URL \
+        -Dsonar.login=$SONAR_TOKEN \
+        -Dsonar.qualitygate.wait=true \
+        -Dsonar.security.hotspots.inheritFromParent=true || true
+    - echo "📊 SonarQube analysis completed"
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true" && $SONAR_TOKEN'
+
+# Docker Security Best Practices
+security:dockerfile:
+  <<: *security_base
+  image: hadolint/hadolint:latest-alpine
+  script:
+    - mkdir -p security-reports
+    - echo "🐳 Checking Dockerfile security practices..."
+    - |
+      if [ -f "Dockerfile" ]; then
+        hadolint Dockerfile --format json > security-reports/hadolint.json || true
+        hadolint Dockerfile --format tty | tee security-reports/hadolint.txt || true
+      fi
+    - echo "📊 Dockerfile security check completed"
+  rules:
+    - exists:
+        - Dockerfile
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# Security Report Aggregation
+security:report:
+  <<: *security_base
+  image: alpine:latest
+  dependencies:
+    - security:trivy
+    - security:gitleaks
+    - security:semgrep
+    - security:license
+    - security:owasp
+  before_script:
+    - apk add --no-cache jq curl python3 py3-pip
+    - pip3 install defectdojo-cli
+  script:
+    - echo "📊 Aggregating security reports..."
+    - .enterprise-cicd/scripts/aggregate-security-reports.sh
+    - .enterprise-cicd/scripts/upload-to-defectdojo.sh || echo "DefectDojo upload failed"
+    - .enterprise-cicd/scripts/send-security-notifications.sh
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'
+
+# Security Gates
+security:gate:
+  stage: security
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache jq
+  script:
+    - echo "🚦 Evaluating security gates..."
+    - .enterprise-cicd/scripts/evaluate-security-gates.sh
+    - echo "✅ Security gates passed"
+  dependencies:
+    - security:report
+  rules:
+    - if: '$ENABLE_SECURITY_SCANS == "true"'

@@ -1,18 +1,59 @@
-# GitLab CI/CD Pipeline for RiggerConnect Capacitor App
-# Integrates with ChaseWhiteRabbit NGO infrastructure
+# ==========================================================================
+# GitLab CI/CD Pipeline for RiggerConnect Capacitor Cross-Platform App
+# ChaseWhiteRabbit NGO - Enterprise DevOps Standards
+# ==========================================================================
+
+include:
+  - local: '../.enterprise-cicd/templates/gitlab-ci-master.yml'
 
 stages:
+  - validate
+  - security
   - test
-  - build
-  - deploy-staging
-  - deploy-production
-  - mobile-build
+  - build-web
+  - build-native
+  - package
+  - deploy
+  - notify
 
 variables:
-  DOCKER_REGISTRY: "docker.sxc.codes"
-  HELM_REGISTRY: "helm.sxc.codes"
+  # Project Configuration
+  PROJECT_TYPE: "capacitor-hybrid"
+  PROJECT_NAME: "riggerconnect-capacitor"
+  NODE_VERSION: "20"
+  DOCKER_IMAGE_NAME: "riggerconnect-capacitor"
+  
+  # Infrastructure
+  DOCKER_REGISTRY: "docker.sxc.codes:5000"
+  GITLAB_RUNNER_HOST: "gitlab.sxc.codes"
+  GRAFANA_HOST: "grafana.sxc.codes"
   SUPABASE_URL: "https://supabase.sxc.codes"
-  NODE_VERSION: "18"
+  
+  # Mobile Build Configuration
+  ANDROID_COMPILE_SDK: "34"
+  ANDROID_BUILD_TOOLS: "34.0.0"
+  ANDROID_SDK_TOOLS: "11076708"
+  XCODE_VERSION: "15.2"
+  IOS_DEPLOYMENT_TARGET: "15.0"
+  
+  # Environment URLs
+  STAGING_URL: "https://riggerconnect-app-staging.sxc.codes"
+  PRODUCTION_URL: "https://riggerconnect-app.sxc.codes"
+  
+  # Feature Flags
+  ENABLE_SECURITY_SCANS: "true"
+  ENABLE_PERFORMANCE_TESTS: "true"
+  ENABLE_E2E_TESTS: "true"
+  ENABLE_MONITORING: "true"
+  ENABLE_NATIVE_BUILDS: "true"
+  
+  # Alert Configuration
+  ALERT_EMAIL_LIST: "tiatheone@protonmail.com,garrett@sxc.codes,garrett.dillman@gmail.com"
+  SLACK_WEBHOOK_URL: "$SLACK_WEBHOOK_URL"
+  
+  # Docker
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
   
 # Test stage
 test:

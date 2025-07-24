@@ -1,0 +1,90 @@
+apiVersion: v2
+name: rigger-ecosystem
+description: Complete Rigger Ecosystem - Enterprise-grade platform for construction and mining industry
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - rigger
+  - ecosystem
+  - construction
+  - mining
+  - enterprise
+  - platform
+  - chasewhiterabbit
+
+home: https://github.com/tiation/rigger-ecosystem
+sources:
+  - https://github.com/tiation/RiggerBackend
+  - https://github.com/tiation/RiggerHub-web
+  - https://github.com/tiation/RiggerConnect-web
+  - https://github.com/tiation/RiggerShared
+
+maintainers:
+  - name: ChaseWhiteRabbit NGO
+    email: tech@chasewhiterabbit.org
+    url: https://chasewhiterabbit.org
+  - name: Tiation Technologies
+    email: tiatheone@protonmail.com
+
+annotations:
+  category: Complete Platform
+  licenses: MIT
+  images: |
+    - name: rigger-backend
+      image: docker.sxc.codes/rigger-backend:1.0.0
+    - name: rigger-hub-web
+      image: docker.sxc.codes/rigger-hub-web:1.0.0
+    - name: rigger-connect-web
+      image: docker.sxc.codes/rigger-connect-web:1.0.0
+
+dependencies:
+  # Core Backend Services
+  - name: rigger-backend
+    version: 1.0.0
+    repository: "file://../rigger-backend"
+    condition: riggerBackend.enabled
+    
+  # Frontend Applications
+  - name: rigger-hub-web
+    version: 1.0.0
+    repository: "file://../rigger-hub-web"
+    condition: riggerHubWeb.enabled
+    
+  - name: rigger-connect-web
+    version: 1.0.0
+    repository: "file://../rigger-connect-web" 
+    condition: riggerConnectWeb.enabled
+    
+  # Infrastructure Dependencies
+  - name: postgresql
+    version: 12.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    
+  - name: redis
+    version: 18.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+    
+  - name: nginx-ingress
+    version: 4.x.x
+    repository: https://kubernetes.github.io/ingress-nginx
+    condition: ingress.enabled
+    
+  - name: cert-manager
+    version: 1.x.x
+    repository: https://charts.jetstack.io
+    condition: certManager.enabled
+    
+  # Monitoring Stack
+  - name: prometheus
+    version: 25.x.x
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: monitoring.prometheus.enabled
+    
+  - name: grafana
+    version: 7.x.x
+    repository: https://grafana.github.io/helm-charts
+    condition: monitoring.grafana.enabled

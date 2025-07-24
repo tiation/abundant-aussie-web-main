@@ -1,0 +1,63 @@
+{
+  "name": "poscalls4u",
+  "version": "1.0.0",
+  "description": "Enterprise-grade call center platform with PBX integration",
+  "main": "server/src/index.js",
+  "scripts": {
+    "test": "npm run test:client && npm run test:server",
+    "test:client": "cd client && npm test",
+    "test:server": "cd server && npm test",
+    "test:watch": "concurrently \"npm run test:client:watch\" \"npm run test:server:watch\"",
+    "test:client:watch": "cd client && npm run test:watch",
+    "test:server:watch": "cd server && npm run test:watch",
+    "test:coverage": "npm run test:client:coverage && npm run test:server:coverage",
+    "test:client:coverage": "cd client && npm run test:coverage",
+    "test:server:coverage": "cd server && npm run test:coverage",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:integration": "npm run test:server:integration",
+    "test:server:integration": "cd server && npm run test:integration",
+    "coverage:merge": "nyc merge coverage coverage/merged-coverage.json",
+    "coverage:report": "nyc report --reporter=html --reporter=text --temp-dir=coverage",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "concurrently": "^8.2.2",
+    "cypress": "^13.6.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "keywords": ["call-center", "pbx", "voip", "enterprise", "telecommunications"],
+  "author": "ChaseWhiteRabbit NGO",
+  "license": "MIT"
+}

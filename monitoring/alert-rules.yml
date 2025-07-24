@@ -1,0 +1,302 @@
+# Alert rules for RiggerHub ecosystem monitoring
+groups:
+  - name: rigger.security.alerts
+    rules:
+      # High security vulnerability count
+      - alert: HighSecurityVulnerabilities
+        expr: security_vulnerabilities_high > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "High number of security vulnerabilities detected"
+          description: "{{ $labels.instance }} has {{ $value }} high-severity vulnerabilities"
+          runbook_url: "https://runbooks.rigger.sxc.codes/security/vulnerabilities"
+
+      # Failed authentication attempts
+      - alert: HighFailedAuthAttempts
+        expr: rate(auth_failed_attempts_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "High number of failed authentication attempts"
+          description: "{{ $labels.instance }} has {{ $value }} failed auth attempts per second"
+
+      # Suspicious API usage patterns
+      - alert: SuspiciousAPIUsage
+        expr: rate(http_requests_total{status=~"4.."}[5m]) > 50
+        for: 3m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "Suspicious API usage pattern detected"
+          description: "{{ $labels.instance }} showing unusual 4xx error rate: {{ $value }}/sec"
+
+  - name: rigger.performance.alerts
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "High CPU usage detected"
+          description: "{{ $labels.instance }} CPU usage is above 85%: {{ $value }}%"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "High memory usage detected"
+          description: "{{ $labels.instance }} memory usage is above 90%: {{ $value }}%"
+
+      # High disk usage
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "High disk usage detected"
+          description: "{{ $labels.instance }} disk usage is above 85%: {{ $value }}%"
+
+      # High response time
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 3m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High response time detected"
+          description: "{{ $labels.instance }} 95th percentile response time is {{ $value }}s"
+
+      # Database connection pool exhaustion
+      - alert: DatabaseConnectionPoolExhaustion
+        expr: db_connection_pool_used / db_connection_pool_max > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          team: database
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "{{ $labels.instance }} using {{ $value | humanizePercentage }} of connection pool"
+
+  - name: rigger.availability.alerts
+    rules:
+      # Service down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Service is down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute"
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 5
+        for: 3m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "{{ $labels.instance }} error rate is {{ $value }} errors/sec"
+
+      # SSL certificate expiring
+      - alert: SSLCertificateExpiry
+        expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 7
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "{{ $labels.instance }} SSL certificate expires in {{ $value | humanizeDuration }}"
+
+      # Kubernetes pod not ready
+      - alert: KubernetesPodNotReady
+        expr: kube_pod_status_ready{condition="false"} == 1
+        for: 5m
+        labels:
+          severity: warning
+          team: kubernetes
+        annotations:
+          summary: "Kubernetes pod not ready"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is not ready"
+
+      # Kubernetes node not ready
+      - alert: KubernetesNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          team: kubernetes
+        annotations:
+          summary: "Kubernetes node not ready"
+          description: "Node {{ $labels.node }} is not ready"
+
+  - name: rigger.database.alerts
+    rules:
+      # Database slow queries
+      - alert: DatabaseSlowQueries
+        expr: rate(postgres_slow_queries_total[5m]) > 5
+        for: 3m
+        labels:
+          severity: warning
+          team: database
+        annotations:
+          summary: "Database slow queries detected"
+          description: "{{ $labels.instance }} has {{ $value }} slow queries/sec"
+
+      # Database connection failures
+      - alert: DatabaseConnectionFailures
+        expr: rate(postgres_connection_failures_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: critical
+          team: database
+        annotations:
+          summary: "Database connection failures"
+          description: "{{ $labels.instance }} has {{ $value }} connection failures/sec"
+
+      # Redis memory usage high
+      - alert: RedisMemoryUsageHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: cache
+        annotations:
+          summary: "Redis memory usage high"
+          description: "{{ $labels.instance }} Redis memory usage is {{ $value | humanizePercentage }}"
+
+      # Redis down
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: cache
+        annotations:
+          summary: "Redis is down"
+          description: "{{ $labels.instance }} Redis server is down"
+
+  - name: rigger.business.alerts
+    rules:
+      # Low user registration rate
+      - alert: LowUserRegistrationRate
+        expr: rate(user_registrations_total[1h]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          team: product
+        annotations:
+          summary: "Low user registration rate"
+          description: "User registration rate is {{ $value }}/hour, below expected threshold"
+
+      # Payment processing failures
+      - alert: PaymentProcessingFailures
+        expr: rate(payment_failures_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          team: payments
+        annotations:
+          summary: "Payment processing failures detected"
+          description: "Payment failure rate is {{ $value }}/sec"
+
+      # Job application failures
+      - alert: JobApplicationFailures
+        expr: rate(job_application_failures_total[5m]) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+          team: product
+        annotations:
+          summary: "Job application failures detected"
+          description: "Job application failure rate is {{ $value }}/sec"
+
+  - name: rigger.docker.alerts
+    rules:
+      # Container restart loop
+      - alert: ContainerRestartLoop
+        expr: rate(container_start_time_seconds[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Container restart loop detected"
+          description: "Container {{ $labels.name }} is restarting frequently"
+
+      # Container OOM killed
+      - alert: ContainerOOMKilled
+        expr: increase(container_oom_kills_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Container OOM killed"
+          description: "Container {{ $labels.name }} was killed due to OOM"
+
+      # High container CPU throttling
+      - alert: HighContainerCPUThrottling
+        expr: rate(container_cpu_cfs_throttled_seconds_total[5m]) / rate(container_cpu_cfs_periods_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "High container CPU throttling"
+          description: "Container {{ $labels.name }} CPU throttling is {{ $value | humanizePercentage }}"
+
+  - name: rigger.network.alerts
+    rules:
+      # High network error rate
+      - alert: HighNetworkErrorRate
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: network
+        annotations:
+          summary: "High network error rate"
+          description: "{{ $labels.instance }} network error rate is {{ $value }}/sec"
+
+      # Network interface down
+      - alert: NetworkInterfaceDown
+        expr: node_network_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: network
+        annotations:
+          summary: "Network interface down"
+          description: "{{ $labels.device }} on {{ $labels.instance }} is down"
+
+      # High network latency
+      - alert: HighNetworkLatency
+        expr: probe_http_duration_seconds > 5
+        for: 3m
+        labels:
+          severity: warning
+          team: network
+        annotations:
+          summary: "High network latency detected"
+          description: "{{ $labels.instance }} network latency is {{ $value }}s"

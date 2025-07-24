@@ -1,0 +1,189 @@
+# Enterprise GitLab CI/CD Master Template
+# ChaseWhiteRabbit NGO - Ethical Technology Standards
+# Version: 2.0.0
+
+include:
+  - local: '.enterprise-cicd/templates/security-template.yml'
+  - local: '.enterprise-cicd/templates/quality-template.yml'
+  - local: '.enterprise-cicd/templates/testing-template.yml'
+  - local: '.enterprise-cicd/templates/deployment-template.yml'
+  - local: '.enterprise-cicd/templates/monitoring-template.yml'
+
+stages:
+  - validate
+  - security
+  - quality
+  - test
+  - build
+  - staging-deploy
+  - staging-test
+  - production-deploy
+  - monitoring
+  - cleanup
+
+variables:
+  # Version Management
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.11"
+  GO_VERSION: "1.21"
+  JAVA_VERSION: "17"
+  
+  # Infrastructure
+  DOCKER_REGISTRY: "docker.sxc.codes"
+  HELM_REGISTRY: "helm.sxc.codes"
+  K8S_NAMESPACE_STAGING: "rigger-staging"
+  K8S_NAMESPACE_PRODUCTION: "rigger-production"
+  
+  # Monitoring & Observability
+  GRAFANA_URL: "https://grafana.sxc.codes"
+  ELASTIC_URL: "https://elastic.sxc.codes"
+  
+  # Security & Compliance
+  SONAR_HOST_URL: "https://sonar.sxc.codes"
+  TRIVY_CACHE_DIR: ".trivy-cache"
+  
+  # Build Optimization
+  DOCKER_BUILDKIT: "1"
+  BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+  
+  # Feature Flags
+  ENABLE_SECURITY_SCANS: "true"
+  ENABLE_PERFORMANCE_TESTS: "true"
+  ENABLE_BLUE_GREEN_DEPLOYMENT: "true"
+  ENABLE_CANARY_DEPLOYMENT: "false"
+
+# Base Templates
+.base_template: &base_template
+  before_script:
+    - echo "🚀 Starting CI/CD Pipeline for $CI_PROJECT_NAME"
+    - echo "📦 Branch: $CI_COMMIT_REF_NAME"
+    - echo "🔄 Commit: $CI_COMMIT_SHORT_SHA"
+    - apk add --no-cache curl jq git || yum install -y curl jq git || apt-get update && apt-get install -y curl jq git || echo "Package manager not found"
+  after_script:
+    - echo "✅ Pipeline step completed"
+  tags:
+    - docker
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+.node_template: &node_template
+  <<: *base_template
+  image: node:${NODE_VERSION}-alpine
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-node
+    paths:
+      - node_modules/
+      - .npm/
+    policy: pull-push
+  before_script:
+    - !reference [.base_template, before_script]
+    - npm config set cache .npm
+    - npm ci --prefer-offline --no-audit
+
+.python_template: &python_template
+  <<: *base_template
+  image: python:${PYTHON_VERSION}-slim
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-python
+    paths:
+      - .pip-cache/
+      - venv/
+    policy: pull-push
+  before_script:
+    - !reference [.base_template, before_script]
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install --cache-dir .pip-cache --upgrade pip
+    - pip install --cache-dir .pip-cache -r requirements.txt || echo "No requirements.txt found"
+
+.go_template: &go_template
+  <<: *base_template
+  image: golang:${GO_VERSION}-alpine
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-go
+    paths:
+      - .go-cache/
+    policy: pull-push
+  before_script:
+    - !reference [.base_template, before_script]
+    - export GOCACHE=.go-cache
+    - go mod download
+
+.docker_template: &docker_template
+  <<: *base_template
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - !reference [.base_template, before_script]
+    - docker info
+    - echo $DOCKER_REGISTRY_PASSWORD | docker login $DOCKER_REGISTRY -u $DOCKER_REGISTRY_USER --password-stdin
+
+# Environment Validation
+validate:environment:
+  stage: validate
+  <<: *base_template
+  script:
+    - echo "🔍 Validating environment configuration..."
+    - .enterprise-cicd/scripts/validate-environment.sh
+    - echo "✅ Environment validation completed"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+validate:dependencies:
+  stage: validate
+  <<: *node_template
+  script:
+    - echo "🔍 Validating dependencies..."
+    - npm audit --audit-level moderate
+    - npx license-checker --summary || echo "License check completed"
+  rules:
+    - exists:
+        - package.json
+  allow_failure: true
+
+# Artifact Management
+.artifacts_template: &artifacts_template
+  artifacts:
+    expire_in: 30 days
+    reports:
+      junit: reports/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - reports/
+      - coverage/
+      - dist/
+      - build/
+    when: always
+
+# Notification Templates
+.notify_success: &notify_success
+  after_script:
+    - !reference [.base_template, after_script]
+    - .enterprise-cicd/scripts/notify-success.sh
+
+.notify_failure: &notify_failure
+  after_script:
+    - echo "❌ Pipeline step failed"
+    - .enterprise-cicd/scripts/notify-failure.sh
+
+# Cleanup
+cleanup:artifacts:
+  stage: cleanup
+  <<: *base_template
+  script:
+    - echo "🧹 Cleaning up old artifacts..."
+    - .enterprise-cicd/scripts/cleanup-artifacts.sh
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  when: always

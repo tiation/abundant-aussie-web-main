@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Sales Button Demo - Spring Up Markers</title>
+    <link href="../src/styles/contact-sales-button.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ff006e;
+        }
+        
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 80px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            margin-bottom: 80px;
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .demo-section p {
+            font-size: 16px;
+            margin-bottom: 40px;
+            color: #4a5568;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .button-showcase {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .button-showcase h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .spacer {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(45deg, #ff9a56, #ff6b35);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .contact-form-section {
+            background: white;
+            padding: 80px 60px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+            margin-bottom: 80px;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-section {
+                padding: 40px 20px;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Contact Sales Button -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Spring Up Markers</div>
+                <a href="#contact-sales" class="contact-sales-btn contact-sales-header" data-action="header-demo">
+                    Contact Sales
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Enhanced Contact Sales Buttons</h1>
+            <p>Experience our striking, enterprise-grade Contact Sales button designs</p>
+            <a href="#contact-sales" class="contact-sales-btn contact-sales-cta contact-sales-btn--with-icon" data-action="hero-demo">
+                Contact Sales
+            </a>
+        </div>
+    </section>
+
+    <!-- Main Demo Content -->
+    <div class="container">
+        <!-- Standard Buttons Section -->
+        <section class="demo-section">
+            <h2>Standard Button Variations</h2>
+            <p>Different sizes and styles for various use cases across your website.</p>
+            
+            <div class="button-grid">
+                <div class="button-showcase">
+                    <h3>Standard Button</h3>
+                    <a href="#contact-sales" class="contact-sales-btn" data-action="standard-demo">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <div class="button-showcase">
+                    <h3>With Icon</h3>
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-btn--with-icon" data-action="icon-demo">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <div class="button-showcase">
+                    <h3>Large CTA</h3>
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-cta" data-action="cta-demo">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <div class="button-showcase">
+                    <h3>Secondary Style</h3>
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-btn--secondary" data-action="secondary-demo">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <div class="button-showcase">
+                    <h3>Dark Style</h3>
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-btn--dark contact-sales-btn--with-icon" data-action="dark-demo">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <div class="button-showcase">
+                    <h3>Pulsing Animation</h3>
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-btn--pulse contact-sales-btn--with-icon" data-action="pulse-demo">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Options Section -->
+        <section class="demo-section">
+            <h2>Multiple Contact Options</h2>
+            <p>Provide various ways for customers to reach your sales team.</p>
+            
+            <div class="contact-sales-options">
+                <h3>Get in Touch</h3>
+                <div class="contact-buttons-row">
+                    <a href="#contact-sales" class="contact-sales-btn contact-sales-btn--with-icon" data-action="form-demo">
+                        Contact Form
+                    </a>
+                    <a href="tel:+1-555-SPRING" class="contact-sales-btn contact-sales-btn--secondary" data-action="call-demo">
+                        📞 Call Now
+                    </a>
+                    <a href="mailto:sales@springupmarkers.com" class="contact-sales-btn contact-sales-btn--dark" data-action="email-demo">
+                        ✉️ Email Us
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Widget Section -->
+        <section class="demo-section">
+            <h2>Contact Sales Widget</h2>
+            <p>Perfect for sidebars, content areas, or promotional sections.</p>
+            
+            <div class="contact-sales-widget">
+                <h3>Ready to Get Started?</h3>
+                <p>Contact our sales team for a personalized demo and pricing information.</p>
+                <a href="#contact-sales" class="contact-sales-btn contact-sales-cta contact-sales-btn--with-icon" data-action="widget-demo">
+                    Contact Sales
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Spacer to test floating button -->
+    <div class="spacer">
+        Scroll down to see the floating Contact Sales button appear!
+    </div>
+
+    <!-- Contact Form Section -->
+    <section id="contact-sales" class="contact-form-section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px;">Contact Our Sales Team</h2>
+            <p style="text-align: center; margin-bottom: 40px; font-size: 18px;">
+                Thank you for your interest! Our sales team will get back to you within 24 hours.
+            </p>
+            
+            <!-- Contact Sales Banner -->
+            <div class="contact-sales-banner">
+                <div class="banner-content">
+                    <div class="banner-text">
+                        <h2>Ready to Transform Your Business?</h2>
+                        <p>Join thousands of satisfied customers who trust Spring Up Markers.</p>
+                    </div>
+                    <a href="mailto:sales@springupmarkers.com" class="contact-sales-btn contact-sales-cta contact-sales-btn--with-icon" data-action="banner-demo">
+                        Start Your Journey
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Spring Up Markers. All rights reserved.</p>
+            <p>Enhanced Contact Sales Button Demo</p>
+        </div>
+    </footer>
+
+    <!-- Load JavaScript -->
+    <script src="../src/scripts/contact-sales-button.js"></script>
+    
+    <!-- Demo-specific JavaScript -->
+    <script>
+        // Demo functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Contact Sales Button Demo Loaded');
+            
+            // Add click tracking for demo
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('contact-sales-btn')) {
+                    const action = e.target.getAttribute('data-action');
+                    console.log(`Demo: Contact Sales button clicked - ${action}`);
+                    
+                    // Show visual feedback
+                    showClickFeedback(e.target);
+                }
+            });
+            
+            function showClickFeedback(button) {
+                const originalText = button.textContent;
+                button.textContent = 'Clicked! ✓';
+                button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 1500);
+            }
+            
+            // Smooth scroll enhancement
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

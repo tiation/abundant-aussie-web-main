@@ -1,27 +1,7 @@
 import './globals.css'
-import { Inter, Poppins, JetBrains_Mono } from 'next/font/google'
 import { Providers } from './providers'
 import { Analytics } from '@/components/analytics/Analytics'
 import { Toast } from '@/components/ui/Toast'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  variable: '--font-poppins',
-  weight: ['300', '400', '500', '600', '700', '800'],
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
 
 export const metadata = {
   title: 'BuildAI - Enterprise AI-Powered Website Builder',
@@ -75,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en">
       <head>
         {/* Security Headers */}
         <meta httpEquiv="Content-Security-Policy" 

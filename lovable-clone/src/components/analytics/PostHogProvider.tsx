@@ -1,8 +1,13 @@
 import { useEffect } from 'react'
 import posthog from 'posthog-js'
 
-export const PostHogProvider = ({ children }: { children: React.ReactNode }) => {
+export const PostHogProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   useEffect(() => {
+    // Only init PostHog if API key is provided
+    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      return
+    }
+    
     // Init PostHog
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
@@ -19,7 +24,12 @@ export const PostHogProvider = ({ children }: { children: React.ReactNode }) => 
       cross_subdomain_cookie: false,
     })
     // Cleanup on unmount
-    return () => posthog.shutdown()
+    return () => {
+      // PostHog doesn't have a shutdown method, but we can reset if needed
+      if (typeof window !== 'undefined') {
+        posthog.reset()
+      }
+    }
   }, [])
 
   return children

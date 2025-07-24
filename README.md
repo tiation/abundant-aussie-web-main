@@ -232,6 +232,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <p><strong>Built with ❤️ by <a href="https://github.com/tiation-repos">Tiation</a> in partnership with <a href="https://github.com/ChaseWhiteRabbit-repos">ChaseWhiteRabbit NGO</a></strong></p>
-  <p><em>Enterprise-grade • Ethical • Community-driven</em></p>
+
+**🏗️ Built with enterprise-grade excellence by [Tiation](https://tiation.github.io/) 🏗️**
+
+*In partnership with ChaseWhiteRabbit NGO - Empowering communities through ethical technology*
+
+[![Tiation Ecosystem](https://img.shields.io/badge/🔮_Ecosystem-Tiation-00FFFF?style=for-the-badge&labelColor=0A0A0A)](https://tiation.github.io/)
+[![Enterprise Grade](https://img.shields.io/badge/🏢_Enterprise-Grade-FF00FF?style=for-the-badge&labelColor=0A0A0A)](https://tiation.github.io/)
+[![NGO Mission](https://img.shields.io/badge/🌟_NGO-Mission_Driven-00FFFF?style=for-the-badge&labelColor=0A0A0A)](https://tiation.github.io/)
+
+**[Explore the Tiation Platform →](https://tiation.github.io/)**
+
 </div>
