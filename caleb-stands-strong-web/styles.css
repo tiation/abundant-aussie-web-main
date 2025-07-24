@@ -1,0 +1,333 @@
+/* Custom Styles for Caleb Stands Strong */
+
+/* Navigation Links */
+.nav-link {
+    @apply text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium;
+}
+
+/* Service Cards */
+.service-card {
+    @apply bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-gray-100;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Category Buttons */
+.category-btn {
+    @apply px-6 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200 font-medium;
+}
+
+.category-btn.active {
+    @apply bg-blue-600 text-white border-blue-600;
+}
+
+/* Blog Post Cards */
+.blog-post-card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100;
+    display: block;
+}
+
+.blog-post-card:hover {
+    transform: translateY(-3px);
+}
+
+.blog-post-image {
+    @apply w-full h-48 object-cover;
+}
+
+.blog-post-content {
+    @apply p-6;
+}
+
+.blog-post-title {
+    @apply text-xl font-bold mb-3 text-gray-900 hover:text-blue-600 transition-colors;
+}
+
+.blog-post-excerpt {
+    @apply text-gray-600 mb-4 leading-relaxed;
+}
+
+.blog-post-meta {
+    @apply flex justify-between items-center text-sm text-gray-500 mb-4;
+}
+
+.blog-post-tags {
+    @apply flex flex-wrap gap-2 mb-4;
+}
+
+.blog-post-tag {
+    @apply px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium;
+}
+
+.read-time {
+    @apply text-xs text-gray-500 flex items-center;
+}
+
+/* Mermaid Chart Container */
+.mermaid-chart {
+    @apply bg-gray-50 p-4 rounded-lg my-4 overflow-auto;
+}
+
+/* Emergency Banner Animation */
+#emergency-banner {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { background-color: #dc2626; }
+    50% { background-color: #ef4444; }
+    100% { background-color: #dc2626; }
+}
+
+/* Schedule Call Button - Always Visible */
+#schedule-call-btn, #schedule-call-main {
+    @apply shadow-lg;
+    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+}
+
+#schedule-call-btn:hover, #schedule-call-main:hover {
+    box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Contact Form Styling */
+#contact-form input:focus,
+#contact-form textarea:focus {
+    @apply outline-none ring-2 ring-blue-500 border-blue-500;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section Spacing */
+section {
+    scroll-margin-top: 8rem;
+}
+
+/* Loading State */
+.loading {
+    @apply animate-pulse;
+}
+
+.loading .loading-text {
+    @apply bg-gray-300 h-4 rounded;
+}
+
+.loading .loading-image {
+    @apply bg-gray-300 h-48 rounded;
+}
+
+/* Error State */
+.error-state {
+    @apply text-center py-12 text-gray-500;
+}
+
+/* Quick Points Styling */
+.quick-points {
+    @apply space-y-2 mb-6;
+}
+
+.quick-point {
+    @apply flex items-start space-x-2;
+}
+
+.quick-point-icon {
+    @apply text-blue-600 mt-1 flex-shrink-0;
+}
+
+/* Disclaimer Styling */
+.disclaimer {
+    @apply bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6 text-sm;
+}
+
+.disclaimer-title {
+    @apply font-bold text-yellow-800 mb-2;
+}
+
+.disclaimer-text {
+    @apply text-yellow-700;
+}
+
+/* Emergency Contacts Styling */
+.emergency-contacts {
+    @apply bg-red-50 border border-red-200 rounded-lg p-4 my-6;
+}
+
+.emergency-contacts h4 {
+    @apply font-bold text-red-800 mb-3;
+}
+
+.emergency-contact {
+    @apply flex items-center space-x-3 py-2;
+}
+
+.emergency-contact a {
+    @apply text-red-700 hover:text-red-800 font-medium;
+}
+
+/* Resource Directory Styling */
+.resource-directory {
+    @apply bg-blue-50 border border-blue-200 rounded-lg p-4 my-6;
+}
+
+.resource-directory h4 {
+    @apply font-bold text-blue-800 mb-3;
+}
+
+.resource-link {
+    @apply text-blue-700 hover:text-blue-800 underline;
+}
+
+/* Typography */
+.blog-content h2 {
+    @apply text-2xl font-bold mt-8 mb-4 text-gray-900;
+}
+
+.blog-content h3 {
+    @apply text-xl font-bold mt-6 mb-3 text-gray-900;
+}
+
+.blog-content h4 {
+    @apply text-lg font-bold mt-4 mb-2 text-gray-900;
+}
+
+.blog-content p {
+    @apply mb-4 leading-relaxed text-gray-700;
+}
+
+.blog-content ul, .blog-content ol {
+    @apply mb-4 pl-6 space-y-2;
+}
+
+.blog-content li {
+    @apply text-gray-700;
+}
+
+.blog-content blockquote {
+    @apply border-l-4 border-blue-500 bg-blue-50 p-4 my-4 italic text-gray-700;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .blog-posts-grid {
+        @apply grid-cols-1;
+    }
+    
+    .category-buttons {
+        @apply flex-col space-y-2;
+    }
+    
+    .category-btn {
+        @apply w-full text-center;
+    }
+}
+
+/* Accessibility Improvements */
+.sr-only {
+    @apply absolute w-1 h-1 p-0 -m-1 overflow-hidden whitespace-nowrap border-0;
+    clip: rect(0, 0, 0, 0);
+}
+
+/* Focus States */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .category-btn {
+        @apply border-2;
+    }
+    
+    .blog-post-card {
+        @apply border-2;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+    #emergency-banner,
+    nav,
+    #mobile-menu,
+    footer {
+        display: none !important;
+    }
+    
+    .blog-post-card {
+        @apply shadow-none border border-gray-400;
+        break-inside: avoid;
+    }
+}
+
+/* Mermaid Chart Responsive */
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Blog Post Filter Animation */
+.blog-post-card.fade-out {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease-out;
+}
+
+.blog-post-card.fade-in {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease-in;
+}
+
+/* Mobile Navigation */
+#mobile-menu.show {
+    @apply block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toast Notifications */
+.toast {
+    @apply fixed bottom-6 right-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.toast.error {
+    @apply bg-red-600;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caleb Stands Strong - Always Standing By You</title>
+    <meta name="description" content="Professional support coordination services with trauma-informed care. Whatever's happening, we need someone who can listen. To feel heard, to feel better.">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+    <!-- Emergency Banner - Always Visible -->
+    <div id="emergency-banner" class="bg-red-600 text-white p-3 text-center fixed top-0 left-0 right-0 z-50 shadow-lg">
+        <div class="container mx-auto flex flex-wrap justify-center items-center gap-4 text-sm sm:text-base">
+            <span class="font-semibold">🚨 Emergency Support Available 24/7</span>
+            <a href="tel:000" class="bg-white text-red-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors">000 Emergency</a>
+            <a href="tel:131114" class="bg-white text-red-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors">13 11 14 Lifeline</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed top-12 left-0 right-0 z-40">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-blue-600">Caleb Stands Strong</h1>
+                    <span class="ml-3 text-sm text-gray-600">Always Standing By You</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#blog" class="nav-link">Resources</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                    <button id="schedule-call-btn" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors shadow-md">
+                        Schedule Call
+                    </button>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg fixed top-24 left-0 right-0 z-30">
+        <div class="px-6 py-4 space-y-4">
+            <a href="#home" class="block nav-link">Home</a>
+            <a href="#services" class="block nav-link">Services</a>
+            <a href="#blog" class="block nav-link">Resources</a>
+            <a href="#contact" class="block nav-link">Contact</a>
+            <button class="w-full bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                Schedule Call
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32">
+        <!-- Hero Section -->
+        <section id="home" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl font-bold mb-6">Whatever's happening, we need someone who can listen</h2>
+                <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                    To feel heard, to feel better. Wherever you are standing is the right place. Whatever's going on around you is there.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#contact" class="bg-white text-blue-600 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">Get Support Now</a>
+                    <a href="#blog" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-blue-600 transition-colors">Browse Resources</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Professional Support Services</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="service-card">
+                        <i class="fas fa-heart text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4">Trauma-Informed Care</h3>
+                        <p class="text-gray-600">Understanding trauma and providing safe, supportive care that recognizes its impact on your life.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-users text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4">Support Coordination</h3>
+                        <p class="text-gray-600">Professional NDIS support coordination to help you navigate services and achieve your goals.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-handshake text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4">Connection & Advocacy</h3>
+                        <p class="text-gray-600">Building connections, advocating for your rights, and helping you access the support you need.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog/Resources Section -->
+        <section id="blog" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Trauma-Informed Resources</h2>
+                
+                <!-- Resource Categories -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <button class="category-btn active" data-category="all">All Resources</button>
+                    <button class="category-btn" data-category="cbt">CBT Tools</button>
+                    <button class="category-btn" data-category="boundaries">Boundaries</button>
+                    <button class="category-btn" data-category="trauma">Trauma Care</button>
+                    <button class="category-btn" data-category="connection">Connection</button>
+                    <button class="category-btn" data-category="basics">Basic Needs</button>
+                    <button class="category-btn" data-category="support">Support Networks</button>
+                    <button class="category-btn" data-category="navigation">System Navigation</button>
+                </div>
+
+                <!-- Blog Posts Grid -->
+                <div id="blog-posts" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Blog posts will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Get In Touch</h2>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6">Ready to Get Support?</h3>
+                        <p class="text-gray-600 mb-6">
+                            I'm here to listen and support you wherever you are in your journey. 
+                            Let's work together to create positive change in your life.
+                        </p>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-blue-600 mr-3"></i>
+                                <a href="tel:+61400000000" class="text-lg hover:text-blue-600 transition-colors">Call: 0400 000 000</a>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-blue-600 mr-3"></i>
+                                <a href="mailto:caleb@calebstandsstrong.com.au" class="text-lg hover:text-blue-600 transition-colors">caleb@calebstandsstrong.com.au</a>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar text-blue-600 mr-3"></i>
+                                <button id="schedule-call-main" class="text-lg text-blue-600 hover:underline">Schedule a Call</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <form id="contact-form" class="space-y-4">
+                            <input type="text" name="name" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-lg">
+                            <input type="email" name="email" placeholder="Your Email" required class="w-full p-3 border border-gray-300 rounded-lg">
+                            <input type="tel" name="phone" placeholder="Your Phone (Optional)" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <textarea name="message" placeholder="How can I help you?" rows="5" required class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Caleb Stands Strong</h3>
+                    <p class="text-gray-300">Always Standing By You</p>
+                    <p class="text-gray-300 mt-2">Professional Support Coordination Services</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white">Services</a></li>
+                        <li><a href="#blog" class="text-gray-300 hover:text-white">Resources</a></li>
+                        <li><a href="#contact" class="text-gray-300 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Emergency Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="tel:000" class="text-red-300 hover:text-red-200">000 - Emergency</a></li>
+                        <li><a href="tel:131114" class="text-blue-300 hover:text-blue-200">13 11 14 - Lifeline</a></li>
+                        <li><a href="tel:1300659467" class="text-green-300 hover:text-green-200">MensLine Australia</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="privacy.html" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                        <li><a href="disclaimer.html" class="text-gray-300 hover:text-white">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 Caleb Standing. All rights reserved. | Licensed Support Coordinator | NDIS Registered</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Emergency Modal -->
+    <div id="emergency-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                <h3 class="text-xl font-bold mb-4 text-red-600">Need Immediate Help?</h3>
+                <p class="mb-4">If you're in crisis or need immediate support, please contact emergency services.</p>
+                <div class="space-y-2 mb-6">
+                    <a href="tel:000" class="block bg-red-600 text-white text-center py-2 rounded hover:bg-red-700">000 - Emergency Services</a>
+                    <a href="tel:131114" class="block bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700">13 11 14 - Lifeline</a>
+                </div>
+                <button id="close-emergency-modal" class="w-full bg-gray-300 text-gray-700 py-2 rounded hover:bg-gray-400">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/blog.js"></script>
+</body>
+</html>
