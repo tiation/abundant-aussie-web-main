@@ -1,0 +1,162 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_ENV = "production"
+  VITE_APP_ENV = "production"
+
+# Redirects for Single Page Application
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API redirects to backend services
+[[redirects]]
+  from = "/api/*"
+  to = "https://riggerbackend.tiation.net/:splat"
+  status = 200
+  force = true
+
+# PWA manifest and service worker redirects
+[[redirects]]
+  from = "/manifest.json"
+  to = "/manifest.json"
+  status = 200
+
+# Enterprise-grade security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Frame protection
+    X-Frame-Options = "DENY"
+    
+    # XSS protection
+    X-XSS-Protection = "1; mode=block"
+    
+    # MIME type sniffing protection
+    X-Content-Type-Options = "nosniff"
+    
+    # Referrer policy for privacy
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # Strict transport security (HTTPS only)
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    
+    # Content Security Policy (Capacitor/PWA optimized)
+    Content-Security-Policy = """
+      default-src 'self' capacitor://localhost capacitor-ionic://localhost ionic://localhost;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' capacitor://localhost capacitor-ionic://localhost ionic://localhost https://cdn.jsdelivr.net;
+      style-src 'self' 'unsafe-inline' capacitor://localhost capacitor-ionic://localhost ionic://localhost https://fonts.googleapis.com;
+      img-src 'self' data: https: blob: capacitor://localhost capacitor-ionic://localhost ionic://localhost;
+      font-src 'self' https://fonts.gstatic.com capacitor://localhost capacitor-ionic://localhost ionic://localhost;
+      connect-src 'self' https://*.supabase.co https://*.tiation.net wss://*.supabase.co capacitor://localhost capacitor-ionic://localhost ionic://localhost;
+      media-src 'self' https: blob: capacitor://localhost capacitor-ionic://localhost ionic://localhost;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+    """
+    
+    # Permissions policy for mobile features
+    Permissions-Policy = """
+      accelerometer=(self),
+      ambient-light-sensor=(),
+      autoplay=(self),
+      battery=(self),
+      camera=(self),
+      cross-origin-isolated=(),
+      display-capture=(),
+      document-domain=(),
+      encrypted-media=(),
+      execution-while-not-rendered=(),
+      execution-while-out-of-viewport=(),
+      fullscreen=(self),
+      geolocation=(self),
+      gyroscope=(self),
+      keyboard-map=(),
+      magnetometer=(self),
+      microphone=(self),
+      midi=(),
+      navigation-override=(),
+      payment=(self),
+      picture-in-picture=(),
+      publickey-credentials-get=(),
+      screen-wake-lock=(self),
+      sync-xhr=(),
+      usb=(),
+      web-share=(self),
+      xr-spatial-tracking=()
+    """
+
+# PWA manifest headers
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type = "application/manifest+json"
+
+# Cache optimization for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache optimization for build artifacts
+[[headers]]
+  for = "/dist/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Service worker caching for PWA
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# Capacitor assets caching
+[[headers]]
+  for = "/capacitor.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Preload critical resources for mobile performance
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Link = """
+      </assets/main.css>; rel=preload; as=style,
+      </assets/main.js>; rel=preload; as=script,
+      </capacitor.js>; rel=preload; as=script
+    """
+
+# Environment-specific build settings
+[context.production]
+  command = "npm run build"
+
+[context.staging]
+  command = "npm run build"
+  [context.staging.environment]
+    VITE_APP_ENV = "staging"
+
+[context.branch-deploy]
+  command = "npm run build"
+  [context.branch-deploy.environment]
+    VITE_APP_ENV = "development"
+
+# Functions configuration
+[functions]
+  directory = "netlify/functions"
+
+# Edge functions for mobile optimization
+[[edge_functions]]
+  function = "mobile-detection"
+  path = "/*"
+
+# Forms handling
+[forms]
+  spam_filter = true

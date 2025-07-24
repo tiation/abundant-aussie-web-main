@@ -217,20 +217,30 @@ function initializeSmoothScrolling() {
 
 // Utility functions
 async function simulateFormSubmission(data) {
-    // Simulate API call
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            // In production, replace with actual API call
-            console.log('Form data submitted:', data);
-            
-            // Simulate success/failure
-            if (Math.random() > 0.1) { // 90% success rate
-                resolve({ success: true, id: Date.now() });
-            } else {
-                reject(new Error('Simulated network error'));
-            }
-        }, 1500);
-    });
+    try {
+        // Create mailto link for contact form submission
+        const subject = encodeURIComponent(`Contact Form Submission from ${data.name}`);
+        const body = encodeURIComponent(
+            `Name: ${data.name}\n` +
+            `Email: ${data.email}\n` +
+            `Phone: ${data.phone || 'Not provided'}\n\n` +
+            `Message:\n${data.message}\n\n` +
+            `Submitted: ${data.timestamp}\n` +
+            `Source: ${data.source}`
+        );
+        
+        const mailtoLink = `mailto:caleb@calebstandsstrong.com.au?subject=${subject}&body=${body}`;
+        
+        // Try to open email client
+        window.open(mailtoLink);
+        
+        console.log('Contact form data:', data);
+
+        return { success: true, method: 'email' };
+    } catch (error) {
+        console.error('Contact form submission error:', error);
+        throw error;
+    }
 }
 
 async function sendConfirmationEmail(email, name) {

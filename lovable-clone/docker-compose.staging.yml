@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  buildai-staging:
+    image: docker.sxc.codes:5000/buildai:staging
+    container_name: buildai-staging
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=staging
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      # Staging environment variables
+      - NEXT_PUBLIC_SUPABASE_URL=${STAGING_NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${STAGING_SUPABASE_SERVICE_ROLE_KEY}
+      - OPENAI_API_KEY=${STAGING_OPENAI_API_KEY}
+      - NEXTAUTH_SECRET=${STAGING_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${STAGING_NEXTAUTH_URL}
+    volumes:
+      - ./logs-staging:/app/logs
+    networks:
+      - buildai-staging-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.buildai-staging.rule=Host(`staging.buildai.sxc.codes`)"
+      - "traefik.http.routers.buildai-staging.tls=true"
+      - "traefik.http.routers.buildai-staging.tls.certresolver=letsencrypt"
+      - "traefik.http.services.buildai-staging.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  buildai-staging-network:
+    driver: bridge
+
+volumes:
+  buildai-staging-logs:
+    driver: local

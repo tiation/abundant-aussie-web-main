@@ -1,0 +1,184 @@
+image: node:18-alpine
+
+# Define stages
+stages:
+  - install
+  - lint
+  - test
+  - build
+  - security
+  - deploy
+
+# Cache node_modules to speed up builds
+cache:
+  paths:
+    - node_modules/
+    - .next/cache/
+
+variables:
+  NODE_ENV: "production"
+  DOCKER_IMAGE_NAME: "buildai"
+  DOCKER_REGISTRY: "docker.sxc.codes:5000"
+
+# Install dependencies
+install_dependencies:
+  stage: install
+  script:
+    - npm ci --only=production
+    - npm ci --only=development
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Lint code
+lint:
+  stage: lint
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run lint
+    - npm run format:check
+    - npm run type-check
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Run tests
+test:
+  stage: test
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Build application
+build:
+  stage: build
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run build
+    - npm run export
+  artifacts:
+    paths:
+      - .next/
+      - out/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+
+# Security scanning
+security_scan:
+  stage: security
+  dependencies:
+    - install_dependencies
+  script:
+    - npm audit --audit-level high
+    - npx snyk test --severity-threshold=high || true
+  allow_failure: true
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Deploy to staging (docker.tiation.net)
+deploy_staging:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  dependencies:
+    - build
+  variables:
+    DOCKER_HOST: tcp://docker.tiation.net:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H docker.tiation.net >> ~/.ssh/known_hosts
+  script:
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:staging .
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_REGISTRY_USER" --password-stdin
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:staging
+    - ssh root@docker.tiation.net "docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:staging && docker-compose -f /opt/buildai/docker-compose.staging.yml up -d"
+  environment:
+    name: staging
+    url: https://staging.buildai.sxc.codes
+  only:
+    - develop
+
+# Deploy to production (docker.sxc.codes)
+deploy_production:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  dependencies:
+    - build
+  variables:
+    DOCKER_HOST: tcp://docker.sxc.codes:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H docker.sxc.codes >> ~/.ssh/known_hosts
+  script:
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:latest .
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_REGISTRY_USER" --password-stdin
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:latest
+    - ssh root@docker.sxc.codes "docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:latest && docker-compose -f /opt/buildai/docker-compose.yml up -d"
+  environment:
+    name: production
+    url: https://buildai.sxc.codes
+  when: manual
+  only:
+    - main
+
+# Grafana alerts integration
+deploy_alerts:
+  stage: deploy
+  image: alpine:latest
+  dependencies: []
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      curl -X POST "https://grafana.sxc.codes/api/alerts" \
+        -H "Authorization: Bearer $GRAFANA_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "name": "BuildAI Deployment Alert",
+          "message": "BuildAI has been deployed to '"$CI_ENVIRONMENT_NAME"'",
+          "tags": ["deployment", "buildai", "'$CI_ENVIRONMENT_NAME'"],
+          "recipients": ["tiatheone@protonmail.com", "garrett@sxc.codes", "garrett.dillman@gmail.com"]
+        }'
+  only:
+    - main
+    - develop
+  when: on_success

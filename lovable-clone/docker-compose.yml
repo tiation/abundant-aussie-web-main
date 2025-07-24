@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  buildai:
+    image: docker.sxc.codes:5000/buildai:latest
+    container_name: buildai-production
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      # Add your environment variables here
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - buildai-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.buildai.rule=Host(`buildai.sxc.codes`)"
+      - "traefik.http.routers.buildai.tls=true"
+      - "traefik.http.routers.buildai.tls.certresolver=letsencrypt"
+      - "traefik.http.services.buildai.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: buildai-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/ssl/certs:ro
+    depends_on:
+      - buildai
+    networks:
+      - buildai-network
+
+networks:
+  buildai-network:
+    driver: bridge
+
+volumes:
+  buildai-logs:
+    driver: local
