@@ -1,0 +1,11 @@
+[0;34m[2025-07-19 12:57:29] Starting GitHub repository push process...[0m
+[0;34m[2025-07-19 12:57:29] Log file: /Users/tiaastor/tiation-github/push-all-log-20250719_125729.txt[0m
+[0;34m[2025-07-19 12:57:29] Discovering git repositories...[0m
+[0;34m[2025-07-19 12:57:31] Found 1 potential repositories to process[0m
+[0;34m[2025-07-19 12:57:31] Processing repository: tiation-github[0m
+[0;36mℹ️  tiation-github: Has uncommitted changes[0m
+[0;36mℹ️  tiation-github: Staging changes...[0m
+[0;36mℹ️  tiation-github: Committing changes...[0m
+[0;32m✅ tiation-github: Changes committed[0m
+[0;36mℹ️  tiation-github: Pushing to remote (main)...[0m
+[0;32m✅ tiation-github: Successfully pushed to GitHub[0m

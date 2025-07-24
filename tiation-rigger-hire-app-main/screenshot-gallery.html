@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiation Enterprise Portfolio - Screenshot Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+        }
+        
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00f5ff;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+        }
+        
+        .project-description {
+            margin-bottom: 1rem;
+            color: #cccccc;
+        }
+        
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, #00f5ff, #0080ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
+        }
+        
+        .revenue-highlight {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            margin-left: 0.5rem;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #00f5ff;
+        }
+        
+        .instructions h2 {
+            color: #00f5ff;
+            margin-bottom: 1rem;
+        }
+        
+        .instructions ol {
+            margin-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tiation Enterprise Portfolio</h1>
+        <span class="revenue-highlight">$500K+ Revenue Potential</span>
+        
+        <div class="instructions">
+            <h2>📸 Screenshot Instructions</h2>
+            <ol>
+                <li>Click on each "GitHub Pages" link below to open the live sites</li>
+                <li>Take full-page screenshots of each landing page</li>
+                <li>For React components, use the local file links if GitHub Pages aren't deployed</li>
+                <li>Capture both desktop and mobile views for responsive design showcase</li>
+                <li>Focus on the hero sections, pricing components, and interactive demos</li>
+            </ol>
+        </div>
+        
+        <div class="portfolio-grid">
+            <div class="project-card">
+                <h2 class="project-title">🚀 AI Platform</h2>
+                <p class="project-description">
+                    Enterprise AI solutions with ML training, data processing, and analytics. 
+                    Features Stripe-integrated SaaS pricing and comprehensive architecture diagrams.
+                </p>
+                <div class="links-container">
+                    <a href="https://tiation.github.io/tiation-ai-platform/" class="link" target="_blank">GitHub Pages</a>
+                    <a href="file:///Users/tiaastor/tiation-github/tiation-ai-platform/index.html" class="link" target="_blank">Local Preview</a>
+                    <a href="vscode://file/Users/tiaastor/tiation-github/tiation-ai-platform/src/components/SaaS/IntelligencePricing.jsx" class="link" target="_blank">Pricing Component (JSX)</a>
+                    <a href="vscode://file/Users/tiaastor/tiation-github/tiation-ai-platform/src/components/InteractiveDemo/AIShowcase.jsx" class="link" target="_blank">Demo Component (JSX)</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <h2 class="project-title">💼 Rigger Workspace</h2>
+                <p class="project-description">
+                    AI-powered job matching platform with document management and analytics. 
+                    Complete SaaS solution with Stripe integration and mobile-optimized design.
+                </p>
+                <div class="links-container">
+                    <a href="https://tiation.github.io/tiation-rigger-workspace/" class="link" target="_blank">GitHub Pages</a>
+                    <a href="file:///Users/tiaastor/tiation-github/tiation-rigger-workspace/index.html" class="link" target="_blank">Local Preview</a>
+                    <a href="vscode://file/Users/tiaastor/tiation-github/tiation-rigger-workspace/src/components/SaaS/PricingSection.jsx" class="link" target="_blank">Pricing Component (JSX)</a>
+                    <a href="vscode://file/Users/tiaastor/tiation-github/tiation-rigger-workspace/src/components/InteractiveDemo/DemoShowcase.jsx" class="link" target="_blank">Demo Component (JSX)</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <h2 class="project-title">🎙️ Tough Talk Podcast</h2>
+                <p class="project-description">
+                    Premium podcast platform with Supabase integration. 
+                    Three-tier subscription model (Listener, Premium, VIP) with advanced analytics.
+                </p>
+                <div class="links-container">
+                    <a href="https://tiation.github.io/www-tough-talk-podcast-chaos/" class="link" target="_blank">GitHub Pages</a>
+                    <a href="file:///Users/tiaastor/tiation-github/www-tough-talk-podcast-chaos/index.html" class="link" target="_blank">Local Preview</a>
+                    <a href="vscode://file/Users/tiaastor/tiation-github/www-tough-talk-podcast-chaos/src/components/SaaS/PodcastPricing.jsx" class="link" target="_blank">Pricing Component (JSX)</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>🔧 Key Components to Screenshot</h2>
+            <ul>
+                <li><strong>Landing Pages:</strong> Hero sections with revenue potential highlights</li>
+                <li><strong>SaaS Pricing:</strong> Three-tier subscription models with payment integration</li>
+                <li><strong>Interactive Demos:</strong> Animated showcases of platform features</li>
+                <li><strong>Architecture Diagrams:</strong> Mermaid-generated system architecture visualizations</li>
+                <li><strong>Mobile Responsiveness:</strong> Dark neon theme across all screen sizes</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

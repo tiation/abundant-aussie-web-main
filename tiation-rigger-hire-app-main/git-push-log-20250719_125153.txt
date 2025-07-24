@@ -1,0 +1,6 @@
+[0;34m[2025-07-19 12:51:53] Starting GitHub repository sync process...[0m
+[0;34m[2025-07-19 12:51:53] Log file: /Users/tiaastor/tiation-github/git-push-log-20250719_125153.txt[0m
+[0;34m[2025-07-19 12:51:53] Discovering repositories...[0m
+[0;34m[2025-07-19 12:51:54] Found 80 repositories to process[0m
+[0;34m[2025-07-19 12:51:54] Processing repository: tiation-github[0m
+[0;36mℹ️  tiation-github: Has uncommitted changes[0m

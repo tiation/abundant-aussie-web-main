@@ -1,0 +1,206 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 260 100% 98%;
+    --foreground: 270 40% 20%;
+
+    --card: 260 30% 97%;
+    --card-foreground: 270 40% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 40% 20%;
+
+    --primary: 265 80% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 20 95% 65%;
+    --secondary-foreground: 270 50% 25%;
+
+    --muted: 260 20% 95%;
+    --muted-foreground: 260 10% 40%;
+
+    --accent: 35 95% 65%;
+    --accent-foreground: 270 40% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 260 30% 90%;
+    --input: 260 30% 90%;
+    --ring: 265 80% 65%;
+
+    --radius: 0.75rem;
+    
+    /* Sidebar colors */
+    --sidebar-background: 260 30% 97%;
+    --sidebar-foreground: 270 40% 20%;
+    --sidebar-primary: 265 80% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 95% 65%;
+    --sidebar-accent-foreground: 270 40% 20%;
+    --sidebar-border: 260 30% 90%;
+    --sidebar-ring: 265 80% 65%;
+  }
+
+  .dark {
+    /* ... keep existing code (dark mode variables) */
+  }
+
+  /* Theme styles */
+  /* Fantasy Theme - Default */
+  .theme-fantasy {
+    /* Default values remain the same */
+  }
+
+  /* Sci-Fi Theme */
+  .theme-scifi {
+    /* Keep existing theme code */
+  }
+
+  /* Modern Theme */
+  .theme-modern {
+    /* Keep existing theme code */
+  }
+
+  /* Horror Theme */
+  .theme-horror {
+    /* Keep existing theme code */
+  }
+
+  /* Romantic Theme - Updated with more vibrant colors */
+  .theme-romantic {
+    --background: 300 100% 98%;
+    --foreground: 300 60% 20%;
+    --card: 300 30% 97%;
+    --card-foreground: 300 60% 20%;
+    --primary: 300 90% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 100% 65%;
+    --secondary-foreground: 300 70% 25%;
+    --accent: 45 100% 65%;
+    --accent-foreground: 300 60% 20%;
+    --border: 300 50% 90%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B5CF6' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  
+  h1 {
+    @apply font-script text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-funky-purple to-funky-pink;
+  }
+  
+  h2, h3, h4, h5, h6 {
+    @apply font-serif text-funky-pink;
+  }
+
+  .card-title {
+    @apply font-script text-2xl text-transparent bg-clip-text bg-gradient-to-r from-funky-purple to-funky-pink;
+  }
+
+  /* Theme-specific body backgrounds */
+  .theme-scifi body {
+    /* Keep existing theme code */
+  }
+
+  .theme-horror body {
+    /* Keep existing theme code */
+  }
+
+  .theme-romantic body {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF49DB' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+@layer components {
+  .parchment {
+    @apply bg-card border border-funky-purple/20 shadow-md;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%238B5CF6' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .romantic-text {
+    @apply font-script text-funky-purple;
+  }
+  
+  .fancy-title {
+    @apply font-script text-3xl text-transparent bg-clip-text bg-gradient-to-r from-funky-pink to-funky-orange italic;
+  }
+  
+  .fantasy-shadow {
+    @apply shadow-[2px_2px_15px_rgba(139,92,246,0.4)];
+  }
+  
+  .fantasy-border {
+    @apply border-2 border-funky-purple/30 rounded-lg;
+  }
+  
+  .stat-box {
+    @apply parchment p-3 text-center rounded-lg hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 transition-all hover:scale-105;
+  }
+
+  .romantic-card {
+    @apply bg-gradient-to-r from-funky-purple via-funky-pink to-funky-orange rounded-lg p-4 text-white shadow-md;
+  }
+
+  .romantic-button {
+    @apply bg-gradient-to-r from-funky-purple to-funky-pink hover:from-funky-pink hover:to-funky-purple text-white font-medium px-4 py-2 rounded-full transition-colors;
+  }
+
+  .romantic-badge {
+    @apply bg-funky-pink/20 text-funky-pink text-xs px-2 py-0.5 rounded-full;
+  }
+
+  /* New shimmer effect */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  
+  .shimmer::after {
+    content: '';
+    @apply absolute top-0 left-0 right-0 bottom-0 bg-shimmer-gradient bg-[length:200%_100%] animate-shimmer;
+    pointer-events: none;
+  }
+
+  /* New rainbow text effect */
+  .rainbow-text {
+    @apply text-transparent bg-clip-text bg-rainbow-gradient animate-rainbow;
+  }
+
+  /* Theme-specific component styles */
+  .theme-scifi .parchment {
+    /* Keep existing theme code */
+  }
+
+  .theme-scifi .fantasy-shadow {
+    /* Keep existing theme code */
+  }
+
+  .theme-horror .parchment {
+    /* Keep existing theme code */
+  }
+
+  .theme-horror .fantasy-shadow {
+    /* Keep existing theme code */
+  }
+
+  .theme-romantic .parchment {
+    @apply bg-gradient-to-r from-funky-purple/10 to-funky-pink/10 border border-funky-pink/30;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23FF49DB' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .theme-romantic .fantasy-shadow {
+    @apply shadow-[2px_2px_15px_rgba(255,73,219,0.4)];
+  }
+}

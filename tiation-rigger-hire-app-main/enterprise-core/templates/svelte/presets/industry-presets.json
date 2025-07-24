@@ -1,0 +1,260 @@
+{
+  "mining": {
+    "name": "Mining & Construction",
+    "description": "Specialized for mining operations, safety compliance, and equipment management",
+    "features": ["safety-compliance", "equipment-tracking", "weather-monitoring", "worker-safety"],
+    "theme": {
+      "primary": "#FFB000",
+      "secondary": "#FF6B00", 
+      "accent": "#00FFFF",
+      "background": "#1A1A1A"
+    },
+    "requiredIntegrations": ["stripe", "supabase"],
+    "additionalDependencies": [
+      "@types/geojson",
+      "leaflet",
+      "chart.js"
+    ],
+    "components": [
+      "SafetyDashboard",
+      "EquipmentStatus", 
+      "WeatherWidget",
+      "ComplianceTracker"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Safety Compliance",
+        "description": "Real-time monitoring of safety protocols and incident reporting"
+      },
+      {
+        "title": "Equipment Tracking", 
+        "description": "GPS tracking and maintenance scheduling for mining equipment"
+      },
+      {
+        "title": "Environmental Monitoring",
+        "description": "Air quality, noise levels, and environmental impact tracking"
+      }
+    ]
+  },
+  "healthcare": {
+    "name": "Healthcare & Medical",
+    "description": "HIPAA-compliant solutions for healthcare providers and medical facilities",
+    "features": ["hipaa-compliance", "patient-management", "telemedicine", "analytics"],
+    "theme": {
+      "primary": "#00FF88",
+      "secondary": "#0088FF",
+      "accent": "#FF00FF", 
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "supabase", "twilio"],
+    "additionalDependencies": [
+      "@types/fhir",
+      "crypto-js",
+      "date-fns"
+    ],
+    "components": [
+      "PatientPortal",
+      "AppointmentScheduler",
+      "TelemedicineInterface",
+      "ComplianceDashboard"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Patient Management",
+        "description": "Secure patient records and appointment scheduling system"
+      },
+      {
+        "title": "Telemedicine Platform",
+        "description": "Video consultations and remote patient monitoring"
+      },
+      {
+        "title": "Analytics Dashboard",
+        "description": "Health metrics analysis and reporting tools"
+      }
+    ]
+  },
+  "finance": {
+    "name": "Financial Services",
+    "description": "Secure financial applications with compliance and fraud detection",
+    "features": ["pci-compliance", "fraud-detection", "reporting", "analytics"],
+    "theme": {
+      "primary": "#0088FF",
+      "secondary": "#FF8800",
+      "accent": "#00FFFF",
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "plaid", "supabase"],
+    "additionalDependencies": [
+      "decimal.js",
+      "validator",
+      "crypto-js"
+    ],
+    "components": [
+      "TransactionDashboard",
+      "ComplianceReports",
+      "FraudDetection",
+      "FinancialCharts"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Transaction Processing",
+        "description": "Secure payment processing with fraud detection"
+      },
+      {
+        "title": "Compliance Reporting",
+        "description": "Automated regulatory compliance and audit trails"
+      },
+      {
+        "title": "Risk Analytics",
+        "description": "Real-time risk assessment and portfolio analysis"
+      }
+    ]
+  },
+  "education": {
+    "name": "Education & Learning",
+    "description": "E-learning platforms and educational management systems",
+    "features": ["lms", "student-management", "assessment", "collaboration"],
+    "theme": {
+      "primary": "#8800FF",
+      "secondary": "#00FF88",
+      "accent": "#FF00FF",
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "supabase", "zoom"],
+    "additionalDependencies": [
+      "@types/video.js",
+      "socket.io-client",
+      "pdfjs-dist"
+    ],
+    "components": [
+      "CourseManager",
+      "StudentDashboard", 
+      "AssessmentTools",
+      "CollaborationSpace"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Course Management",
+        "description": "Create, manage, and deliver online courses and content"
+      },
+      {
+        "title": "Student Progress Tracking",
+        "description": "Monitor student performance and engagement metrics"
+      },
+      {
+        "title": "Virtual Classroom",
+        "description": "Live streaming and interactive learning experiences"
+      }
+    ]
+  },
+  "retail": {
+    "name": "Retail & E-commerce",
+    "description": "Modern e-commerce solutions with inventory and customer management",
+    "features": ["inventory-management", "customer-analytics", "payment-processing", "mobile-commerce"],
+    "theme": {
+      "primary": "#FF0088",
+      "secondary": "#88FF00",
+      "accent": "#00FFFF",
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "shopify", "supabase"],
+    "additionalDependencies": [
+      "@shopify/storefront-api-client",
+      "barcode-scanner",
+      "qr-code-generator"
+    ],
+    "components": [
+      "ProductCatalog",
+      "InventoryManager",
+      "CustomerAnalytics",
+      "MobileCheckout"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Inventory Management",
+        "description": "Real-time stock tracking and automated reordering"
+      },
+      {
+        "title": "Customer Analytics",
+        "description": "Purchase behavior analysis and personalization"
+      },
+      {
+        "title": "Mobile Commerce",
+        "description": "Optimized mobile shopping experience and PWA"
+      }
+    ]
+  },
+  "saas": {
+    "name": "SaaS Platform",
+    "description": "Multi-tenant SaaS applications with subscription management",
+    "features": ["multi-tenancy", "subscription-billing", "api-management", "analytics"],
+    "theme": {
+      "primary": "#00FFFF",
+      "secondary": "#FF00FF",
+      "accent": "#FFD700",
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "supabase", "auth0"],
+    "additionalDependencies": [
+      "@stripe/stripe-js",
+      "jwt-decode",
+      "analytics-node"
+    ],
+    "components": [
+      "SubscriptionManager",
+      "TenantDashboard",
+      "APIDocumentation", 
+      "UsageAnalytics"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Subscription Management",
+        "description": "Flexible pricing plans and billing automation"
+      },
+      {
+        "title": "Multi-Tenant Architecture",
+        "description": "Secure data isolation and tenant customization"
+      },
+      {
+        "title": "API Management",
+        "description": "RESTful APIs with rate limiting and documentation"
+      }
+    ]
+  },
+  "default": {
+    "name": "General Business",
+    "description": "Versatile template suitable for various business applications",
+    "features": ["dashboard", "user-management", "analytics", "mobile-optimized"],
+    "theme": {
+      "primary": "#00FFFF",
+      "secondary": "#FF00FF",
+      "accent": "#00FF88",
+      "background": "#0A0A0A"
+    },
+    "requiredIntegrations": ["stripe", "supabase"],
+    "additionalDependencies": [
+      "chart.js",
+      "date-fns"
+    ],
+    "components": [
+      "Dashboard",
+      "UserManagement",
+      "Analytics",
+      "Settings"
+    ],
+    "sampleFeatures": [
+      {
+        "title": "Analytics Dashboard",
+        "description": "Comprehensive data visualization and reporting tools"
+      },
+      {
+        "title": "User Management",
+        "description": "Role-based access control and user administration"
+      },
+      {
+        "title": "Mobile Optimization",
+        "description": "Responsive design optimized for all devices"
+      }
+    ]
+  }
+}

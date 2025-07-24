@@ -1,0 +1,56 @@
+# AI Agent Rules for Tiation Projects
+
+## MANDATORY READING
+All AI agents working on Tiation projects MUST read:
+- TIATION_AGENT_DEPLOYMENT_GUIDE.md (complete deployment system)
+- deployment-configuration-report.md (status report)
+
+## DEPLOYMENT SYSTEM STATUS
+- 12 repositories fully configured with enterprise-grade Surge deployment
+- Automated CI/CD workflows implemented
+- Security headers and performance optimization active
+- Dark neon theme consistency enforced across all projects
+
+## ESSENTIAL COMMANDS
+- `npm run deploy:surge` - Deploy to production
+- `npm run health-check` - Verify deployment
+- `./scripts/deploy-all-repos.sh` - Configure all repositories
+- `node scripts/generate-deployment-config.cjs <repo-name>` - Configure new repos
+
+## THEME REQUIREMENTS
+- Dark neon theme with cyan/magenta gradients
+- Enterprise-grade UI components
+- Consistent branding across platforms
+- Professional documentation standards
+
+## SECURITY REQUIREMENTS
+- HTTPS/TLS enforcement with HSTS
+- Content Security Policy headers
+- XSS and clickjacking protection
+- Security scanning in CI pipeline
+
+## PERFORMANCE STANDARDS
+- HTTP/2 support enabled
+- Gzip and Brotli compression
+- Optimized caching strategies
+- Lighthouse CI performance monitoring
+
+## AUTOMATION STATUS
+✅ Repository configuration automated
+✅ Mass deployment system implemented
+✅ CI/CD workflows deployed
+✅ Security scanning integrated
+✅ Performance monitoring active
+✅ Dark theme consistency enforced
+
+## AGENT RESPONSIBILITIES
+1. Always verify deployment configuration exists
+2. Test deployments after making changes
+3. Maintain dark neon theme consistency
+4. Follow security best practices
+5. Use automated scripts for repetitive tasks
+
+## SUPPORT
+- Email: tiatheone@protonmail.com
+- Documentation: TIATION_AGENT_DEPLOYMENT_GUIDE.md
+- Reports: deployment-configuration-report.md

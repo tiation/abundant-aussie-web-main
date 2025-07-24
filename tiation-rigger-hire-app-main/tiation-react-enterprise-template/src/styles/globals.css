@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tiation theme fonts */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Tiation color palette */
+    --tiation-cyan: #00FFFF;
+    --tiation-magenta: #FF00FF;
+    --tiation-dark: #0A0A0A;
+    --tiation-gray: #1A1A1A;
+    
+    /* Neon variants */
+    --neon-cyan-500: #00FFFF;
+    --neon-magenta-500: #FF00FF;
+    
+    /* Glass morphism */
+    --glass-bg: rgba(10, 10, 10, 0.8);
+    --glass-border: rgba(0, 255, 255, 0.2);
+  }
+
+  html {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-tiation-dark text-white antialiased;
+    background-attachment: fixed;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-tiation-gray;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gradient-to-b from-tiation-cyan to-tiation-magenta rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply opacity-80;
+  }
+}
+
+@layer components {
+  /* Tiation glass morphism effect */
+  .tiation-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Tiation gradient backgrounds */
+  .tiation-gradient-bg {
+    background: linear-gradient(135deg, var(--tiation-cyan) 0%, var(--tiation-magenta) 100%);
+  }
+
+  .tiation-gradient-text {
+    background: linear-gradient(135deg, var(--tiation-cyan) 0%, var(--tiation-magenta) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Tiation neon border effect */
+  .tiation-neon-border {
+    border: 1px solid var(--tiation-cyan);
+    box-shadow: 0 0 5px var(--tiation-cyan), inset 0 0 5px var(--tiation-cyan);
+  }
+
+  .tiation-neon-border:hover {
+    box-shadow: 0 0 10px var(--tiation-cyan), inset 0 0 10px var(--tiation-cyan);
+  }
+
+  /* Tiation card hover effects */
+  .tiation-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tiation-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 255, 255, 0.15);
+  }
+
+  /* Tiation button variants */
+  .tiation-btn-primary {
+    @apply bg-gradient-to-r from-tiation-cyan to-tiation-magenta text-black font-semibold py-3 px-6 rounded-lg transition-all duration-300;
+  }
+
+  .tiation-btn-primary:hover {
+    @apply shadow-neon-gradient transform scale-105;
+  }
+
+  .tiation-btn-secondary {
+    @apply bg-transparent border-2 border-tiation-cyan text-tiation-cyan font-semibold py-3 px-6 rounded-lg transition-all duration-300;
+  }
+
+  .tiation-btn-secondary:hover {
+    @apply bg-tiation-cyan text-black shadow-neon-cyan;
+  }
+
+  .tiation-btn-ghost {
+    @apply bg-transparent text-gray-300 hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:bg-white hover:bg-opacity-10;
+  }
+
+  /* Tiation form elements */
+  .tiation-input {
+    @apply bg-tiation-gray border border-gray-600 text-white placeholder-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:border-tiation-cyan focus:ring-1 focus:ring-tiation-cyan transition-colors;
+  }
+
+  .tiation-textarea {
+    @apply tiation-input resize-none;
+  }
+
+  .tiation-select {
+    @apply tiation-input cursor-pointer;
+  }
+
+  /* Tiation animations */
+  .tiation-pulse {
+    animation: tiation-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes tiation-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .tiation-float {
+    animation: tiation-float 3s ease-in-out infinite;
+  }
+
+  @keyframes tiation-float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Mobile optimizations */
+  .tiation-mobile-touch {
+    -webkit-tap-highlight-color: rgba(0, 255, 255, 0.3);
+    touch-action: manipulation;
+  }
+
+  /* Loading states */
+  .tiation-skeleton {
+    @apply bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse rounded;
+    background-size: 200% 100%;
+    animation: tiation-skeleton 1.5s ease-in-out infinite;
+  }
+
+  @keyframes tiation-skeleton {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Focus states for accessibility */
+  .tiation-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-tiation-cyan focus:ring-offset-2 focus:ring-offset-tiation-dark;
+  }
+}
+
+@layer utilities {
+  /* Mobile-first responsive utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+  }
+
+  .mobile-text {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+
+  /* Performance utilities */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .text-shadow-neon {
+    text-shadow: 0 0 10px currentColor;
+  }
+}

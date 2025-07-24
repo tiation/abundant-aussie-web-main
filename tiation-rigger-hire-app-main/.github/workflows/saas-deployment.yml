@@ -1,0 +1,825 @@
+name: 🚀 Tiation SaaS Multi-Platform Deployment
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+      - 'feature/**'
+      - 'hotfix/**'
+  pull_request:
+    branches: 
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      platform:
+        description: 'Target platform (leave empty for all)'
+        required: false
+        type: choice
+        options:
+          - ''
+          - rigger
+          - ai-agents
+          - gaming
+          - podcast
+          - templates
+          - enterprise
+      skip_tests:
+        description: 'Skip tests'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECR_REGISTRY: 123456789012.dkr.ecr.ap-southeast-2.amazonaws.com
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ===============================================
+  # 🔍 DETECT CHANGES & SETUP
+  # ===============================================
+  
+  detect-changes:
+    name: 🔍 Detect Changed Platforms
+    runs-on: ubuntu-latest
+    outputs:
+      platforms: ${{ steps.changes.outputs.platforms }}
+      should_deploy: ${{ steps.changes.outputs.should_deploy }}
+      matrix: ${{ steps.changes.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            rigger:
+              - 'rigger/**'
+              - 'shared/**'
+            ai-agents:
+              - 'ai-agents/**'
+              - 'shared/**'
+            gaming:
+              - 'gaming/**'
+              - 'shared/**'
+            podcast:
+              - 'podcast/**'
+              - 'shared/**'
+            templates:
+              - 'templates/**'
+              - 'shared/**'
+            enterprise:
+              - 'enterprise/**'
+              - 'shared/**'
+            infrastructure:
+              - 'deployment/**'
+              - '.github/workflows/**'
+
+      - name: Set deployment matrix
+        id: matrix-setup
+        run: |
+          if [ "${{ github.event.inputs.platform }}" != "" ]; then
+            # Manual workflow dispatch with specific platform
+            echo "matrix=[\"${{ github.event.inputs.platform }}\"]" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/main" ] || [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            # Deploy all platforms on main/develop branch
+            echo "matrix=[\"rigger\",\"ai-agents\",\"gaming\",\"podcast\",\"templates\",\"enterprise\"]" >> $GITHUB_OUTPUT
+          else
+            # Feature branch - only deploy changed platforms
+            changed_platforms=""
+            for platform in rigger ai-agents gaming podcast templates enterprise; do
+              if [ "${{ steps.changes.outputs[platform] }}" == "true" ]; then
+                if [ -z "$changed_platforms" ]; then
+                  changed_platforms="\"$platform\""
+                else
+                  changed_platforms="$changed_platforms,\"$platform\""
+                fi
+              fi
+            done
+            if [ -z "$changed_platforms" ]; then
+              echo "matrix=[]" >> $GITHUB_OUTPUT
+            else
+              echo "matrix=[$changed_platforms]" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Output results
+        run: |
+          echo "Changed platforms: ${{ steps.changes.outputs.changes }}"
+          echo "Deployment matrix: ${{ steps.matrix-setup.outputs.matrix }}"
+          echo "Should deploy: ${{ steps.changes.outputs.should_deploy }}"
+
+  # ===============================================
+  # 🧪 SECURITY & QUALITY CHECKS
+  # ===============================================
+  
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.matrix != '[]' }}
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '${{ matrix.platform }}'
+          format: 'sarif'
+          output: 'trivy-results-${{ matrix.platform }}.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results-${{ matrix.platform }}.sarif'
+
+      - name: Check for critical vulnerabilities
+        run: |
+          if trivy fs --format json --output results.json ${{ matrix.platform }}; then
+            CRITICAL=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length' results.json)
+            HIGH=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="HIGH")] | length' results.json)
+            
+            echo "Critical vulnerabilities: $CRITICAL"
+            echo "High vulnerabilities: $HIGH"
+            
+            if [ "$CRITICAL" -gt 0 ]; then
+              echo "❌ Critical vulnerabilities found. Deployment blocked."
+              exit 1
+            fi
+            
+            if [ "$HIGH" -gt 10 ]; then
+              echo "⚠️ Too many high-severity vulnerabilities. Consider review."
+              exit 1
+            fi
+          fi
+
+  # ===============================================
+  # 🧪 TESTING PIPELINE
+  # ===============================================
+  
+  test-platforms:
+    name: 🧪 Test ${{ matrix.platform }} Platform
+    runs-on: ubuntu-latest
+    needs: [detect-changes, security-scan]
+    if: ${{ needs.detect-changes.outputs.matrix != '[]' && !inputs.skip_tests }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+        os: [ubuntu-latest]
+        include:
+          - platform: rigger
+            test_command: npm run test:coverage
+          - platform: ai-agents
+            test_command: npm run test:coverage
+          - platform: gaming
+            test_command: npm run test:coverage
+          - platform: podcast
+            test_command: npm run test:coverage
+          - platform: templates
+            test_command: npm run test:coverage
+          - platform: enterprise
+            test_command: npm run test:coverage
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.platform }}/backend/package-lock.json
+
+      - name: Setup test environment
+        run: |
+          # Start test databases
+          docker run -d --name test-postgres \
+            -e POSTGRES_DB=test_db \
+            -e POSTGRES_USER=test_user \
+            -e POSTGRES_PASSWORD=test_pass \
+            -p 5432:5432 postgres:15-alpine
+          
+          docker run -d --name test-redis \
+            -p 6379:6379 redis:7-alpine
+          
+          docker run -d --name test-mongo \
+            -e MONGO_INITDB_ROOT_USERNAME=test_user \
+            -e MONGO_INITDB_ROOT_PASSWORD=test_pass \
+            -p 27017:27017 mongo:6.0
+
+      - name: Install backend dependencies
+        working-directory: ${{ matrix.platform }}/backend
+        run: npm ci
+
+      - name: Install frontend dependencies
+        working-directory: ${{ matrix.platform }}/frontend
+        run: npm ci
+
+      - name: Run backend linting
+        working-directory: ${{ matrix.platform }}/backend
+        run: npm run lint
+
+      - name: Run frontend linting
+        working-directory: ${{ matrix.platform }}/frontend
+        run: npm run lint
+
+      - name: Run backend tests
+        working-directory: ${{ matrix.platform }}/backend
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+          MONGODB_URI: mongodb://test_user:test_pass@localhost:27017/test_db?authSource=admin
+          JWT_SECRET: test_jwt_secret
+          STRIPE_SECRET_KEY: sk_test_12345
+        run: ${{ matrix.test_command }}
+
+      - name: Run frontend tests
+        working-directory: ${{ matrix.platform }}/frontend
+        env:
+          CI: true
+          REACT_APP_API_URL: http://localhost:3000
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: pk_test_12345
+        run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./${{ matrix.platform }}/backend/coverage/lcov.info
+          flags: ${{ matrix.platform }}-backend
+          name: ${{ matrix.platform }}-backend-coverage
+
+      - name: Upload frontend coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./${{ matrix.platform }}/frontend/coverage/lcov.info
+          flags: ${{ matrix.platform }}-frontend
+          name: ${{ matrix.platform }}-frontend-coverage
+
+  # ===============================================
+  # 🏗️ BUILD & PUSH DOCKER IMAGES
+  # ===============================================
+  
+  build-images:
+    name: 🔨 Build ${{ matrix.platform }} Images
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-platforms]
+    if: ${{ needs.detect-changes.outputs.matrix != '[]' && (success() || inputs.skip_tests) }}
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate image tags
+        id: meta
+        run: |
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          GIT_SHA=$(echo ${{ github.sha }} | cut -c1-8)
+          
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            IMAGE_TAG="prod-${GIT_SHA}-${TIMESTAMP}"
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            IMAGE_TAG="staging-${GIT_SHA}-${TIMESTAMP}"
+          else
+            BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+            IMAGE_TAG="dev-${BRANCH_NAME}-${GIT_SHA}-${TIMESTAMP}"
+          fi
+          
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "git_sha=${GIT_SHA}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.platform }}/backend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-backend:${{ steps.meta.outputs.image_tag }}
+            ${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ steps.meta.outputs.timestamp }}
+            VCS_REF=${{ steps.meta.outputs.git_sha }}
+            VERSION=${{ steps.meta.outputs.image_tag }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.platform }}/frontend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-frontend:${{ steps.meta.outputs.image_tag }}
+            ${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ steps.meta.outputs.timestamp }}
+            VCS_REF=${{ steps.meta.outputs.git_sha }}
+            VERSION=${{ steps.meta.outputs.image_tag }}
+
+      - name: Store image metadata
+        run: |
+          mkdir -p deployment-artifacts
+          echo "${{ steps.meta.outputs.image_tag }}" > deployment-artifacts/${{ matrix.platform }}-image-tag.txt
+          echo "${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-backend:${{ steps.meta.outputs.image_tag }}" > deployment-artifacts/${{ matrix.platform }}-backend-image.txt
+          echo "${{ env.ECR_REGISTRY }}/tiation-${{ matrix.platform }}-frontend:${{ steps.meta.outputs.image_tag }}" > deployment-artifacts/${{ matrix.platform }}-frontend-image.txt
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifacts-${{ matrix.platform }}
+          path: deployment-artifacts/
+          retention-days: 7
+
+  # ===============================================
+  # 🚀 DEPLOYMENT TO ENVIRONMENTS
+  # ===============================================
+  
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-images]
+    if: ${{ github.ref == 'refs/heads/develop' && needs.detect-changes.outputs.matrix != '[]' }}
+    environment: staging
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download deployment artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: deployment-artifacts-${{ matrix.platform }}
+          path: deployment-artifacts/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to ECS Staging
+        run: |
+          IMAGE_TAG=$(cat deployment-artifacts/${{ matrix.platform }}-image-tag.txt)
+          BACKEND_IMAGE=$(cat deployment-artifacts/${{ matrix.platform }}-backend-image.txt)
+          FRONTEND_IMAGE=$(cat deployment-artifacts/${{ matrix.platform }}-frontend-image.txt)
+          
+          # Update backend service
+          aws ecs update-service \
+            --cluster tiation-saas-staging \
+            --service ${{ matrix.platform }}-staging-backend-service \
+            --task-definition ${{ matrix.platform }}-staging-backend \
+            --force-new-deployment
+          
+          # Update frontend service
+          aws ecs update-service \
+            --cluster tiation-saas-staging \
+            --service ${{ matrix.platform }}-staging-frontend-service \
+            --task-definition ${{ matrix.platform }}-staging-frontend \
+            --force-new-deployment
+
+      - name: Wait for deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster tiation-saas-staging \
+            --services ${{ matrix.platform }}-staging-backend-service ${{ matrix.platform }}-staging-frontend-service
+
+      - name: Run health checks
+        run: |
+          # Wait for services to be ready
+          sleep 60
+          
+          # Get load balancer URL from Terraform output
+          ALB_URL=$(aws elbv2 describe-load-balancers \
+            --names tiation-saas-staging \
+            --query 'LoadBalancers[0].DNSName' \
+            --output text)
+          
+          # Health check endpoints
+          BACKEND_HEALTH="http://${ALB_URL}/${{ matrix.platform }}/health"
+          
+          # Retry health checks
+          for i in {1..10}; do
+            if curl -f "$BACKEND_HEALTH"; then
+              echo "✅ Health check passed for ${{ matrix.platform }}"
+              break
+            fi
+            
+            if [ $i -eq 10 ]; then
+              echo "❌ Health check failed for ${{ matrix.platform }}"
+              exit 1
+            fi
+            
+            echo "⏳ Waiting for ${{ matrix.platform }} to be ready... ($i/10)"
+            sleep 30
+          done
+
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-images]
+    if: ${{ github.ref == 'refs/heads/main' && needs.detect-changes.outputs.matrix != '[]' }}
+    environment: production
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download deployment artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: deployment-artifacts-${{ matrix.platform }}
+          path: deployment-artifacts/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create deployment backup
+        run: |
+          # Create backup of current task definition
+          CLUSTER_NAME="tiation-saas-production"
+          SERVICE_NAME="${{ matrix.platform }}-production-backend-service"
+          
+          CURRENT_TASK_DEF=$(aws ecs describe-services \
+            --cluster $CLUSTER_NAME \
+            --services $SERVICE_NAME \
+            --query 'services[0].taskDefinition' \
+            --output text)
+          
+          echo "Creating backup of task definition: $CURRENT_TASK_DEF"
+          echo "$CURRENT_TASK_DEF" > backup-task-definition-${{ matrix.platform }}.txt
+
+      - name: Deploy to ECS Production
+        run: |
+          IMAGE_TAG=$(cat deployment-artifacts/${{ matrix.platform }}-image-tag.txt)
+          
+          # Deploy with blue-green strategy
+          aws ecs update-service \
+            --cluster tiation-saas-production \
+            --service ${{ matrix.platform }}-production-backend-service \
+            --force-new-deployment \
+            --deployment-configuration maximumPercent=200,minimumHealthyPercent=100
+          
+          aws ecs update-service \
+            --cluster tiation-saas-production \
+            --service ${{ matrix.platform }}-production-frontend-service \
+            --force-new-deployment \
+            --deployment-configuration maximumPercent=200,minimumHealthyPercent=100
+
+      - name: Wait for production deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster tiation-saas-production \
+            --services ${{ matrix.platform }}-production-backend-service ${{ matrix.platform }}-production-frontend-service
+
+      - name: Production health checks
+        run: |
+          sleep 60
+          
+          # Get production load balancer URL
+          ALB_URL=$(aws elbv2 describe-load-balancers \
+            --names tiation-saas-production \
+            --query 'LoadBalancers[0].DNSName' \
+            --output text)
+          
+          BACKEND_HEALTH="https://${ALB_URL}/${{ matrix.platform }}/health"
+          
+          # Extended health checks for production
+          for i in {1..15}; do
+            if curl -f "$BACKEND_HEALTH"; then
+              echo "✅ Production health check passed for ${{ matrix.platform }}"
+              break
+            fi
+            
+            if [ $i -eq 15 ]; then
+              echo "❌ Production health check failed for ${{ matrix.platform }}"
+              # Automatic rollback on health check failure
+              echo "🔄 Initiating automatic rollback..."
+              BACKUP_TASK_DEF=$(cat backup-task-definition-${{ matrix.platform }}.txt)
+              
+              aws ecs update-service \
+                --cluster tiation-saas-production \
+                --service ${{ matrix.platform }}-production-backend-service \
+                --task-definition "$BACKUP_TASK_DEF"
+              
+              exit 1
+            fi
+            
+            echo "⏳ Production health check ($i/15)..."
+            sleep 30
+          done
+
+  # ===============================================
+  # 🗄️ DATABASE MIGRATIONS
+  # ===============================================
+  
+  run-migrations:
+    name: 🗄️ Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: ${{ always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success') }}
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Run migrations
+        working-directory: ${{ matrix.platform }}/backend
+        run: |
+          # Install dependencies
+          npm ci
+          
+          # Determine environment
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            ENVIRONMENT="production"
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            ENVIRONMENT="staging"
+          else
+            echo "Skipping migrations for feature branch"
+            exit 0
+          fi
+          
+          # Get database credentials from AWS Secrets Manager
+          DB_PASSWORD=$(aws secretsmanager get-secret-value \
+            --secret-id "tiation-saas/${ENVIRONMENT}/database/password" \
+            --query SecretString --output text)
+          
+          # Set database URL
+          export DATABASE_URL="postgresql://tiation:${DB_PASSWORD}@tiation-saas-${ENVIRONMENT}.cluster-xyz.${AWS_REGION}.rds.amazonaws.com:5432/tiation_saas_${ENVIRONMENT}"
+          
+          # Run migrations
+          if npm run migrate --if-present; then
+            echo "✅ Migrations completed for ${{ matrix.platform }} in $ENVIRONMENT"
+          else
+            echo "ℹ️ No migrations found for ${{ matrix.platform }}"
+          fi
+
+  # ===============================================
+  # 📊 POST-DEPLOYMENT MONITORING
+  # ===============================================
+  
+  post-deployment-tests:
+    name: 📊 Post-Deployment Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production, run-migrations]
+    if: ${{ always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success') }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install testing dependencies
+        run: |
+          npm install -g newman
+          npm install -g k6
+
+      - name: Run API integration tests
+        run: |
+          # Determine environment and base URL
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            BASE_URL="https://api.tiation.com"
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            BASE_URL="https://staging-api.tiation.com"
+          else
+            echo "Skipping integration tests for feature branch"
+            exit 0
+          fi
+          
+          # Run Postman collections for each platform
+          for platform in rigger ai-agents gaming podcast templates enterprise; do
+            if [ -f "tests/postman/${platform}.postman_collection.json" ]; then
+              newman run "tests/postman/${platform}.postman_collection.json" \
+                --env-var "base_url=${BASE_URL}" \
+                --reporters cli,junit \
+                --reporter-junit-export "test-results-${platform}.xml"
+            fi
+          done
+
+      - name: Run load tests
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            BASE_URL="https://api.tiation.com"
+            
+            # Run K6 load tests
+            for platform in rigger ai-agents gaming podcast templates enterprise; do
+              if [ -f "tests/load/${platform}.js" ]; then
+                k6 run --env BASE_URL="${BASE_URL}" "tests/load/${platform}.js"
+              fi
+            done
+          fi
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: test-results-*.xml
+          retention-days: 7
+
+  # ===============================================
+  # 📢 NOTIFICATIONS & CLEANUP
+  # ===============================================
+  
+  notify-deployment:
+    name: 📢 Send Deployment Notifications
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production, post-deployment-tests]
+    if: always()
+    
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.deploy-production.result }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.deploy-staging.result }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "environment=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ steps.status.outputs.status }}' === 'success' ? 'good' : 'danger',
+                title: '${{ steps.status.outputs.status }}' === 'success' ? '🚀 Deployment Successful' : '❌ Deployment Failed',
+                fields: [{
+                  title: 'Environment',
+                  value: '${{ steps.status.outputs.environment }}',
+                  short: true
+                }, {
+                  title: 'Branch',
+                  value: '${{ github.ref_name }}',
+                  short: true
+                }, {
+                  title: 'Commit',
+                  value: '${{ github.sha }}',
+                  short: true
+                }, {
+                  title: 'Author',
+                  value: '${{ github.actor }}',
+                  short: true
+                }],
+                footer: 'Tiation SaaS Deployment Pipeline',
+                ts: ${{ github.event.head_commit.timestamp }}
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send email notification
+        if: steps.status.outputs.status == 'failure'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🚨 Tiation SaaS Deployment Failed - ${{ github.ref_name }}"
+          to: ${{ secrets.DEPLOYMENT_NOTIFICATION_EMAIL }}
+          from: "Tiation CI/CD <noreply@tiation.com>"
+          body: |
+            Deployment failed for branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            
+            Please check the GitHub Actions workflow for details:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  cleanup:
+    name: 🧹 Cleanup Resources
+    runs-on: ubuntu-latest
+    needs: [notify-deployment]
+    if: always()
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Clean up old ECR images
+        run: |
+          # Keep only the 10 most recent images for each repository
+          for platform in rigger ai-agents gaming podcast templates enterprise; do
+            for service in backend frontend; do
+              REPO_NAME="tiation-${platform}-${service}"
+              
+              # Get list of images sorted by push date
+              aws ecr list-images \
+                --repository-name "$REPO_NAME" \
+                --filter tagStatus=TAGGED \
+                --query 'imageIds[?imageTag!=`latest`]' \
+                --output text | \
+              head -n -10 | \
+              while read imageDigest imageTag; do
+                if [ -n "$imageTag" ] && [ "$imageTag" != "latest" ]; then
+                  aws ecr batch-delete-image \
+                    --repository-name "$REPO_NAME" \
+                    --image-ids imageTag="$imageTag" || true
+                fi
+              done
+            done
+          done
+
+      - name: Clean up old task definitions
+        run: |
+          # Deregister old task definitions (keep latest 5)
+          for platform in rigger ai-agents gaming podcast templates enterprise; do
+            for env in staging production; do
+              FAMILY="${platform}-${env}-backend"
+              
+              aws ecs list-task-definitions \
+                --family-prefix "$FAMILY" \
+                --status ACTIVE \
+                --sort DESC \
+                --query 'taskDefinitionArns[5:]' \
+                --output text | \
+              xargs -r -n1 aws ecs deregister-task-definition --task-definition || true
+            done
+          done

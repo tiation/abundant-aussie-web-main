@@ -1,0 +1,335 @@
+version: '3.8'
+
+# 🚀 Tiation SaaS - Simplified Development Environment
+# Based on existing directory structure
+
+networks:
+  tiation-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+
+services:
+  # ===============================================
+  # 🗄️  CORE DATABASES & SERVICES
+  # ===============================================
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: tiation-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tiation_dev
+      POSTGRES_USER: tiation
+      POSTGRES_PASSWORD: dev123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tiation"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mongodb:
+    image: mongo:6.0
+    container_name: tiation-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tiation
+      MONGO_INITDB_ROOT_PASSWORD: dev123
+      MONGO_INITDB_DATABASE: tiation_gaming
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: tiation-redis
+    restart: unless-stopped
+    command: redis-server --requirepass dev123 --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - tiation-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "dev123", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🎲 D&D DICE ROLLER (Existing Platform)
+  # ===============================================
+  
+  dnd-dice-roller:
+    build:
+      context: ./dnddiceroller-enhanced
+      dockerfile: Dockerfile
+    container_name: tiation-dnd-dice-roller
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      MONGODB_URI: mongodb://tiation:dev123@mongodb:27017/tiation_gaming?authSource=admin
+      REDIS_URL: redis://:dev123@redis:6379
+    ports:
+      - "3000:3000"
+    networks:
+      - tiation-network
+    depends_on:
+      - mongodb
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🏗️ RIGGER PLATFORM (Existing)
+  # ===============================================
+  
+  rigger-platform:
+    build:
+      context: ./tiation-rigger-platform
+      dockerfile: Dockerfile
+    container_name: tiation-rigger-platform
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://tiation:dev123@postgres:5432/tiation_dev
+      REDIS_URL: redis://:dev123@redis:6379
+      JWT_SECRET: dev_jwt_secret_key
+    ports:
+      - "3001:3001"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🤖 AI AGENTS PLATFORM (Existing)
+  # ===============================================
+  
+  ai-agents:
+    build:
+      context: ./tiation-ai-agents
+      dockerfile: Dockerfile
+    container_name: tiation-ai-agents
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      DATABASE_URL: postgresql://tiation:dev123@postgres:5432/tiation_dev
+      REDIS_URL: redis://:dev123@redis:6379
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-dev-key}
+      JWT_SECRET: dev_jwt_secret_key
+    ports:
+      - "3002:3002"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🎧 PODCAST PLATFORM (Existing)
+  # ===============================================
+  
+  podcast-platform:
+    build:
+      context: ./www-tough-talk-podcast-chaos
+      dockerfile: Dockerfile
+    container_name: tiation-podcast
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+      DATABASE_URL: postgresql://tiation:dev123@postgres:5432/tiation_dev
+      REDIS_URL: redis://:dev123@redis:6379
+    ports:
+      - "3003:3003"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3003/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🏢 ENTERPRISE CORE (Existing)
+  # ===============================================
+  
+  enterprise-core:
+    build:
+      context: ./enterprise-core
+      dockerfile: Dockerfile
+    container_name: tiation-enterprise-core
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3004
+      DATABASE_URL: postgresql://tiation:dev123@postgres:5432/tiation_dev
+      REDIS_URL: redis://:dev123@redis:6379
+    ports:
+      - "3004:3004"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3004/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===============================================
+  # 🌐 REVERSE PROXY (NGINX)
+  # ===============================================
+  
+  nginx:
+    image: nginx:alpine
+    container_name: tiation-nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/simple.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - tiation-network
+    depends_on:
+      - dnd-dice-roller
+      - rigger-platform
+      - ai-agents
+      - podcast-platform
+      - enterprise-core
+
+  # ===============================================
+  # 🔧 DEVELOPMENT TOOLS
+  # ===============================================
+  
+  adminer:
+    image: adminer:latest
+    container_name: tiation-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - tiation-network
+    depends_on:
+      - postgres
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: tiation-mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: tiation
+      ME_CONFIG_MONGODB_ADMINPASSWORD: dev123
+      ME_CONFIG_MONGODB_URL: mongodb://tiation:dev123@mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    ports:
+      - "8081:8081"
+    networks:
+      - tiation-network
+    depends_on:
+      - mongodb
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: tiation-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:dev123
+    ports:
+      - "8082:8081"
+    networks:
+      - tiation-network
+    depends_on:
+      - redis
+
+  # ===============================================
+  # 📧 EMAIL TESTING
+  # ===============================================
+  
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: tiation-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    networks:
+      - tiation-network
+
+  # ===============================================
+  # 📊 BASIC MONITORING
+  # ===============================================
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: tiation-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus-simple.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - tiation-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: tiation-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3100:3000"
+    networks:
+      - tiation-network
+    depends_on:
+      - prometheus

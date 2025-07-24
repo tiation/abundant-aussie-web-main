@@ -1,0 +1,83 @@
+{
+  "name": "@tiation/enterprise-cli",
+  "version": "1.0.0-beta.1",
+  "description": "CLI tool for creating and managing Tiation Enterprise Framework templates",
+  "main": "dist/index.js",
+  "bin": {
+    "tiation": "dist/bin.js"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/bin.ts",
+    "build": "tsup src/bin.ts src/index.ts --format esm --dts",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "tiation",
+    "enterprise",
+    "template",
+    "cli",
+    "framework",
+    "react",
+    "svelte",
+    "vue",
+    "typescript",
+    "ai",
+    "realtime"
+  ],
+  "author": "Tiation Development Team <dev@tiation.dev>",
+  "license": "MIT",
+  "homepage": "https://tiation.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiation/enterprise-framework.git",
+    "directory": "developer-experience/cli-tools"
+  },
+  "bugs": {
+    "url": "https://github.com/tiation/enterprise-framework/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "degit": "^2.8.4",
+    "execa": "^8.0.1",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.2.12",
+    "node-fetch": "^3.3.2",
+    "ora": "^7.0.1",
+    "semver": "^7.5.4",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.0",
+    "@types/semver": "^7.5.6",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "tsup": "^8.0.1",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

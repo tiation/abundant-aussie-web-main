@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiation AI Agents - Pricing</title>
+    <style>
+        :root {
+            --primary-color: #00D9FF;
+            --secondary-color: #00FF88;
+            --accent-color: #FF0080;
+            --background-color: #0A0A0A;
+            --card-background: #1A1A1A;
+            --text-color: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-color: #333333;
+            --success-color: #00FF88;
+            --warning-color: #FFE500;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--background-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 217, 255, 0.3) 0%, transparent 70%);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Pricing Toggle */
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 3rem 0;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--border-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-color);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--text-color);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .toggle-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .toggle-label.active {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .savings-badge {
+            background: var(--success-color);
+            color: var(--background-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pricing-card {
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 217, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .pricing-card.popular::after {
+            content: 'Most Popular';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: var(--background-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .plan-price .currency {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .plan-price .period {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .annual-price {
+            display: none;
+        }
+
+        .billing-toggle.annual .monthly-price {
+            display: none;
+        }
+
+        .billing-toggle.annual .annual-price {
+            display: block;
+        }
+
+        .plan-trial {
+            color: var(--success-color);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success-color);
+            font-weight: 600;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 50%;
+        }
+
+        .plan-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--background-color);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .plan-button.secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .plan-button.secondary:hover {
+            background: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        /* Enterprise Section */
+        .enterprise-section {
+            background: var(--card-background);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enterprise-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 0, 128, 0.1));
+            opacity: 0.5;
+        }
+
+        .enterprise-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .enterprise-section p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .enterprise-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .enterprise-feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .enterprise-feature h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-button {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 0, 128, 0.3);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin: 4rem 0;
+        }
+
+        .faq-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .faq-item {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1.5rem;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--card-background);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-toggle {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .enterprise-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../stripe-integration.js">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center space-x-3">
+                        <svg class="h-8 w-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span class="font-bold text-xl text-gray-900">Pricing</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#plans" class="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-cyan-400 transition">Plans</a>
+                    <a href="#features" class="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-cyan-400 transition">Features</a>
+                    <a href="#contact" class="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-cyan-400 transition">Contact</a>
+                    <button id="theme-toggle" class="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-cyan-400 transition p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <i id="theme-icon" class="fas fa-moon text-xl"></i>
+                    </button>
+                    <a href="https://github.com/tiation/monetization-templates" class="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-cyan-400 transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Choose Your AI Agent Plan</h1>
+            <p>Transform your business with enterprise-grade AI automation. Start with a 14-day free trial.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Billing Toggle -->
+        <div class="pricing-toggle">
+            <span class="toggle-label active" id="monthly-label">Monthly</span>
+            <div class="toggle-switch" id="billing-toggle">
+                <div class="toggle-slider"></div>
+            </div>
+            <span class="toggle-label" id="annual-label">Annual</span>
+            <span class="savings-badge">Save 20%</span>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid billing-toggle monthly" id="pricing-grid">
+            <!-- Starter Plan -->
+            <div class="pricing-card">
+                <div class="plan-name">Starter</div>
+                <div class="plan-description">Perfect for small teams getting started with AI automation</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>
+                    <span class="monthly-price">99</span>
+                    <span class="annual-price">79</span>
+                    <span class="period">/month</span>
+                </div>
+                <div class="plan-trial">✨ 14-day free trial</div>
+                <ul class="plan-features">
+                    <li>Up to 5 AI agents</li>
+                    <li>Basic automation workflows</li>
+                    <li>1,000 API calls/month</li>
+                    <li>Email support</li>
+                    <li>Community access</li>
+                    <li>Basic analytics</li>
+                </ul>
+                <button class="plan-button secondary" onclick="selectPlan('starter')">Start Free Trial</button>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="pricing-card popular">
+                <div class="plan-name">Professional</div>
+                <div class="plan-description">Ideal for growing businesses with advanced automation needs</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>
+                    <span class="monthly-price">299</span>
+                    <span class="annual-price">239</span>
+                    <span class="period">/month</span>
+                </div>
+                <div class="plan-trial">✨ 14-day free trial</div>
+                <ul class="plan-features">
+                    <li>Up to 25 AI agents</li>
+                    <li>Advanced workflow builder</li>
+                    <li>10,000 API calls/month</li>
+                    <li>Priority support</li>
+                    <li>Custom integrations</li>
+                    <li>Advanced analytics</li>
+                    <li>Team collaboration</li>
+                    <li>Custom domains</li>
+                </ul>
+                <button class="plan-button" onclick="selectPlan('professional')">Start Free Trial</button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-description">For large organizations requiring maximum flexibility and control</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>
+                    <span class="monthly-price">999</span>
+                    <span class="annual-price">799</span>
+                    <span class="period">/month</span>
+                </div>
+                <div class="plan-trial">✨ 14-day free trial</div>
+                <ul class="plan-features">
+                    <li>Unlimited AI agents</li>
+                    <li>Custom workflow engine</li>
+                    <li>Unlimited API calls</li>
+                    <li>Dedicated support</li>
+                    <li>White-label options</li>
+                    <li>Enterprise analytics</li>
+                    <li>SSO integration</li>
+                    <li>Custom development</li>
+                    <li>SLA guarantees</li>
+                </ul>
+                <button class="plan-button" onclick="selectPlan('enterprise')">Start Free Trial</button>
+            </div>
+        </div>
+
+        <!-- Enterprise Section -->
+        <div class="enterprise-section">
+            <h2>Need Something More?</h2>
+            <p>Custom solutions for enterprise organizations with unique requirements</p>
+            <div class="enterprise-features">
+                <div class="enterprise-feature">
+                    <h3>🏢 Custom Deployment</h3>
+                    <p>On-premises or private cloud deployment options</p>
+                </div>
+                <div class="enterprise-feature">
+                    <h3>🔒 Enhanced Security</h3>
+                    <p>SOC2, HIPAA, and custom compliance requirements</p>
+                </div>
+                <div class="enterprise-feature">
+                    <h3>🛠️ Custom Development</h3>
+                    <p>Tailored features and integrations for your needs</p>
+                </div>
+                <div class="enterprise-feature">
+                    <h3>📞 Dedicated Support</h3>
+                    <p>24/7 support with dedicated account management</p>
+                </div>
+            </div>
+            <button class="contact-button" onclick="contactSales()">Contact Sales</button>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    What's included in the free trial?
+                    <span>+</span>
+                </button>
+                <div class="faq-answer">
+                    Your 14-day free trial includes full access to all features in your chosen plan. No credit card required to start, and you can cancel anytime during the trial period.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Can I change plans later?
+                    <span>+</span>
+                </button>
+                <div class="faq-answer">
+                    Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and billing is prorated accordingly.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    What happens if I exceed my API limits?
+                    <span>+</span>
+                </button>
+                <div class="faq-answer">
+                    If you exceed your monthly API limits, you'll be notified and can either upgrade your plan or purchase additional API calls at $0.01 per call.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Do you offer custom integrations?
+                    <span>+</span>
+                </button>
+                <div class="faq-answer">
+                    Yes! Professional and Enterprise plans include custom integrations. We can connect to virtually any API or service your business uses.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/security">Security</a>
+                <a href="/support">Support</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <p>&copy; 2024 Tiation AI Agents. All rights reserved.</p>
+            <p>Built with ❤️ for the future of AI automation</p>
+        </div>
+    </div>
+
+    <script>
+        // Billing toggle functionality
+        const billingToggle = document.getElementById('billing-toggle');
+        const monthlyLabel = document.getElementById('monthly-label');
+        const annualLabel = document.getElementById('annual-label');
+        const pricingGrid = document.getElementById('pricing-grid');
+
+        billingToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            
+            if (this.classList.contains('active')) {
+                monthlyLabel.classList.remove('active');
+                annualLabel.classList.add('active');
+                pricingGrid.classList.remove('monthly');
+                pricingGrid.classList.add('annual');
+            } else {
+                monthlyLabel.classList.add('active');
+                annualLabel.classList.remove('active');
+                pricingGrid.classList.remove('annual');
+                pricingGrid.classList.add('monthly');
+            }
+        });
+
+        // Plan selection
+        function selectPlan(planName) {
+            // Integrate with Stripe Checkout
+            console.log('Selected plan:', planName);
+            // Example integration:
+            // window.location.href = `/checkout?plan=${planName}&billing=${getBillingType()}`;
+            
+            // For demo purposes, show alert
+            alert(`Starting free trial for ${planName} plan!`);
+        }
+
+        function getBillingType() {
+            return billingToggle.classList.contains('active') ? 'annual' : 'monthly';
+        }
+
+        function contactSales() {
+            // Integrate with your sales contact system
+            console.log('Contact sales clicked');
+            // Example: window.location.href = '/contact-sales';
+            alert('Redirecting to sales contact form...');
+        }
+
+        // FAQ toggle
+        function toggleFAQ(button) {
+            const faqItem = button.parentElement;
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.faq-question span').textContent = '+';
+            });
+            
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+                button.querySelector('span').textContent = '-';
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    <script src="../config/tiation-theme-toggle.js"></script>
+</body>
+</html>

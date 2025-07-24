@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+html,
+body {
+	@apply overflow-y-scroll;
+}
+
+/* Tiation theme fonts */
+@font-face {
+	font-family: 'Quicksand';
+	src: url('/fonts/Quicksand.ttf');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Space Grotesk';
+	src: url('/fonts/SpaceGrotesk.ttf');
+	font-display: swap;
+}
+
+/* Custom Tiation styles */
+.tiation-gradient-bg {
+	background: linear-gradient(135deg, #00FFFF 0%, #FF00FF 100%);
+}
+
+.tiation-gradient-text {
+	background: linear-gradient(135deg, #00FFFF 0%, #FF00FF 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.tiation-neon-border {
+	border: 1px solid #00FFFF;
+	box-shadow: 0 0 5px #00FFFF, inset 0 0 5px #00FFFF;
+}
+
+.tiation-card-hover {
+	transition: all 0.3s ease;
+}
+
+.tiation-card-hover:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+}
+
+/* Dark theme customizations */
+.dark .tiation-glass {
+	background: rgba(10, 10, 10, 0.8);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(0, 255, 255, 0.2);
+}
