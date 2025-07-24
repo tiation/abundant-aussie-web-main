@@ -1,0 +1,679 @@
+# Reusable Testing Workflow Template
+# ChaseWhiteRabbit NGO - Enterprise Testing Standards
+# Usage: uses: ./.enterprise-cicd/templates/github-actions/testing-workflow.yml
+
+name: 'Enterprise Testing Pipeline'
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      python-version:
+        description: 'Python version to use'
+        required: false
+        type: string
+        default: '3.11'
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.21'
+      java-version:
+        description: 'Java version to use'
+        required: false
+        type: string
+        default: '17'
+      coverage-threshold:
+        description: 'Minimum code coverage percentage'
+        required: false
+        type: number
+        default: 80
+      enable-performance-tests:
+        description: 'Enable performance testing'
+        required: false
+        type: boolean
+        default: false
+      enable-e2e-tests:
+        description: 'Enable end-to-end testing'
+        required: false
+        type: boolean
+        default: false
+      parallel-jobs:
+        description: 'Number of parallel test jobs'
+        required: false
+        type: number
+        default: 4
+    secrets:
+      CODECOV_TOKEN:
+        description: 'Codecov token for coverage reporting'
+        required: false
+      SONAR_TOKEN:
+        description: 'SonarQube token'
+        required: false
+      DATABASE_URL:
+        description: 'Database URL for integration tests'
+        required: false
+      TEST_API_KEY:
+        description: 'API key for testing external services'
+        required: false
+    outputs:
+      test-results:
+        description: 'Summary of test results'
+        value: ${{ jobs.aggregate-results.outputs.summary }}
+      coverage-percentage:
+        description: 'Overall code coverage percentage'
+        value: ${{ jobs.aggregate-results.outputs.coverage }}
+
+env:
+  REPORTS_DIR: test-reports
+  COVERAGE_DIR: coverage-reports
+
+jobs:
+  preparation:
+    name: 'Test Preparation'
+    runs-on: ubuntu-latest
+    outputs:
+      has-package-json: ${{ steps.check-files.outputs.has-package-json }}
+      has-requirements-txt: ${{ steps.check-files.outputs.has-requirements-txt }}
+      has-go-mod: ${{ steps.check-files.outputs.has-go-mod }}
+      has-java-files: ${{ steps.check-files.outputs.has-java-files }}
+      has-dockerfile: ${{ steps.check-files.outputs.has-dockerfile }}
+      project-type: ${{ steps.detect-type.outputs.project-type }}
+      test-matrix: ${{ steps.generate-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for project files
+        id: check-files
+        run: |
+          echo "has-package-json=$(test -f package.json && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-requirements-txt=$(test -f requirements.txt && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-go-mod=$(test -f go.mod && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-java-files=$(find . -name '*.java' -o -name 'pom.xml' -o -name 'build.gradle' | head -1 | wc -l | xargs)" >> $GITHUB_OUTPUT
+          echo "has-dockerfile=$(test -f Dockerfile && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      - name: Detect project type
+        id: detect-type
+        run: |
+          if [[ -f "package.json" ]]; then
+            echo "project-type=nodejs" >> $GITHUB_OUTPUT
+          elif [[ -f "requirements.txt" || -f "pyproject.toml" ]]; then
+            echo "project-type=python" >> $GITHUB_OUTPUT
+          elif [[ -f "go.mod" ]]; then
+            echo "project-type=golang" >> $GITHUB_OUTPUT
+          elif [[ -f "pom.xml" || -f "build.gradle" ]]; then
+            echo "project-type=java" >> $GITHUB_OUTPUT
+          else
+            echo "project-type=generic" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate test matrix
+        id: generate-matrix
+        run: |
+          # Create test matrix based on project type
+          case "${{ steps.detect-type.outputs.project-type }}" in
+            nodejs)
+              echo 'matrix={"os":["ubuntu-latest","windows-latest","macos-latest"],"node-version":["18","20","21"]}' >> $GITHUB_OUTPUT
+              ;;
+            python)
+              echo 'matrix={"os":["ubuntu-latest","windows-latest","macos-latest"],"python-version":["3.9","3.10","3.11","3.12"]}' >> $GITHUB_OUTPUT
+              ;;
+            golang)
+              echo 'matrix={"os":["ubuntu-latest","windows-latest","macos-latest"],"go-version":["1.20","1.21","1.22"]}' >> $GITHUB_OUTPUT
+              ;;
+            java)
+              echo 'matrix={"os":["ubuntu-latest","windows-latest","macos-latest"],"java-version":["11","17","21"]}' >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo 'matrix={"os":["ubuntu-latest"]}' >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Create reports directory
+        run: |
+          mkdir -p ${{ env.REPORTS_DIR }}
+          mkdir -p ${{ env.COVERAGE_DIR }}
+
+  unit-tests:
+    name: 'Unit Tests'
+    runs-on: ${{ matrix.os }}
+    needs: preparation
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.preparation.outputs.test-matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: |
+          mkdir -p ${{ env.REPORTS_DIR }}
+          mkdir -p ${{ env.COVERAGE_DIR }}
+
+      # Node.js Unit Tests
+      - name: Set up Node.js
+        if: needs.preparation.outputs.has-package-json == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version || inputs.node-version }}
+          cache: 'npm'
+
+      - name: Install Node.js dependencies
+        if: needs.preparation.outputs.has-package-json == 'true'
+        run: npm ci
+
+      - name: Run Node.js tests
+        if: needs.preparation.outputs.has-package-json == 'true'
+        run: |
+          # Check for test scripts
+          if npm run | grep -q "test"; then
+            echo "Running npm test..."
+            npm test -- --coverage --watchAll=false --testResultsProcessor=jest-junit
+          elif npx jest --version > /dev/null 2>&1; then
+            echo "Running Jest tests..."
+            npx jest --coverage --watchAll=false --testResultsProcessor=jest-junit
+          elif npx mocha --version > /dev/null 2>&1; then
+            echo "Running Mocha tests..."
+            npx mocha --reporter json --reporter-options output=${{ env.REPORTS_DIR }}/mocha-results.json
+          else
+            echo "No test framework detected"
+          fi
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ${{ env.REPORTS_DIR }}
+          JEST_JUNIT_OUTPUT_NAME: jest-results.xml
+
+      # Python Unit Tests
+      - name: Set up Python
+        if: needs.preparation.outputs.has-requirements-txt == 'true' || needs.preparation.outputs.project-type == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version || inputs.python-version }}
+
+      - name: Install Python dependencies
+        if: needs.preparation.outputs.has-requirements-txt == 'true' || needs.preparation.outputs.project-type == 'python'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pytest-xdist pytest-html
+          if [[ -f "requirements.txt" ]]; then
+            pip install -r requirements.txt
+          elif [[ -f "pyproject.toml" ]]; then
+            pip install -e .
+          fi
+
+      - name: Run Python tests
+        if: needs.preparation.outputs.has-requirements-txt == 'true' || needs.preparation.outputs.project-type == 'python'
+        run: |
+          echo "Running Python tests..."
+          pytest \
+            --cov=. \
+            --cov-report=xml:${{ env.COVERAGE_DIR }}/coverage.xml \
+            --cov-report=html:${{ env.COVERAGE_DIR }}/htmlcov \
+            --cov-report=term \
+            --junit-xml=${{ env.REPORTS_DIR }}/pytest-results.xml \
+            --html=${{ env.REPORTS_DIR }}/pytest-report.html \
+            --self-contained-html \
+            -n ${{ inputs.parallel-jobs }} \
+            -v
+
+      # Go Unit Tests
+      - name: Set up Go
+        if: needs.preparation.outputs.has-go-mod == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version || inputs.go-version }}
+
+      - name: Run Go tests
+        if: needs.preparation.outputs.has-go-mod == 'true'
+        run: |
+          echo "Running Go tests..."
+          go test -v -race -coverprofile=${{ env.COVERAGE_DIR }}/coverage.out -covermode=atomic ./...
+          go tool cover -html=${{ env.COVERAGE_DIR }}/coverage.out -o ${{ env.COVERAGE_DIR }}/coverage.html
+          
+          # Convert to XML for reporting
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          go test -v ./... 2>&1 | go-junit-report -set-exit-code > ${{ env.REPORTS_DIR }}/go-test-results.xml
+
+      # Java Unit Tests
+      - name: Set up Java
+        if: needs.preparation.outputs.has-java-files == '1'
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version || inputs.java-version }}
+          distribution: 'temurin'
+
+      - name: Run Java tests (Maven)
+        if: needs.preparation.outputs.has-java-files == '1' && hashFiles('**/pom.xml') != ''
+        run: |
+          echo "Running Maven tests..."
+          mvn test \
+            -Dmaven.test.failure.ignore=true \
+            -Dcobertura.report.format=xml \
+            -Dcobertura.outputDirectory=${{ env.COVERAGE_DIR }}
+          
+          # Copy test results
+          find . -name "surefire-reports" -type d -exec cp -r {} ${{ env.REPORTS_DIR }}/ \;
+
+      - name: Run Java tests (Gradle)
+        if: needs.preparation.outputs.has-java-files == '1' && hashFiles('**/build.gradle*') != ''
+        run: |
+          echo "Running Gradle tests..."
+          ./gradlew test jacocoTestReport
+          
+          # Copy test results
+          find . -name "test-results" -type d -exec cp -r {} ${{ env.REPORTS_DIR }}/ \;
+          find . -name "jacoco" -type d -exec cp -r {} ${{ env.COVERAGE_DIR }}/ \;
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.node-version || matrix.python-version || matrix.go-version || matrix.java-version || 'default' }}
+          path: |
+            ${{ env.REPORTS_DIR }}
+            ${{ env.COVERAGE_DIR }}
+          retention-days: 30
+
+  integration-tests:
+    name: 'Integration Tests'
+    runs-on: ubuntu-latest
+    needs: preparation
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: |
+          mkdir -p ${{ env.REPORTS_DIR }}
+          mkdir -p ${{ env.COVERAGE_DIR }}
+
+      - name: Set up project environment
+        run: |
+          # Setup based on project type
+          case "${{ needs.preparation.outputs.project-type }}" in
+            nodejs)
+              echo "Setting up Node.js environment..."
+              ;;
+            python)
+              echo "Setting up Python environment..."
+              ;;
+            golang)
+              echo "Setting up Go environment..."
+              ;;
+            java)
+              echo "Setting up Java environment..."
+              ;;
+            *)
+              echo "Generic environment setup..."
+              ;;
+          esac
+
+      - name: Run integration tests
+        run: |
+          # Run integration tests based on project type
+          if [[ -f "docker-compose.test.yml" ]]; then
+            echo "Running Docker Compose integration tests..."
+            docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+          elif [[ -f "integration-tests.sh" ]]; then
+            echo "Running custom integration tests..."
+            chmod +x integration-tests.sh
+            ./integration-tests.sh
+          else
+            echo "No integration tests found"
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/test_db' }}
+          REDIS_URL: redis://localhost:6379
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            ${{ env.REPORTS_DIR }}
+            ${{ env.COVERAGE_DIR }}
+          retention-days: 30
+
+  e2e-tests:
+    name: 'End-to-End Tests'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: inputs.enable-e2e-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: |
+          mkdir -p ${{ env.REPORTS_DIR }}
+          mkdir -p ${{ env.COVERAGE_DIR }}
+
+      - name: Set up Node.js for E2E
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install Playwright
+        run: |
+          npm install -g @playwright/test
+          npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: |
+          if [[ -f "playwright.config.js" || -f "playwright.config.ts" ]]; then
+            echo "Running Playwright E2E tests..."
+            npx playwright test --reporter=html --reporter=junit
+          elif [[ -f "cypress.config.js" ]]; then
+            echo "Running Cypress E2E tests..."
+            npm install cypress
+            npx cypress run --reporter junit --reporter-options "mochaFile=${{ env.REPORTS_DIR }}/cypress-results.xml"
+          else
+            echo "No E2E test framework configured"
+          fi
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            ${{ env.REPORTS_DIR }}
+            playwright-report/
+            cypress/screenshots/
+            cypress/videos/
+          retention-days: 30
+
+  performance-tests:
+    name: 'Performance Tests'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: inputs.enable-performance-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Set up K6
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.47.0/k6-v0.47.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+
+      - name: Run performance tests
+        run: |
+          if [[ -f "k6-performance.js" ]]; then
+            echo "Running K6 performance tests..."
+            ./k6 run --out json=${{ env.REPORTS_DIR }}/k6-results.json k6-performance.js
+          elif [[ -f "artillery.yml" ]]; then
+            echo "Running Artillery performance tests..."
+            npm install -g artillery
+            artillery run artillery.yml --output ${{ env.REPORTS_DIR }}/artillery-results.json
+          else
+            echo "No performance tests configured"
+          fi
+
+      - name: Upload performance test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-test-results
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+  aggregate-results:
+    name: 'Aggregate Test Results'
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, e2e-tests, performance-tests]
+    if: always()
+    outputs:
+      summary: ${{ steps.generate-summary.outputs.summary }}
+      coverage: ${{ steps.generate-summary.outputs.coverage }}
+      tests-passed: ${{ steps.generate-summary.outputs.tests-passed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.REPORTS_DIR }}
+
+      - name: Flatten artifact structure
+        run: |
+          find ${{ env.REPORTS_DIR }} -type f -exec mv {} ${{ env.REPORTS_DIR }}/ \; 2>/dev/null || true
+          find ${{ env.REPORTS_DIR }} -type d -empty -delete 2>/dev/null || true
+
+      - name: Generate test summary
+        id: generate-summary
+        run: |
+          cat > generate_test_summary.py << 'EOF'
+          import json
+          import os
+          import xml.etree.ElementTree as ET
+          from datetime import datetime
+          import glob
+          
+          def parse_junit_xml(filename):
+              try:
+                  tree = ET.parse(filename)
+                  root = tree.getroot()
+                  
+                  if root.tag == 'testsuites':
+                      suites = root.findall('testsuite')
+                  else:
+                      suites = [root]
+                  
+                  total_tests = 0
+                  failures = 0
+                  errors = 0
+                  skipped = 0
+                  
+                  for suite in suites:
+                      total_tests += int(suite.get('tests', 0))
+                      failures += int(suite.get('failures', 0))
+                      errors += int(suite.get('errors', 0))
+                      skipped += int(suite.get('skipped', 0))
+                  
+                  return {
+                      'total': total_tests,
+                      'passed': total_tests - failures - errors - skipped,
+                      'failed': failures + errors,
+                      'skipped': skipped
+                  }
+              except:
+                  return {'total': 0, 'passed': 0, 'failed': 0, 'skipped': 0}
+          
+          def parse_coverage_xml(filename):
+              try:
+                  tree = ET.parse(filename)
+                  root = tree.getroot()
+                  
+                  if root.tag == 'coverage':
+                      line_rate = float(root.get('line-rate', 0))
+                      return int(line_rate * 100)
+                  else:
+                      return 0
+              except:
+                  return 0
+          
+          # Initialize summary
+          summary = {
+              'timestamp': datetime.now().isoformat(),
+              'repository': os.environ.get('GITHUB_REPOSITORY', 'Unknown'),
+              'commit': os.environ.get('GITHUB_SHA', 'Unknown'),
+              'total_tests': 0,
+              'passed_tests': 0,
+              'failed_tests': 0,
+              'skipped_tests': 0,
+              'coverage_percentage': 0,
+              'test_suites': [],
+              'coverage_threshold_met': False
+          }
+          
+          reports_dir = '${{ env.REPORTS_DIR }}'
+          
+          # Parse test results
+          junit_files = glob.glob(f'{reports_dir}/*results*.xml') + glob.glob(f'{reports_dir}/*-results.xml')
+          
+          for junit_file in junit_files:
+              suite_name = os.path.basename(junit_file).replace('-results.xml', '').replace('results.xml', '')
+              results = parse_junit_xml(junit_file)
+              
+              summary['test_suites'].append({
+                  'name': suite_name,
+                  'results': results
+              })
+              
+              summary['total_tests'] += results['total']
+              summary['passed_tests'] += results['passed']
+              summary['failed_tests'] += results['failed']
+              summary['skipped_tests'] += results['skipped']
+          
+          # Parse coverage results
+          coverage_files = glob.glob(f'{reports_dir}/coverage*.xml')
+          if coverage_files:
+              summary['coverage_percentage'] = parse_coverage_xml(coverage_files[0])
+          
+          # Check coverage threshold
+          threshold = int(os.environ.get('COVERAGE_THRESHOLD', 80))
+          summary['coverage_threshold_met'] = summary['coverage_percentage'] >= threshold
+          
+          # Calculate pass rate
+          if summary['total_tests'] > 0:
+              summary['pass_rate'] = (summary['passed_tests'] / summary['total_tests']) * 100
+          else:
+              summary['pass_rate'] = 0
+          
+          # Save summary
+          with open(f'{reports_dir}/test-summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          # Print summary
+          print("🧪 TEST RESULTS SUMMARY")
+          print("=" * 50)
+          print(f"Repository: {summary['repository']}")
+          print(f"Commit: {summary['commit'][:8]}")
+          print(f"Total tests: {summary['total_tests']}")
+          print(f"  Passed: {summary['passed_tests']}")
+          print(f"  Failed: {summary['failed_tests']}")
+          print(f"  Skipped: {summary['skipped_tests']}")
+          print(f"Pass rate: {summary['pass_rate']:.1f}%")
+          print(f"Coverage: {summary['coverage_percentage']}%")
+          print(f"Coverage threshold ({threshold}%): {'✅ Met' if summary['coverage_threshold_met'] else '❌ Not met'}")
+          
+          print("\nTest suites:")
+          for suite in summary['test_suites']:
+              print(f"  {suite['name']}: {suite['results']['passed']}/{suite['results']['total']} passed")
+          
+          # Set GitHub outputs
+          with open(f'{os.environ["GITHUB_OUTPUT"]}', 'a') as f:
+              f.write(f"summary={json.dumps(summary)}\n")
+              f.write(f"coverage={summary['coverage_percentage']}\n")
+              f.write(f"tests-passed={'true' if summary['failed_tests'] == 0 else 'false'}\n")
+          
+          EOF
+          
+          python3 generate_test_summary.py
+        env:
+          COVERAGE_THRESHOLD: ${{ inputs.coverage-threshold }}
+
+      - name: Upload to Codecov
+        if: secrets.CODECOV_TOKEN
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ env.REPORTS_DIR }}
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: Upload consolidated test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-consolidated
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 90
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = JSON.parse(fs.readFileSync('${{ env.REPORTS_DIR }}/test-summary.json', 'utf8'));
+            
+            const testEmoji = summary.failed_tests === 0 ? '✅' : '❌';
+            const coverageEmoji = summary.coverage_threshold_met ? '✅' : '⚠️';
+            
+            const body = `## 🧪 Test Results
+            
+            **${testEmoji} Tests** | **${coverageEmoji} Coverage** for commit \`${summary.commit.substring(0, 8)}\`
+            
+            | Metric | Value |
+            |--------|-------|
+            | Total Tests | ${summary.total_tests} |
+            | Passed | ${summary.passed_tests} |
+            | Failed | ${summary.failed_tests} |
+            | Skipped | ${summary.skipped_tests} |
+            | Pass Rate | ${summary.pass_rate.toFixed(1)}% |
+            | Coverage | ${summary.coverage_percentage}% |
+            
+            ${summary.failed_tests > 0 ? '❌ **Some tests failed!** Please review and fix before merging.' : ''}
+            ${!summary.coverage_threshold_met ? `⚠️ **Coverage below threshold!** Current: ${summary.coverage_percentage}%, Required: ${{ inputs.coverage-threshold }}%` : ''}
+            ${summary.failed_tests === 0 && summary.coverage_threshold_met ? '✅ **All tests passed with good coverage!**' : ''}
+            
+            <details>
+            <summary>Test Suite Details</summary>
+            
+            ${summary.test_suites.map(suite => `- **${suite.name}**: ${suite.results.passed}/${suite.results.total} passed`).join('\n')}
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail on test failures
+        if: steps.generate-summary.outputs.tests-passed == 'false'
+        run: |
+          echo "❌ Tests failed. Failing the workflow."
+          exit 1
+
+      - name: Fail on coverage threshold
+        if: inputs.coverage-threshold > 0
+        run: |
+          COVERAGE=$(cat ${{ env.REPORTS_DIR }}/test-summary.json | jq -r '.coverage_percentage')
+          if (( $(echo "$COVERAGE < ${{ inputs.coverage-threshold }}" | bc -l) )); then
+            echo "❌ Coverage ($COVERAGE%) below threshold (${{ inputs.coverage-threshold }}%)"
+            exit 1
+          fi

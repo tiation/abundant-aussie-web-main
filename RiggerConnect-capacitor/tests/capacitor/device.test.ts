@@ -1,21 +1,54 @@
-import { Device } from '@capacitor/device';
-import { Network } from '@capacitor/network';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Geolocation } from '@capacitor/geolocation';
-import { Preferences } from '@capacitor/preferences';
+import { CameraResultType, CameraSource } from '@capacitor/camera';
 
-// Mock Capacitor plugins
-jest.mock('@capacitor/device');
-jest.mock('@capacitor/network');
-jest.mock('@capacitor/camera');
-jest.mock('@capacitor/geolocation');
-jest.mock('@capacitor/preferences');
+// Mock Capacitor plugins with factory functions
+jest.mock('@capacitor/device', () => ({
+  Device: {
+    getInfo: jest.fn(),
+    getId: jest.fn(),
+    getBatteryInfo: jest.fn(),
+    getLanguageCode: jest.fn(),
+  },
+}));
 
-const mockDevice = Device as jest.Mocked<typeof Device>;
-const mockNetwork = Network as jest.Mocked<typeof Network>;
-const mockCamera = Camera as jest.Mocked<typeof Camera>;
-const mockGeolocation = Geolocation as jest.Mocked<typeof Geolocation>;
-const mockPreferences = Preferences as jest.Mocked<typeof Preferences>;
+jest.mock('@capacitor/network', () => ({
+  Network: {
+    getStatus: jest.fn(),
+    addListener: jest.fn(),
+  },
+}));
+
+jest.mock('@capacitor/camera', () => ({
+  Camera: {
+    getPhoto: jest.fn(),
+    requestPermissions: jest.fn(),
+  },
+}));
+
+jest.mock('@capacitor/geolocation', () => ({
+  Geolocation: {
+    getCurrentPosition: jest.fn(),
+    watchPosition: jest.fn(),
+    clearWatch: jest.fn(),
+    requestPermissions: jest.fn(),
+  },
+}));
+
+jest.mock('@capacitor/preferences', () => ({
+  Preferences: {
+    get: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+    clear: jest.fn(),
+    keys: jest.fn(),
+  },
+}));
+
+// Import the mocked modules
+const { Device } = require('@capacitor/device');
+const { Network } = require('@capacitor/network');
+const { Camera } = require('@capacitor/camera');
+const { Geolocation } = require('@capacitor/geolocation');
+const { Preferences } = require('@capacitor/preferences');
 
 describe('Capacitor Device Integration', () => {
   beforeEach(() => {
@@ -39,7 +72,7 @@ describe('Capacitor Device Integration', () => {
         realDiskTotal: 128000,
       };
 
-      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
+      Device.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
 
@@ -51,7 +84,7 @@ describe('Capacitor Device Integration', () => {
 
     it('should get device ID', async () => {
       const mockDeviceId = { identifier: 'test-device-id-12345' };
-      mockDevice.getId.mockResolvedValue(mockDeviceId);
+      Device.getId.mockResolvedValue(mockDeviceId);
 
       const deviceId = await Device.getId();
 
@@ -65,7 +98,7 @@ describe('Capacitor Device Integration', () => {
         isCharging: false,
       };
 
-      mockDevice.getBatteryInfo.mockResolvedValue(mockBatteryInfo);
+      Device.getBatteryInfo.mockResolvedValue(mockBatteryInfo);
 
       const batteryInfo = await Device.getBatteryInfo();
 
@@ -76,7 +109,7 @@ describe('Capacitor Device Integration', () => {
 
     it('should get language code', async () => {
       const mockLanguageCode = { value: 'en-US' };
-      mockDevice.getLanguageCode.mockResolvedValue(mockLanguageCode);
+      Device.getLanguageCode.mockResolvedValue(mockLanguageCode);
 
       const languageCode = await Device.getLanguageCode();
 
@@ -92,7 +125,7 @@ describe('Capacitor Device Integration', () => {
         connectionType: 'wifi' as const,
       };
 
-      mockNetwork.getStatus.mockResolvedValue(mockNetworkStatus);
+      Network.getStatus.mockResolvedValue(mockNetworkStatus);
 
       const networkStatus = await Network.getStatus();
 
@@ -105,7 +138,7 @@ describe('Capacitor Device Integration', () => {
       const mockListener = jest.fn();
       const mockRemove = jest.fn();
 
-      mockNetwork.addListener.mockResolvedValue({ remove: mockRemove });
+      Network.addListener.mockResolvedValue({ remove: mockRemove });
 
       Network.addListener('networkStatusChange', mockListener);
 
@@ -118,7 +151,7 @@ describe('Capacitor Device Integration', () => {
         connectionType: 'none' as const,
       };
 
-      mockNetwork.getStatus.mockResolvedValue(mockOfflineStatus);
+      Network.getStatus.mockResolvedValue(mockOfflineStatus);
 
       const networkStatus = await Network.getStatus();
 
@@ -138,7 +171,7 @@ describe('Capacitor Device Integration', () => {
         saved: false,
       };
 
-      mockCamera.getPhoto.mockResolvedValue(mockPhoto);
+      Camera.getPhoto.mockResolvedValue(mockPhoto);
 
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.DataUrl,
@@ -160,7 +193,7 @@ describe('Capacitor Device Integration', () => {
         photos: 'granted' as const,
       };
 
-      mockCamera.requestPermissions.mockResolvedValue(mockPermissions);
+      Camera.requestPermissions.mockResolvedValue(mockPermissions);
 
       const permissions = await Camera.requestPermissions();
 
@@ -175,7 +208,7 @@ describe('Capacitor Device Integration', () => {
         photos: 'denied' as const,
       };
 
-      mockCamera.requestPermissions.mockResolvedValue(mockDeniedPermissions);
+      Camera.requestPermissions.mockResolvedValue(mockDeniedPermissions);
 
       const permissions = await Camera.requestPermissions();
 
@@ -199,7 +232,7 @@ describe('Capacitor Device Integration', () => {
         timestamp: 1640995200000,
       };
 
-      mockGeolocation.getCurrentPosition.mockResolvedValue(mockPosition);
+      Geolocation.getCurrentPosition.mockResolvedValue(mockPosition);
 
       const position = await Geolocation.getCurrentPosition();
 
@@ -215,7 +248,7 @@ describe('Capacitor Device Integration', () => {
         coarseLocation: 'granted' as const,
       };
 
-      mockGeolocation.requestPermissions.mockResolvedValue(mockPermissions);
+      Geolocation.requestPermissions.mockResolvedValue(mockPermissions);
 
       const permissions = await Geolocation.requestPermissions();
 
@@ -226,14 +259,14 @@ describe('Capacitor Device Integration', () => {
 
     it('should handle location errors', async () => {
       const mockError = new Error('Location services disabled');
-      mockGeolocation.getCurrentPosition.mockRejectedValue(mockError);
+      Geolocation.getCurrentPosition.mockRejectedValue(mockError);
 
       await expect(Geolocation.getCurrentPosition()).rejects.toThrow('Location services disabled');
     });
 
     it('should watch position changes', async () => {
       const mockWatchId = 'watch-123';
-      mockGeolocation.watchPosition.mockResolvedValue(mockWatchId);
+      Geolocation.watchPosition.mockResolvedValue(mockWatchId);
 
       const watchId = await Geolocation.watchPosition({
         enableHighAccuracy: true,
@@ -252,8 +285,8 @@ describe('Capacitor Device Integration', () => {
 
   describe('Preferences Plugin', () => {
     it('should set and get preferences', async () => {
-      mockPreferences.set.mockResolvedValue();
-      mockPreferences.get.mockResolvedValue({ value: 'test-value' });
+      Preferences.set.mockResolvedValue();
+      Preferences.get.mockResolvedValue({ value: 'test-value' });
 
       await Preferences.set({
         key: 'test-key',
@@ -271,7 +304,7 @@ describe('Capacitor Device Integration', () => {
     });
 
     it('should remove preferences', async () => {
-      mockPreferences.remove.mockResolvedValue();
+      Preferences.remove.mockResolvedValue();
 
       await Preferences.remove({ key: 'test-key' });
 
@@ -279,7 +312,7 @@ describe('Capacitor Device Integration', () => {
     });
 
     it('should clear all preferences', async () => {
-      mockPreferences.clear.mockResolvedValue();
+      Preferences.clear.mockResolvedValue();
 
       await Preferences.clear();
 
@@ -288,7 +321,7 @@ describe('Capacitor Device Integration', () => {
 
     it('should get all preference keys', async () => {
       const mockKeys = { keys: ['key1', 'key2', 'key3'] };
-      mockPreferences.keys.mockResolvedValue(mockKeys);
+      Preferences.keys.mockResolvedValue(mockKeys);
 
       const result = await Preferences.keys();
 
@@ -297,7 +330,7 @@ describe('Capacitor Device Integration', () => {
     });
 
     it('should handle missing preferences', async () => {
-      mockPreferences.get.mockResolvedValue({ value: null });
+      Preferences.get.mockResolvedValue({ value: null });
 
       const result = await Preferences.get({ key: 'nonexistent-key' });
 
@@ -317,7 +350,7 @@ describe('Capacitor Device Integration', () => {
         webViewVersion: '15.0',
       };
 
-      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
+      Device.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
       expect(deviceInfo.platform).toBe('ios');
@@ -334,7 +367,7 @@ describe('Capacitor Device Integration', () => {
         webViewVersion: '94.0.4606.85',
       };
 
-      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
+      Device.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
       expect(deviceInfo.platform).toBe('android');
@@ -351,7 +384,7 @@ describe('Capacitor Device Integration', () => {
         webViewVersion: 'unknown',
       };
 
-      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
+      Device.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
       expect(deviceInfo.platform).toBe('web');

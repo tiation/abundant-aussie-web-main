@@ -244,3 +244,68 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **[Explore the Tiation Platform →](https://tiation.github.io/)**
 
 </div>
+
+---
+
+## 🔧 Jack Jonas Co-Founder Integration Plan
+
+This section documents the comprehensive 9-step process to properly acknowledge Jack Jonas as Co-Founder across all Rigger ecosystem repositories.
+
+### Step-by-Step Implementation Guide
+
+#### 1. Clone Repositories
+Use SSH to clone each of the nine Rigger-related repositories locally (RiggerBackend, RiggerConnect-android, RiggerConnect-capacitor, RiggerConnect-ios, RiggerConnect-web, RiggerHub-android, RiggerHub-ios, RiggerHub-web, RiggerShared). Ensure you have up-to-date main or default branches pulled.
+
+#### 2. Identify Consistent Founding Story Text
+Draft a short paragraph or bullet points describing how Tia (ChaseWhiteRabbit NGO) and Jack Jonas (Crane Operator Mechanic & Rigger) co-founded these projects to solve real rigging-industry issues. This text should mention Jack's industry expertise and Tia's software/NGO leadership, along with their shared goal of reducing FIFO requirements. This text will appear in all READMEs, with minor repo-specific edits if needed.
+
+#### 3. Update README Files
+Insert or revise an "About the Founders" or "Founders" section in each repo's README to acknowledge both Tia and Jack Jonas. Emphasize Tia's software NGO leadership and Jack's industry expertise. Ensure the mention is consistent across all nine repositories, while allowing for small contextual differences if needed.
+
+#### 4. Modify package.json Files
+In each repository's package.json, update "author" or "contributors" fields to include both Tia and Jack Jonas as co-founders. This may appear under "contributors", such as:
+
+```json
+[
+  {
+    "name": "Tia (ChaseWhiteRabbit NGO)",
+    "email": "tiatheone@protonmail.com",
+    "role": "Co-Founder, Software Architect"
+  },
+  {
+    "name": "Jack Jonas",
+    "email": "jackjonas95@gmail.com",
+    "role": "Co-Founder, Crane Operator Mechanic & Rigger"
+  }
+]
+```
+
+Adjust the structure as needed if the field doesn't exist yet.
+
+#### 5. Update CONTRIBUTING.md Files
+Add a brief acknowledgement of Tia and Jack as co-founders in each repo's CONTRIBUTING.md, noting their complementary roles. This can be placed near the top or in an "About" or "Founders" section, emphasizing how the project is guided by both software and field expertise.
+
+#### 6. Add or Update AUTHORS/CONTRIBUTORS Files
+If an AUTHORS or CONTRIBUTORS file exists, add entries for Tia and Jack. If none exists, create a CONTRIBUTORS.md (or AUTHORS.md) at the root of each repo. Include name, email, and brief role description.
+
+#### 7. Quality Review and Consistency Check
+Verify that all README references, package.json entries, CONTRIBUTING.md mentions, and AUTHORS/CONTRIBUTORS files are consistent, free of typos, and accurately describe the Tia–Jack co-founding story.
+
+#### 8. Commit and Push Changes
+Commit the updated files for each repository in logical commits (e.g., "Add Jack Jonas as Co-Founder to README, package.json, and CONTRIBUTING.md"). Push each commit or merge request to the respective remote repos on GitHub.
+
+#### 9. Create or Merge Pull Requests
+Open pull requests for each repository or merge directly if appropriate. Assign any reviewers as needed. On approval, merge the changes into the main or default branches.
+
+### Implementation Status
+- [ ] Step 1: Repositories cloned and up-to-date
+- [ ] Step 2: Founding story text drafted
+- [ ] Step 3: README files updated
+- [ ] Step 4: package.json files modified
+- [ ] Step 5: CONTRIBUTING.md files updated
+- [ ] Step 6: AUTHORS/CONTRIBUTORS files created/updated
+- [ ] Step 7: Quality review completed
+- [ ] Step 8: Changes committed and pushed
+- [ ] Step 9: Pull requests created and merged
+
+---

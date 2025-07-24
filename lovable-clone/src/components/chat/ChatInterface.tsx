@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '@/stores/chatStore'
 import { useBuilderStore } from '@/stores/builderStore'
 import { useAnalytics } from '@/hooks/useAnalytics'
+import { useStoreHydration } from '@/hooks/useStoreHydration'
 import { Button } from '@/components/ui/Button'
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { formatTime } from '@/lib/utils'
@@ -13,6 +14,7 @@ export function ChatInterface() {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const hasHydrated = useStoreHydration()
   
   const { messages, isLoading, sendMessage } = useChatStore()
   const { startBuild, currentProject } = useBuilderStore()
@@ -62,6 +64,20 @@ export function ChatInterface() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
     }
   }, [input])
+  
+  // Show loading state during hydration
+  if (!hasHydrated) {
+    return (
+      <div className="flex flex-col h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            <p className="text-sm text-muted-foreground">Loading chat...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
   
   return (
     <div className="flex flex-col h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">

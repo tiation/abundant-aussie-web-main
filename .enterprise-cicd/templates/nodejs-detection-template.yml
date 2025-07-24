@@ -1,0 +1,473 @@
+# Node.js Project Detection Enhanced Template
+# ChaseWhiteRabbit NGO - Enterprise CI/CD
+# Version: 2.1.0
+# 
+# This template uses project detection results to conditionally execute CI/CD tasks
+
+# Project Detection Job - runs first to determine project type
+detect:project:
+  stage: validate
+  <<: *base_template
+  script:
+    - echo "🔍 Detecting Node.js project type..."
+    - .enterprise-cicd/scripts/detect-nodejs-project.sh detect
+    - echo "⚙️ Applying detection results to pipeline..."
+    - .enterprise-cicd/scripts/apply-project-detection.sh apply
+    - echo "📄 Generated pipeline configuration:"
+    - cat .enterprise-cicd/pipeline-config.env
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - .enterprise-cicd/project-detection.json
+      - .enterprise-cicd/project-detection.env
+      - .enterprise-cicd/pipeline-config.env
+    reports:
+      dotenv: .enterprise-cicd/pipeline-config.env
+  rules:
+    - exists:
+        - package.json
+
+# Frontend Build Jobs (conditional based on detection)
+build:frontend:nextjs:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "🏗️ Building Next.js application..."
+    - source .enterprise-cicd/pipeline-config.env
+    - npm run build
+    - echo "📦 Next.js build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - .next/
+      - out/
+      - dist/
+  rules:
+    - if: $PROJECT_TYPE == "nextjs"
+  needs:
+    - detect:project
+
+build:frontend:vite:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "🏗️ Building Vite application..."
+    - source .enterprise-cicd/pipeline-config.env
+    - npm run build
+    - echo "📦 Vite build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - dist/
+      - build/
+  rules:
+    - if: $PROJECT_TYPE == "vite"
+  needs:
+    - detect:project
+
+build:frontend:nuxt:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "🏗️ Building Nuxt application..."
+    - source .enterprise-cicd/pipeline-config.env
+    - npm run build
+    - echo "📦 Nuxt build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - .nuxt/
+      - .output/
+      - dist/
+  rules:
+    - if: $PROJECT_TYPE == "nuxt"
+  needs:
+    - detect:project
+
+# Server Build Jobs (conditional based on detection)
+build:server:express:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "🏗️ Building Express API server..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      if [[ "$HAS_TYPESCRIPT" == "true" ]]; then
+        npm run build
+      else
+        echo "No build step required for JavaScript Express app"
+      fi
+    - echo "📦 Express build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - dist/
+      - build/
+  rules:
+    - if: $PROJECT_TYPE == "express"
+  needs:
+    - detect:project
+
+build:server:fastify:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "🏗️ Building Fastify API server..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      if [[ "$HAS_TYPESCRIPT" == "true" ]]; then
+        npm run build
+      else
+        echo "No build step required for JavaScript Fastify app"
+      fi
+    - echo "📦 Fastify build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - dist/
+      - build/
+  rules:
+    - if: $PROJECT_TYPE == "fastify"
+  needs:
+    - detect:project
+
+# Library Build Jobs (conditional based on detection)
+build:library:
+  stage: build
+  <<: *node_template
+  script:
+    - echo "📚 Building shared library..."
+    - source .enterprise-cicd/pipeline-config.env
+    - npm run build
+    - echo "📦 Library build completed"
+  artifacts:
+    <<: *artifacts_template
+    paths:
+      - dist/
+      - lib/
+      - build/
+  rules:
+    - if: $PROJECT_TYPE == "shared-library"
+  needs:
+    - detect:project
+
+# TypeScript Type Checking (conditional)
+quality:typecheck:
+  stage: quality
+  <<: *node_template
+  script:
+    - echo "🔍 Running TypeScript type checking..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      if [[ "$HAS_TYPESCRIPT" == "true" ]]; then
+        npx tsc --noEmit
+        echo "✅ TypeScript type checking passed"
+      else
+        echo "⚠️ No TypeScript configuration found, skipping type check"
+      fi
+  rules:
+    - if: $HAS_TYPESCRIPT == "true"
+  needs:
+    - detect:project
+
+# Linting (conditional based on project type)
+quality:lint:
+  stage: quality
+  <<: *node_template
+  script:
+    - echo "🧹 Running code linting..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      case "$PROJECT_TYPE" in
+        "nextjs")
+          npm run lint:check || npx next lint
+          ;;
+        "vite"|"nuxt")
+          npm run lint:check || npx eslint . --ext .ts,.tsx,.js,.jsx
+          ;;
+        "express"|"fastify"|"shared-library")
+          npm run lint:check || npx eslint src --ext .ts,.js
+          ;;
+        *)
+          npm run lint:check || npx eslint . --ext .ts,.js
+          ;;
+      esac
+    - echo "✅ Linting completed"
+  rules:
+    - if: $PROJECT_TYPE != "generic-nodejs"
+  needs:
+    - detect:project
+  allow_failure: true
+
+# Frontend Component Tests (conditional)
+test:frontend:components:
+  stage: test
+  <<: *node_template
+  script:
+    - echo "🧪 Running frontend component tests..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      case "$PROJECT_TYPE" in
+        "nextjs"|"vite"|"nuxt")
+          npm run test:ci || npm test -- --ci --coverage --watchAll=false
+          ;;
+        "react-native")
+          npm test -- --ci --coverage --watchAll=false --testPathPattern=".*\.(test|spec)\.(ts|tsx|js|jsx)$"
+          ;;
+        *)
+          npm test
+          ;;
+      esac
+    - echo "✅ Frontend tests completed"
+  artifacts:
+    <<: *artifacts_template
+  rules:
+    - if: $FRONTEND_BUILD == "true" && $HAS_TESTS == "true"
+  needs:
+    - detect:project
+
+# API Server Tests (conditional)
+test:server:integration:
+  stage: test
+  <<: *node_template
+  script:
+    - echo "🧪 Running API server integration tests..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      case "$PROJECT_TYPE" in
+        "express"|"fastify")
+          npm run test:ci || npm test -- --ci --coverage
+          ;;
+        *)
+          npm test
+          ;;
+      esac
+    - echo "✅ Server tests completed"
+  artifacts:
+    <<: *artifacts_template
+  rules:
+    - if: $SERVER_TESTS == "true"
+  needs:
+    - detect:project
+
+# Library Unit Tests (conditional)
+test:library:unit:
+  stage: test
+  <<: *node_template
+  script:
+    - echo "🧪 Running library unit tests..."
+    - source .enterprise-cicd/pipeline-config.env
+    - npm run test:ci || npm test -- --ci --coverage
+    - echo "✅ Library tests completed"
+  artifacts:
+    <<: *artifacts_template
+  rules:
+    - if: $LIBRARY_BUILD == "true" && $HAS_TESTS == "true"
+  needs:
+    - detect:project
+
+# Performance Tests (conditional for frontend apps)
+test:performance:lighthouse:
+  stage: test
+  <<: *node_template
+  script:
+    - echo "⚡ Running Lighthouse performance tests..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      case "$PROJECT_TYPE" in
+        "nextjs")
+          npm run build
+          npm start &
+          sleep 10
+          npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json
+          ;;
+        "vite")
+          npm run build
+          npm run preview &
+          sleep 10
+          npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json
+          ;;
+        "nuxt")
+          npm run build
+          npm run preview &
+          sleep 10
+          npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json
+          ;;
+      esac
+    - echo "✅ Performance tests completed"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - lighthouse-report.json
+  rules:
+    - if: $FRONTEND_BUILD == "true" && $PROJECT_TYPE =~ /^(nextjs|vite|nuxt)$/
+  needs:
+    - detect:project
+    - build:frontend:nextjs
+    - build:frontend:vite
+    - build:frontend:nuxt
+  allow_failure: true
+
+# Docker Build (conditional)
+build:docker:
+  stage: build
+  <<: *docker_template
+  script:
+    - echo "🐳 Building Docker image..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      IMAGE_TAG="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+      echo "Building image: $IMAGE_TAG"
+      
+      # Use project-specific Dockerfile if available
+      DOCKERFILE="Dockerfile"
+      if [[ -f "Dockerfile.${PROJECT_TYPE}" ]]; then
+        DOCKERFILE="Dockerfile.${PROJECT_TYPE}"
+      fi
+      
+      docker build \
+        --build-arg NODE_VERSION="$NODE_VERSION" \
+        --build-arg PROJECT_TYPE="$PROJECT_TYPE" \
+        -t "$IMAGE_TAG" \
+        -f "$DOCKERFILE" \
+        .
+      
+      docker push "$IMAGE_TAG"
+    - echo "✅ Docker image built and pushed"
+  rules:
+    - if: $DOCKER_BUILD == "true"
+  needs:
+    - detect:project
+    - build:frontend:nextjs
+    - build:frontend:vite
+    - build:frontend:nuxt
+    - build:server:express
+    - build:server:fastify
+
+# Deployment Jobs (conditional based on project type)
+deploy:frontend:static:
+  stage: staging-deploy
+  <<: *base_template
+  script:
+    - echo "🚀 Deploying static frontend..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      case "$PROJECT_TYPE" in
+        "nextjs")
+          echo "Deploying Next.js static export..."
+          rsync -avz out/ user@server:/var/www/html/
+          ;;
+        "vite")
+          echo "Deploying Vite build..."
+          rsync -avz dist/ user@server:/var/www/html/
+          ;;
+        "nuxt")
+          echo "Deploying Nuxt static generation..."
+          rsync -avz .output/public/ user@server:/var/www/html/
+          ;;
+      esac
+    - echo "✅ Static deployment completed"
+  rules:
+    - if: $FRONTEND_BUILD == "true" && $CI_COMMIT_BRANCH == "main"
+  needs:
+    - detect:project
+    - build:frontend:nextjs
+    - build:frontend:vite
+    - build:frontend:nuxt
+  environment:
+    name: production
+    url: https://your-domain.com
+
+deploy:server:docker:
+  stage: staging-deploy
+  <<: *docker_template
+  script:
+    - echo "🚀 Deploying API server..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      IMAGE_TAG="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+      
+      case "$PROJECT_TYPE" in
+        "express"|"fastify")
+          echo "Deploying API server container..."
+          docker pull "$IMAGE_TAG"
+          docker stop "${PROJECT_TYPE}-api" || true
+          docker rm "${PROJECT_TYPE}-api" || true
+          docker run -d \
+            --name "${PROJECT_TYPE}-api" \
+            -p 3000:3000 \
+            --restart unless-stopped \
+            "$IMAGE_TAG"
+          ;;
+      esac
+    - echo "✅ Server deployment completed"
+  rules:
+    - if: $SERVER_TESTS == "true" && $DOCKER_BUILD == "true" && $CI_COMMIT_BRANCH == "main"
+  needs:
+    - detect:project
+    - build:docker
+    - test:server:integration
+  environment:
+    name: production
+    url: https://api.your-domain.com
+
+# Library Publishing (conditional)
+publish:library:npm:
+  stage: production-deploy
+  <<: *node_template
+  script:
+    - echo "📦 Publishing library to npm..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      if [[ "$LIBRARY_BUILD" == "true" && "$CI_COMMIT_BRANCH" == "main" ]]; then
+        echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+        npm publish --access public
+        echo "✅ Library published to npm"
+      else
+        echo "ℹ️ Not a library or not on main branch, skipping publish"
+      fi
+  rules:
+    - if: $LIBRARY_BUILD == "true" && $CI_COMMIT_BRANCH == "main"
+  needs:
+    - detect:project
+    - build:library
+    - test:library:unit
+  environment:
+    name: npm-registry
+
+# Monitoring Setup (conditional for deployed applications)
+monitoring:setup:
+  stage: monitoring
+  <<: *base_template
+  script:
+    - echo "📊 Setting up monitoring..."
+    - source .enterprise-cicd/pipeline-config.env
+    - |
+      if [[ "$FRONTEND_BUILD" == "true" || "$SERVER_TESTS" == "true" ]]; then
+        echo "Configuring application monitoring..."
+        # Setup monitoring dashboards, alerts, etc.
+        .enterprise-cicd/scripts/setup-monitoring.sh "$PROJECT_TYPE"
+      fi
+    - echo "✅ Monitoring configured"
+  rules:
+    - if: ($FRONTEND_BUILD == "true" || $SERVER_TESTS == "true") && $CI_COMMIT_BRANCH == "main"
+  needs:
+    - detect:project
+    - deploy:frontend:static
+    - deploy:server:docker
+  allow_failure: true
+
+# Cleanup (runs for all projects)
+cleanup:detection:
+  stage: cleanup
+  <<: *base_template
+  script:
+    - echo "🧹 Cleaning up detection artifacts..."
+    - rm -f .enterprise-cicd/project-detection.json
+    - rm -f .enterprise-cicd/project-detection.env
+    - rm -f .enterprise-cicd/pipeline-config.env
+    - echo "✅ Cleanup completed"
+  rules:
+    - when: always
+  needs:
+    - detect:project

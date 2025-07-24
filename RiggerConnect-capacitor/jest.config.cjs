@@ -44,7 +44,7 @@ module.exports = {
   
   // Transform node_modules ES modules
   transformIgnorePatterns: [
-    'node_modules/(?!(isows|@supabase|@capacitor)/)',
+    'node_modules/(?!(isows|@supabase|@capacitor|@babel|babel|react|react-dom|react-router|react-router-dom)/)',
   ],
   
   // Coverage configurations

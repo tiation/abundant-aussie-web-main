@@ -1,0 +1,593 @@
+# Reusable Linting Workflow Template
+# ChaseWhiteRabbit NGO - Enterprise Code Quality Standards
+# Usage: uses: ./.enterprise-cicd/templates/github-actions/linting-workflow.yml
+
+name: 'Enterprise Code Linting'
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      python-version:
+        description: 'Python version to use'
+        required: false
+        type: string
+        default: '3.11'
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.21'
+      java-version:
+        description: 'Java version to use'
+        required: false
+        type: string
+        default: '17'
+      enable-auto-fix:
+        description: 'Auto-fix linting issues where possible'
+        required: false
+        type: boolean
+        default: false
+      fail-on-error:
+        description: 'Fail the workflow on linting errors'
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      lint-results:
+        description: 'Summary of linting results'
+        value: ${{ jobs.aggregate-results.outputs.summary }}
+
+env:
+  REPORTS_DIR: lint-reports
+
+jobs:
+  preparation:
+    name: 'Linting Preparation'
+    runs-on: ubuntu-latest
+    outputs:
+      has-package-json: ${{ steps.check-files.outputs.has-package-json }}
+      has-requirements-txt: ${{ steps.check-files.outputs.has-requirements-txt }}
+      has-go-mod: ${{ steps.check-files.outputs.has-go-mod }}
+      has-java-files: ${{ steps.check-files.outputs.has-java-files }}
+      has-dockerfile: ${{ steps.check-files.outputs.has-dockerfile }}
+      has-yaml-files: ${{ steps.check-files.outputs.has-yaml-files }}
+      has-shell-scripts: ${{ steps.check-files.outputs.has-shell-scripts }}
+      project-type: ${{ steps.detect-type.outputs.project-type }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for project files
+        id: check-files
+        run: |
+          echo "has-package-json=$(test -f package.json && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-requirements-txt=$(test -f requirements.txt && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-go-mod=$(test -f go.mod && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-java-files=$(find . -name '*.java' -o -name 'pom.xml' -o -name 'build.gradle' | head -1 | wc -l | xargs)" >> $GITHUB_OUTPUT
+          echo "has-dockerfile=$(test -f Dockerfile && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has-yaml-files=$(find . -name '*.yml' -o -name '*.yaml' | head -1 | wc -l | xargs)" >> $GITHUB_OUTPUT
+          echo "has-shell-scripts=$(find . -name '*.sh' | head -1 | wc -l | xargs)" >> $GITHUB_OUTPUT
+
+      - name: Detect project type
+        id: detect-type
+        run: |
+          if [[ -f "package.json" ]]; then
+            echo "project-type=nodejs" >> $GITHUB_OUTPUT
+          elif [[ -f "requirements.txt" || -f "pyproject.toml" ]]; then
+            echo "project-type=python" >> $GITHUB_OUTPUT
+          elif [[ -f "go.mod" ]]; then
+            echo "project-type=golang" >> $GITHUB_OUTPUT
+          elif [[ -f "pom.xml" || -f "build.gradle" ]]; then
+            echo "project-type=java" >> $GITHUB_OUTPUT
+          else
+            echo "project-type=generic" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+  javascript-linting:
+    name: 'JavaScript/TypeScript Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-package-json == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: |
+          # Check if ESLint is configured
+          if [[ -f ".eslintrc.js" || -f ".eslintrc.json" || -f ".eslintrc.yml" || -f "eslint.config.js" ]]; then
+            echo "Running ESLint..."
+            npx eslint . --format json --output-file ${{ env.REPORTS_DIR }}/eslint.json || true
+            npx eslint . --format unix | tee ${{ env.REPORTS_DIR }}/eslint.txt || true
+            
+            if [[ "${{ inputs.enable-auto-fix }}" == "true" ]]; then
+              echo "Running ESLint with auto-fix..."
+              npx eslint . --fix || true
+            fi
+          else
+            echo "ESLint not configured, installing default config..."
+            npm install --save-dev eslint @eslint/js typescript-eslint
+            echo "module.exports = require('@eslint/js').configs.recommended;" > .eslintrc.js
+            npx eslint . --format json --output-file ${{ env.REPORTS_DIR }}/eslint.json || true
+            npx eslint . --format unix | tee ${{ env.REPORTS_DIR }}/eslint.txt || true
+          fi
+
+      - name: Run Prettier
+        run: |
+          if [[ -f ".prettierrc" || -f ".prettierrc.json" || -f ".prettierrc.yml" || -f "prettier.config.js" ]]; then
+            echo "Running Prettier..."
+            npx prettier --check . --write-out-files ${{ env.REPORTS_DIR }}/prettier-files.txt || true
+            
+            if [[ "${{ inputs.enable-auto-fix }}" == "true" ]]; then
+              echo "Running Prettier with auto-fix..."
+              npx prettier --write . || true
+            fi
+          else
+            echo "Prettier not configured, using defaults..."
+            npx prettier --check . --write-out-files ${{ env.REPORTS_DIR }}/prettier-files.txt || true
+          fi
+
+      - name: Run TypeScript check
+        if: hashFiles('**/*.ts', '**/*.tsx') != ''
+        run: |
+          if [[ -f "tsconfig.json" ]]; then
+            echo "Running TypeScript check..."
+            npx tsc --noEmit --pretty false 2>&1 | tee ${{ env.REPORTS_DIR }}/typescript.txt || true
+          fi
+
+      - name: Upload JavaScript lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: javascript-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+      - name: Commit auto-fixes
+        if: inputs.enable-auto-fix && github.event_name == 'pull_request'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --staged --quiet || git commit -m "fix: auto-fix linting issues"
+          git push
+
+  python-linting:
+    name: 'Python Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-requirements-txt == 'true' || needs.preparation.outputs.project-type == 'python'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort mypy pylint bandit safety
+
+      - name: Install project dependencies
+        run: |
+          if [[ -f "requirements.txt" ]]; then
+            pip install -r requirements.txt
+          elif [[ -f "pyproject.toml" ]]; then
+            pip install -e .
+          fi
+
+      - name: Run Flake8
+        run: |
+          echo "Running Flake8..."
+          flake8 . --format=json --output-file=${{ env.REPORTS_DIR }}/flake8.json || true
+          flake8 . --tee --output-file=${{ env.REPORTS_DIR }}/flake8.txt || true
+
+      - name: Run Black
+        run: |
+          echo "Running Black..."
+          black --check --diff . > ${{ env.REPORTS_DIR }}/black.txt || true
+          
+          if [[ "${{ inputs.enable-auto-fix }}" == "true" ]]; then
+            echo "Running Black with auto-fix..."
+            black . || true
+          fi
+
+      - name: Run isort
+        run: |
+          echo "Running isort..."
+          isort --check-only --diff . > ${{ env.REPORTS_DIR }}/isort.txt || true
+          
+          if [[ "${{ inputs.enable-auto-fix }}" == "true" ]]; then
+            echo "Running isort with auto-fix..."
+            isort . || true
+          fi
+
+      - name: Run MyPy
+        run: |
+          echo "Running MyPy..."
+          mypy . --txt-report ${{ env.REPORTS_DIR }}/mypy --json-report ${{ env.REPORTS_DIR }}/mypy-json || true
+
+      - name: Run Pylint
+        run: |
+          echo "Running Pylint..."
+          pylint --output-format=json --reports=y $(find . -name "*.py" | head -20) > ${{ env.REPORTS_DIR }}/pylint.json || true
+          pylint --reports=y $(find . -name "*.py" | head -20) > ${{ env.REPORTS_DIR }}/pylint.txt || true
+
+      - name: Upload Python lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+      - name: Commit auto-fixes
+        if: inputs.enable-auto-fix && github.event_name == 'pull_request'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --staged --quiet || git commit -m "fix: auto-fix Python linting issues"
+          git push
+
+  go-linting:
+    name: 'Go Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-go-mod == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go-version }}
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Run go fmt
+        run: |
+          echo "Running go fmt..."
+          gofmt -l -d . > ${{ env.REPORTS_DIR }}/gofmt.txt || true
+          
+          if [[ "${{ inputs.enable-auto-fix }}" == "true" ]]; then
+            echo "Running go fmt with auto-fix..."
+            gofmt -w . || true
+          fi
+
+      - name: Run go vet
+        run: |
+          echo "Running go vet..."
+          go vet ./... 2>&1 | tee ${{ env.REPORTS_DIR }}/govet.txt || true
+
+      - name: Install and run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
+          args: --out-format json:${{ env.REPORTS_DIR }}/golangci-lint.json,line-number:${{ env.REPORTS_DIR }}/golangci-lint.txt
+
+      - name: Run go mod tidy check
+        run: |
+          echo "Checking go mod tidy..."
+          go mod tidy
+          git diff --exit-code go.mod go.sum || (echo "go.mod or go.sum needs updating" | tee ${{ env.REPORTS_DIR }}/gomod.txt)
+
+      - name: Upload Go lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+  yaml-linting:
+    name: 'YAML Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-yaml-files == '1'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Set up Python for yamllint
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint
+        run: |
+          echo "Running yamllint..."
+          yamllint -f parsable . > ${{ env.REPORTS_DIR }}/yamllint.txt || true
+          yamllint -f json . > ${{ env.REPORTS_DIR }}/yamllint.json || true
+
+      - name: Upload YAML lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: yaml-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+  shell-linting:
+    name: 'Shell Script Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-shell-scripts == '1'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        run: |
+          echo "Running ShellCheck..."
+          find . -name "*.sh" -exec shellcheck -f json {} + > ${{ env.REPORTS_DIR }}/shellcheck.json || true
+          find . -name "*.sh" -exec shellcheck -f tty {} + > ${{ env.REPORTS_DIR }}/shellcheck.txt || true
+
+      - name: Upload Shell lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: shell-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+  dockerfile-linting:
+    name: 'Dockerfile Linting'
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.has-dockerfile == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          format: json
+          output-file: ${{ env.REPORTS_DIR }}/hadolint.json
+
+      - name: Run Hadolint (text format)
+        run: |
+          docker run --rm -i hadolint/hadolint:latest-alpine \
+            hadolint --format tty - < Dockerfile > ${{ env.REPORTS_DIR }}/hadolint.txt || true
+
+      - name: Upload Dockerfile lint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dockerfile-lint-reports
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 30
+
+  aggregate-results:
+    name: 'Aggregate Linting Results'
+    runs-on: ubuntu-latest
+    needs: [javascript-linting, python-linting, go-linting, yaml-linting, shell-linting, dockerfile-linting]
+    if: always()
+    outputs:
+      summary: ${{ steps.generate-summary.outputs.summary }}
+      has-errors: ${{ steps.generate-summary.outputs.has-errors }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all lint artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.REPORTS_DIR }}
+
+      - name: Flatten artifact structure
+        run: |
+          find ${{ env.REPORTS_DIR }} -type f -exec mv {} ${{ env.REPORTS_DIR }}/ \; 2>/dev/null || true
+          find ${{ env.REPORTS_DIR }} -type d -empty -delete 2>/dev/null || true
+
+      - name: Generate linting summary
+        id: generate-summary
+        run: |
+          cat > generate_lint_summary.py << 'EOF'
+          import json
+          import os
+          from datetime import datetime
+          import glob
+          
+          def load_json_report(filename):
+              try:
+                  with open(filename, 'r') as f:
+                      return json.load(f)
+              except:
+                  return None
+          
+          def count_lines_in_file(filename):
+              try:
+                  with open(filename, 'r') as f:
+                      return len([line for line in f if line.strip()])
+              except:
+                  return 0
+          
+          # Initialize summary
+          summary = {
+              'timestamp': datetime.now().isoformat(),
+              'repository': os.environ.get('GITHUB_REPOSITORY', 'Unknown'),
+              'commit': os.environ.get('GITHUB_SHA', 'Unknown'),
+              'total_issues': 0,
+              'error_count': 0,
+              'warning_count': 0,
+              'info_count': 0,
+              'tools_run': [],
+              'findings': {},
+              'auto_fixed': False
+          }
+          
+          reports_dir = '${{ env.REPORTS_DIR }}'
+          
+          # Process ESLint results
+          eslint_json = load_json_report(f'{reports_dir}/eslint.json')
+          if eslint_json:
+              summary['tools_run'].append('eslint')
+              eslint_errors = sum(len(file.get('messages', [])) for file in eslint_json)
+              summary['findings']['eslint'] = eslint_errors
+              summary['total_issues'] += eslint_errors
+              summary['error_count'] += eslint_errors
+          
+          # Process Flake8 results
+          flake8_lines = count_lines_in_file(f'{reports_dir}/flake8.txt')
+          if flake8_lines > 0:
+              summary['tools_run'].append('flake8')
+              summary['findings']['flake8'] = flake8_lines
+              summary['total_issues'] += flake8_lines
+              summary['error_count'] += flake8_lines
+          
+          # Process golangci-lint results
+          golangci_json = load_json_report(f'{reports_dir}/golangci-lint.json')
+          if golangci_json and 'Issues' in golangci_json:
+              summary['tools_run'].append('golangci-lint')
+              golangci_issues = len(golangci_json['Issues'])
+              summary['findings']['golangci-lint'] = golangci_issues
+              summary['total_issues'] += golangci_issues
+              summary['error_count'] += golangci_issues
+          
+          # Process yamllint results
+          yamllint_lines = count_lines_in_file(f'{reports_dir}/yamllint.txt')
+          if yamllint_lines > 0:
+              summary['tools_run'].append('yamllint')
+              summary['findings']['yamllint'] = yamllint_lines
+              summary['total_issues'] += yamllint_lines
+              summary['warning_count'] += yamllint_lines
+          
+          # Process shellcheck results
+          shellcheck_json = load_json_report(f'{reports_dir}/shellcheck.json')
+          if shellcheck_json:
+              summary['tools_run'].append('shellcheck')
+              shellcheck_issues = len(shellcheck_json) if isinstance(shellcheck_json, list) else 0
+              summary['findings']['shellcheck'] = shellcheck_issues
+              summary['total_issues'] += shellcheck_issues
+              summary['warning_count'] += shellcheck_issues
+          
+          # Process hadolint results
+          hadolint_json = load_json_report(f'{reports_dir}/hadolint.json')
+          if hadolint_json:
+              summary['tools_run'].append('hadolint')
+              hadolint_issues = len(hadolint_json) if isinstance(hadolint_json, list) else 0
+              summary['findings']['hadolint'] = hadolint_issues
+              summary['total_issues'] += hadolint_issues
+              summary['warning_count'] += hadolint_issues
+          
+          # Save summary
+          with open(f'{reports_dir}/lint-summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          # Print summary
+          print("🔍 LINTING SUMMARY")
+          print("=" * 50)
+          print(f"Repository: {summary['repository']}")
+          print(f"Commit: {summary['commit'][:8]}")
+          print(f"Tools run: {', '.join(summary['tools_run'])}")
+          print(f"Total issues: {summary['total_issues']}")
+          print(f"  Errors: {summary['error_count']}")
+          print(f"  Warnings: {summary['warning_count']}")
+          print(f"  Info: {summary['info_count']}")
+          print("\nFindings by tool:")
+          for tool, count in summary['findings'].items():
+              print(f"  {tool}: {count}")
+          
+          # Set GitHub outputs
+          with open(f'{os.environ["GITHUB_OUTPUT"]}', 'a') as f:
+              f.write(f"summary={json.dumps(summary)}\n")
+              f.write(f"has-errors={'true' if summary['error_count'] > 0 else 'false'}\n")
+              f.write(f"total-issues={summary['total_issues']}\n")
+          EOF
+          
+          python3 generate_lint_summary.py
+
+      - name: Upload consolidated lint reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports-consolidated
+          path: ${{ env.REPORTS_DIR }}
+          retention-days: 90
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = JSON.parse(fs.readFileSync('${{ env.REPORTS_DIR }}/lint-summary.json', 'utf8'));
+            
+            const emoji = summary.error_count > 0 ? '❌' : summary.warning_count > 0 ? '⚠️' : '✅';
+            const status = summary.total_issues === 0 ? 'Clean!' : `${summary.total_issues} issues found`;
+            
+            const body = `## 🔍 Code Linting Results
+            
+            **${emoji} ${status}** for commit \`${summary.commit.substring(0, 8)}\`
+            
+            | Category | Count |
+            |----------|-------|
+            | Errors | ${summary.error_count} |
+            | Warnings | ${summary.warning_count} |
+            | **Total** | **${summary.total_issues}** |
+            
+            **Tools executed:** ${summary.tools_run.join(', ')}
+            
+            ${summary.error_count > 0 ? '❌ **Linting errors found!** Please fix before merging.' : ''}
+            ${summary.total_issues === 0 ? '✅ **Code looks clean!**' : ''}
+            
+            <details>
+            <summary>Detailed Findings</summary>
+            
+            ${Object.entries(summary.findings).map(([tool, count]) => `- **${tool}**: ${count} issues`).join('\n')}
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail on linting errors
+        if: inputs.fail-on-error && steps.generate-summary.outputs.has-errors == 'true'
+        run: |
+          echo "❌ Linting errors found. Failing the workflow."
+          exit 1

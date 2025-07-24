@@ -302,6 +302,7 @@ export const useChatStore = create<ChatState>()(
     {
       name: 'chat-store',
       version: 1,
+      skipHydration: true,
     }
   )
 )

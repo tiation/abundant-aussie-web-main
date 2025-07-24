@@ -277,21 +277,21 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 
 ## 📚 Documentation
 
-- [API Documentation](../docs/api/)
-- [Architecture Overview](../docs/architecture/)
-- [Deployment Guide](../docs/deployment/)
-- [User Guide](../docs/user-guide/)
-- [Troubleshooting](../docs/troubleshooting/)
+- [API Documentation](https://github.com/tiaastor/docs/api/)
+- [Architecture Overview](https://github.com/tiaastor/docs/architecture/)
+- [Deployment Guide](https://github.com/tiaastor/docs/deployment/)
+- [User Guide](https://github.com/tiaastor/docs/user-guide/)
+- [Troubleshooting](https://github.com/tiaastor/docs/troubleshooting/)
 
 ## 🔗 Related Repositories
 
 ### Rigger Ecosystem
-- **[RiggerBackend](../RiggerBackend/)**: Node.js API and microservices
-- **[RiggerConnect-web](../RiggerConnect-web/)**: React web application
-- **[RiggerConnect-ios](../RiggerConnect-ios/)**: Native iOS application
-- **[RiggerConnect-android](../RiggerConnect-android/)**: Native Android application
-- **[RiggerHub-web](../RiggerHub-web/)**: Business portal web application
-- **[RiggerShared](../RiggerShared/)**: Shared libraries and utilities
+- **[RiggerBackend](https://github.com/tiaastor/RiggerBackend/)**: Node.js API and microservices
+- **[RiggerConnect-web](https://github.com/tiaastor/RiggerConnect-web/)**: React web application
+- **[RiggerConnect-ios](https://github.com/tiaastor/RiggerConnect-ios/)**: Native iOS application
+- **[RiggerConnect-android](https://github.com/tiaastor/RiggerConnect-android/)**: Native Android application
+- **[RiggerHub-web](https://github.com/tiaastor/RiggerHub-web/)**: Business portal web application
+- **[RiggerShared](https://github.com/tiaastor/RiggerShared/)**: Shared libraries and utilities
 
 ### ChaseWhiteRabbit NGO
 This project is proudly developed under the ChaseWhiteRabbit NGO, dedicated to creating ethical, enterprise-grade solutions for the construction industry.

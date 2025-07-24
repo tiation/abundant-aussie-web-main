@@ -130,7 +130,10 @@ export default function HomePage() {
               <Button
                 onClick={() => {
                   trackFeatureUsage('welcome_dismissed')
-                  // This will be handled by the chat store
+                  // Create a new session and add a welcome message to dismiss the modal
+                  const { createSession, addSystemMessage } = useChatStore.getState()
+                  createSession('New Project')
+                  addSystemMessage('Welcome to BuildAI! I\'m ready to help you build your website. What would you like to create?')
                 }}
                 className="btn-ai w-full"
               >

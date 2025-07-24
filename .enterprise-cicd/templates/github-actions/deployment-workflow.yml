@@ -1,0 +1,605 @@
+# Reusable Deployment Workflow Template  
+# ChaseWhiteRabbit NGO - Enterprise Deployment Standards
+# Usage: uses: ./.enterprise-cicd/templates/github-actions/deployment-workflow.yml
+
+name: 'Enterprise Deployment Pipeline'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target environment (staging, production)'  
+        required: true
+        type: string
+      docker-registry:
+        description: 'Docker registry URL'
+        required: false
+        type: string
+        default: 'ghcr.io'
+      image-name:
+        description: 'Docker image name'
+        required: false  
+        type: string
+      enable-blue-green:
+        description: 'Enable blue-green deployment'
+        required: false
+        type: boolean
+        default: false
+      health-check-url:
+        description: 'Health check endpoint URL'
+        required: false
+        type: string
+      health-check-timeout:
+        description: 'Health check timeout in seconds'
+        required: false
+        type: number
+        default: 300
+      rollback-on-failure:
+        description: 'Automatically rollback on deployment failure'
+        required: false
+        type: boolean
+        default: true
+      notification-channels:
+        description: 'Notification channels (slack,email,teams)'
+        required: false
+        type: string
+        default: 'slack'
+    secrets:
+      DOCKER_REGISTRY_USERNAME:
+        description: 'Docker registry username'
+        required: false
+      DOCKER_REGISTRY_TOKEN:
+        description: 'Docker registry token'
+        required: false
+      KUBECONFIG:
+        description: 'Kubernetes config for deployment'
+        required: false
+      HELM_VALUES:
+        description: 'Helm values for deployment'
+        required: false
+      DEPLOY_SSH_KEY:
+        description: 'SSH key for server deployments'
+        required: false
+      STAGING_SERVER_HOST:
+        description: 'Staging server hostname'
+        required: false
+      PRODUCTION_SERVER_HOST:
+        description: 'Production server hostname'
+        required: false
+      SLACK_WEBHOOK_URL:
+        description: 'Slack webhook for notifications'
+        required: false
+      TEAMS_WEBHOOK_URL:
+        description: 'Teams webhook for notifications'
+        required: false
+    outputs:
+      deployment-url:
+        description: 'URL of the deployed application'
+        value: ${{ jobs.deploy.outputs.app-url }}
+      deployment-version:
+        description: 'Version tag of the deployment'
+        value: ${{ jobs.deploy.outputs.version }}
+
+env:
+  DEPLOYMENT_DIR: deployment-artifacts
+  HELM_CHART_DIR: .enterprise-cicd/helm-charts
+
+jobs:
+  pre-deployment:
+    name: 'Pre-deployment Checks'
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-strategy: ${{ steps.strategy.outputs.strategy }}
+      image-tag: ${{ steps.versioning.outputs.tag }}
+      deployment-config: ${{ steps.config.outputs.config }}
+      server-host: ${{ steps.config.outputs.server-host }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine deployment strategy
+        id: strategy
+        run: |
+          if [[ "${{ inputs.enable-blue-green }}" == "true" ]]; then
+            echo "strategy=blue-green" >> $GITHUB_OUTPUT
+          elif [[ -f "k8s/" || -f "kubernetes/" ]]; then
+            echo "strategy=kubernetes" >> $GITHUB_OUTPUT
+          elif [[ -f "docker-compose.yml" || -f "docker-compose.yaml" ]]; then
+            echo "strategy=docker-compose" >> $GITHUB_OUTPUT
+          elif [[ -f "Dockerfile" ]]; then
+            echo "strategy=docker" >> $GITHUB_OUTPUT
+          else
+            echo "strategy=direct" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate version tag
+        id: versioning
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            # Production deployment
+            VERSION="v$(date +%Y.%m.%d)-$(git rev-parse --short HEAD)"
+          else
+            # Feature branch or PR deployment
+            VERSION="$(echo ${GITHUB_REF##*/} | tr '/' '-')-$(git rev-parse --short HEAD)"
+          fi
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version tag: $VERSION"
+
+      - name: Setup deployment configuration
+        id: config
+        run: |
+          case "${{ inputs.environment }}" in
+            staging)
+              echo "server-host=${{ secrets.STAGING_SERVER_HOST }}" >> $GITHUB_OUTPUT
+              echo "config=staging" >> $GITHUB_OUTPUT
+              ;;
+            production)
+              echo "server-host=${{ secrets.PRODUCTION_SERVER_HOST }}" >> $GITHUB_OUTPUT  
+              echo "config=production" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "server-host=localhost" >> $GITHUB_OUTPUT
+              echo "config=development" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Validate deployment prerequisites
+        run: |
+          echo "🔍 Validating deployment prerequisites..."
+          
+          # Check if we have the necessary secrets
+          if [[ "${{ steps.strategy.outputs.strategy }}" == "kubernetes" ]]; then
+            if [[ -z "${{ secrets.KUBECONFIG }}" ]]; then
+              echo "❌ KUBECONFIG secret is required for Kubernetes deployment"
+              exit 1
+            fi
+          fi
+          
+          if [[ "${{ steps.strategy.outputs.strategy }}" == "docker" ]]; then
+            if [[ -z "${{ secrets.DOCKER_REGISTRY_TOKEN }}" ]]; then
+              echo "❌ DOCKER_REGISTRY_TOKEN secret is required for Docker deployment"
+              exit 1
+            fi
+          fi
+          
+          if [[ "${{ steps.strategy.outputs.strategy }}" == "direct" ]]; then
+            if [[ -z "${{ secrets.DEPLOY_SSH_KEY }}" ]]; then  
+              echo "❌ DEPLOY_SSH_KEY secret is required for direct deployment"
+              exit 1
+            fi
+          fi
+          
+          echo "✅ All prerequisites validated"
+
+  build-and-push:
+    name: 'Build and Push Container'
+    runs-on: ubuntu-latest
+    needs: pre-deployment
+    if: contains(fromJson('["docker", "kubernetes", "blue-green"]'), needs.pre-deployment.outputs.deployment-strategy)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.docker-registry }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ inputs.docker-registry }}/${{ inputs.image-name || github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=${{ needs.pre-deployment.outputs.image-tag }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            ENVIRONMENT=${{ inputs.environment }}
+            VERSION=${{ needs.pre-deployment.outputs.image-tag }}
+
+      - name: Run container security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ inputs.docker-registry }}/${{ inputs.image-name || github.repository }}:${{ needs.pre-deployment.outputs.image-tag }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  deploy:
+    name: 'Deploy Application'
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, build-and-push]
+    if: always() && needs.pre-deployment.result == 'success'
+    environment: ${{ inputs.environment }}
+    outputs:
+      app-url: ${{ steps.deployment.outputs.app-url }}
+      version: ${{ needs.pre-deployment.outputs.image-tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment directory
+        run: mkdir -p ${{ env.DEPLOYMENT_DIR }}
+
+      # Kubernetes Deployment
+      - name: Deploy to Kubernetes
+        if: needs.pre-deployment.outputs.deployment-strategy == 'kubernetes'
+        id: k8s-deploy
+        run: |
+          echo "🚀 Deploying to Kubernetes..."
+          
+          # Setup kubectl
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          
+          # Install Helm if needed
+          if [[ -d "${{ env.HELM_CHART_DIR }}" ]]; then
+            curl https://get.helm.sh/helm-v3.13.0-linux-amd64.tar.gz | tar xz
+            sudo mv linux-amd64/helm /usr/local/bin/
+            
+            # Deploy with Helm
+            helm upgrade --install ${{ github.event.repository.name }} \
+              ${{ env.HELM_CHART_DIR }} \
+              --namespace ${{ inputs.environment }} \
+              --create-namespace \
+              --set image.repository=${{ inputs.docker-registry }}/${{ inputs.image-name || github.repository }} \
+              --set image.tag=${{ needs.pre-deployment.outputs.image-tag }} \
+              --set environment=${{ inputs.environment }} \
+              --values <(echo "${{ secrets.HELM_VALUES }}")
+          else
+            # Direct kubectl deployment
+            kubectl set image deployment/${{ github.event.repository.name }} \
+              app=${{ inputs.docker-registry }}/${{ inputs.image-name || github.repository }}:${{ needs.pre-deployment.outputs.image-tag }} \
+              -n ${{ inputs.environment }}
+            
+            kubectl rollout status deployment/${{ github.event.repository.name }} -n ${{ inputs.environment }}
+          fi
+          
+          # Get service URL
+          SERVICE_URL=$(kubectl get service ${{ github.event.repository.name }} -n ${{ inputs.environment }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+          echo "app-url=http://$SERVICE_URL" >> $GITHUB_OUTPUT
+
+      # Docker Compose Deployment
+      - name: Deploy with Docker Compose
+        if: needs.pre-deployment.outputs.deployment-strategy == 'docker-compose'
+        id: compose-deploy
+        run: |
+          echo "🚀 Deploying with Docker Compose..."
+          
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Deploy to server
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@${{ needs.pre-deployment.outputs.server-host }} << 'EOF'
+            cd /opt/deployments/${{ github.event.repository.name }}
+            git pull origin main
+            
+            # Set environment variables
+            export IMAGE_TAG=${{ needs.pre-deployment.outputs.image-tag }}
+            export ENVIRONMENT=${{ inputs.environment }}
+            
+            # Deploy
+            docker-compose pull
+            docker-compose up -d --remove-orphans
+            
+            # Cleanup old images
+            docker image prune -f
+          EOF
+          
+          echo "app-url=http://${{ needs.pre-deployment.outputs.server-host }}" >> $GITHUB_OUTPUT
+
+      # Direct Server Deployment
+      - name: Deploy directly to server
+        if: needs.pre-deployment.outputs.deployment-strategy == 'direct'
+        id: direct-deploy
+        run: |
+          echo "🚀 Deploying directly to server..."
+          
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Create deployment package
+          tar -czf ${{ env.DEPLOYMENT_DIR }}/deployment.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='__pycache__' \
+            --exclude='.venv' \
+            .
+          
+          # Transfer and deploy
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOYMENT_DIR }}/deployment.tar.gz \
+            root@${{ needs.pre-deployment.outputs.server-host }}:/tmp/
+          
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@${{ needs.pre-deployment.outputs.server-host }} << 'EOF'
+            # Backup current deployment
+            if [[ -d "/opt/app" ]]; then
+              sudo cp -r /opt/app /opt/app.backup.$(date +%s)
+            fi
+            
+            # Extract new deployment
+            sudo rm -rf /opt/app.new
+            sudo mkdir -p /opt/app.new
+            sudo tar -xzf /tmp/deployment.tar.gz -C /opt/app.new
+            
+            # Install dependencies and restart services
+            cd /opt/app.new
+            
+            if [[ -f "package.json" ]]; then
+              npm ci --production
+              sudo systemctl restart ${{ github.event.repository.name }}
+            elif [[ -f "requirements.txt" ]]; then
+              python3 -m venv venv
+              source venv/bin/activate
+              pip install -r requirements.txt
+              sudo systemctl restart ${{ github.event.repository.name }}
+            fi
+            
+            # Atomic swap
+            sudo mv /opt/app /opt/app.old 2>/dev/null || true
+            sudo mv /opt/app.new /opt/app
+            
+            # Cleanup
+            sudo rm -rf /opt/app.old
+            rm /tmp/deployment.tar.gz
+          EOF
+          
+          echo "app-url=http://${{ needs.pre-deployment.outputs.server-host }}" >> $GITHUB_OUTPUT
+
+      - name: Set deployment outputs
+        id: deployment
+        run: |
+          case "${{ needs.pre-deployment.outputs.deployment-strategy }}" in
+            kubernetes)
+              echo "app-url=${{ steps.k8s-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
+              ;;
+            docker-compose)
+              echo "app-url=${{ steps.compose-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
+              ;;
+            direct)
+              echo "app-url=${{ steps.direct-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "app-url=http://localhost" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  health-check:
+    name: 'Health Check'
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, deploy]
+    if: inputs.health-check-url != ''
+    steps:
+      - name: Wait for application startup
+        run: sleep 30
+
+      - name: Run health checks
+        id: health-check
+        run: |
+          echo "🏥 Running health checks..."
+          
+          HEALTH_URL="${{ inputs.health-check-url }}"
+          if [[ -z "$HEALTH_URL" ]]; then
+            HEALTH_URL="${{ needs.deploy.outputs.app-url }}/health"
+          fi
+          
+          MAX_ATTEMPTS=10
+          ATTEMPT=1
+          
+          while [[ $ATTEMPT -le $MAX_ATTEMPTS ]]; do
+            echo "Health check attempt $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            if curl -f -s --max-time 10 "$HEALTH_URL" > /dev/null; then
+              echo "✅ Health check passed!"
+              echo "healthy=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            
+            echo "❌ Health check failed, retrying in 30 seconds..."
+            sleep 30
+            ((ATTEMPT++))
+          done
+          
+          echo "❌ Health check failed after $MAX_ATTEMPTS attempts"
+          echo "healthy=false" >> $GITHUB_OUTPUT
+          exit 1
+        timeout-minutes: ${{ inputs.health-check-timeout / 60 }}
+
+      - name: Run smoke tests
+        if: steps.health-check.outputs.healthy == 'true'
+        run: |
+          echo "🧪 Running smoke tests..."
+          
+          # Basic API tests
+          BASE_URL="${{ needs.deploy.outputs.app-url }}"
+          
+          # Test key endpoints
+          curl -f "$BASE_URL/" || echo "Homepage check failed"
+          curl -f "$BASE_URL/api/health" || echo "API health check failed" 
+          
+          echo "✅ Smoke tests completed"
+
+  rollback:
+    name: 'Rollback Deployment'
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, deploy, health-check]
+    if: always() && inputs.rollback-on-failure && (needs.deploy.result == 'failure' || needs.health-check.result == 'failure')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Rollback deployment
+        run: |
+          echo "🔄 Rolling back deployment due to failure..."
+          
+          case "${{ needs.pre-deployment.outputs.deployment-strategy }}" in
+            kubernetes)
+              mkdir -p ~/.kube
+              echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+              kubectl rollout undo deployment/${{ github.event.repository.name }} -n ${{ inputs.environment }}
+              ;;
+            docker-compose)
+              # SSH and rollback
+              mkdir -p ~/.ssh
+              echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+              chmod 600 ~/.ssh/deploy_key
+              
+              ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@${{ needs.pre-deployment.outputs.server-host }} \
+                "cd /opt/deployments/${{ github.event.repository.name }} && git checkout HEAD~1 && docker-compose up -d"
+              ;;
+            direct)
+              # SSH and restore backup
+              mkdir -p ~/.ssh  
+              echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+              chmod 600 ~/.ssh/deploy_key
+              
+              ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@${{ needs.pre-deployment.outputs.server-host }} \
+                "sudo mv /opt/app.backup.* /opt/app && sudo systemctl restart ${{ github.event.repository.name }}"
+              ;;
+          esac
+          
+          echo "✅ Rollback completed"
+
+  notify:
+    name: 'Send Notifications'
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, deploy, health-check, rollback]
+    if: always()
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [[ "${{ needs.deploy.result }}" == "success" && "${{ needs.health-check.result }}" != "failure" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.rollback.result }}" == "success" ]]; then
+            echo "status=rolled-back" >> $GITHUB_OUTPUT
+            echo "emoji=🔄" >> $GITHUB_OUTPUT
+            echo "color=warning" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack notification
+        if: contains(inputs.notification-channels, 'slack') && secrets.SLACK_WEBHOOK_URL
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"attachments\": [{
+                \"color\": \"${{ steps.status.outputs.color }}\",
+                \"title\": \"${{ steps.status.outputs.emoji }} Deployment ${{ steps.status.outputs.status }} - ${{ github.repository }}\",
+                \"fields\": [
+                  {\"title\": \"Environment\", \"value\": \"${{ inputs.environment }}\", \"short\": true},
+                  {\"title\": \"Version\", \"value\": \"${{ needs.pre-deployment.outputs.image-tag }}\", \"short\": true},
+                  {\"title\": \"Strategy\", \"value\": \"${{ needs.pre-deployment.outputs.deployment-strategy }}\", \"short\": true},
+                  {\"title\": \"URL\", \"value\": \"${{ needs.deploy.outputs.app-url }}\", \"short\": true},
+                  {\"title\": \"Commit\", \"value\": \"<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>\", \"short\": true},
+                  {\"title\": \"Workflow\", \"value\": \"<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\", \"short\": true}
+                ]
+              }]
+            }" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send Teams notification  
+        if: contains(inputs.notification-channels, 'teams') && secrets.TEAMS_WEBHOOK_URL
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"@type\": \"MessageCard\",
+              \"@context\": \"https://schema.org/extensions\",
+              \"summary\": \"Deployment ${{ steps.status.outputs.status }}\",
+              \"themeColor\": \"${{ steps.status.outputs.color == 'good' && '00FF00' || steps.status.outputs.color == 'warning' && 'FFFF00' || 'FF0000' }}\",
+              \"sections\": [{
+                \"activityTitle\": \"${{ steps.status.outputs.emoji }} Deployment ${{ steps.status.outputs.status }}\",
+                \"activitySubtitle\": \"${{ github.repository }}\",
+                \"facts\": [
+                  {\"name\": \"Environment\", \"value\": \"${{ inputs.environment }}\"},
+                  {\"name\": \"Version\", \"value\": \"${{ needs.pre-deployment.outputs.image-tag }}\"},
+                  {\"name\": \"Strategy\", \"value\": \"${{ needs.pre-deployment.outputs.deployment-strategy }}\"},
+                  {\"name\": \"URL\", \"value\": \"${{ needs.deploy.outputs.app-url }}\"}
+                ]
+              }],
+              \"potentialAction\": [{
+                \"@type\": \"OpenUri\",
+                \"name\": \"View Workflow\",
+                \"targets\": [{
+                  \"os\": \"default\",
+                  \"uri\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+                }]
+              }]
+            }" \
+            ${{ secrets.TEAMS_WEBHOOK_URL }}
+
+      - name: Update deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ steps.status.outputs.status }}';
+            const environment = '${{ inputs.environment }}';
+            const version = '${{ needs.pre-deployment.outputs.image-tag }}';
+            const url = '${{ needs.deploy.outputs.app-url }}';
+            
+            // Create deployment status
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment?.id || 'unknown',
+              state: status === 'success' ? 'success' : status === 'rolled-back' ? 'error' : 'failure',
+              description: `Deployment ${status} for ${environment}`,
+              environment_url: url,
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
+            
+            // Comment on PR if this is a PR deployment
+            if (context.payload.pull_request) {
+              const emoji = status === 'success' ? '✅' : status === 'rolled-back' ? '🔄' : '❌';
+              const body = `## ${emoji} Deployment ${status}
+              
+              **Environment:** ${environment}  
+              **Version:** \`${version}\`
+              **URL:** ${url}
+              **Strategy:** ${{ needs.pre-deployment.outputs.deployment-strategy }}
+              
+              ${status === 'success' ? '🎉 Deployment completed successfully!' : ''}
+              ${status === 'rolled-back' ? '⚠️ Deployment failed and was rolled back.' : ''}
+              ${status === 'failed' ? '❌ Deployment failed. Please check the logs.' : ''}`;
+              
+              await github.rest.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }

@@ -376,6 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       name: 'builder-store',
       version: 1,
+      skipHydration: true,
     }
   )
 )
