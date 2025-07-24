@@ -83,12 +83,16 @@
 
 /* Schedule Call Button - Always Visible */
 #schedule-call-btn, #schedule-call-main {
-    @apply shadow-lg;
-    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+    @apply shadow-lg bg-blue-600 text-white px-6 py-2 rounded-full font-medium;
+    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.5);
+    transition: all 0.3s ease;
+    display: inline-block !important;
+    visibility: visible !important;
 }
 
 #schedule-call-btn:hover, #schedule-call-main:hover {
-    box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.5);
+    @apply bg-blue-700;
+    box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.7);
     transform: translateY(-2px);
 }
 

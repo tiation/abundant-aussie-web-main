@@ -432,7 +432,7 @@ const blogPosts = [
     // For brevity, I'm including 5 comprehensive examples that demonstrate the pattern
 ];
 
-// Additional blog posts data (abbreviated for space)
+// Additional blog posts data - Comprehensive trauma-informed care resources
 const additionalPosts = [
     {
         id: 6,
@@ -442,6 +442,73 @@ const additionalPosts = [
         tags: ["Support Network", "Mental Health", "Professional Help", "Community"],
         readTime: "12 min read",
         image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=250&fit=crop",
+        content: `
+            <h2>Understanding Your Support Network</h2>
+            <p>A strong support network is essential for mental health and recovery. It's important to understand the different types of support available and how they work together.</p>
+            
+            <h3>Types of Support</h3>
+            <div class="quick-points">
+                <div class="quick-point">
+                    <i class="fas fa-user-md quick-point-icon"></i>
+                    <span><strong>Formal Support:</strong> Professional services, healthcare providers, counselors</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-heart quick-point-icon"></i>
+                    <span><strong>Informal Support:</strong> Family, friends, community groups, peers</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-users quick-point-icon"></i>
+                    <span><strong>Peer Support:</strong> Others with similar experiences</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-building quick-point-icon"></i>
+                    <span><strong>Community Support:</strong> Local organizations, religious groups, clubs</span>
+                </div>
+            </div>
+
+            <h3>Building Your Network</h3>
+            <ol>
+                <li><strong>Map your current support:</strong> List who you can turn to now</li>
+                <li><strong>Identify gaps:</strong> What types of support are missing?</li>
+                <li><strong>Research formal services:</strong> GP, mental health professionals, support coordinators</li>
+                <li><strong>Connect with peers:</strong> Support groups, online communities</li>
+                <li><strong>Strengthen existing relationships:</strong> Communicate your needs clearly</li>
+                <li><strong>Maintain your network:</strong> Regular check-ins and appreciation</li>
+            </ol>
+
+            <div class="mermaid-chart">
+                <div class="mermaid">
+                graph TD
+                    A[You] --> B[Formal Support]
+                    A --> C[Informal Support]
+                    A --> D[Peer Support]
+                    A --> E[Community Support]
+                    B --> F[GP/Psychiatrist]
+                    B --> G[Therapist/Counselor]
+                    B --> H[Support Coordinator]
+                    C --> I[Family]
+                    C --> J[Close Friends]
+                    C --> K[Colleagues]
+                    D --> L[Support Groups]
+                    D --> M[Online Communities]
+                    E --> N[Religious Groups]
+                    E --> O[Hobby Groups]
+                    E --> P[Volunteer Organizations]
+                </div>
+            </div>
+
+            <div class="emergency-contacts">
+                <h4>24/7 Support Available</h4>
+                <div class="emergency-contact">
+                    <i class="fas fa-phone text-blue-600"></i>
+                    <a href="tel:131114">13 11 14 - Lifeline</a>
+                </div>
+                <div class="emergency-contact">
+                    <i class="fas fa-phone text-green-600"></i>
+                    <a href="tel:1300659467">1300 659 467 - MensLine Australia</a>
+                </div>
+            </div>
+        `,
         relatedPosts: [4, 7, 8]
     },
     {
@@ -452,6 +519,58 @@ const additionalPosts = [
         tags: ["Emergency Contacts", "Crisis Support", "Relationships", "Mental Health"],
         readTime: "6 min read",
         image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=400&h=250&fit=crop",
+        content: `
+            <h2>Your Emergency Contact Strategy</h2>
+            <p>Having people you can call during difficult times is crucial. But it's not just about having numbers - it's about building and maintaining relationships that can support you when you need it most.</p>
+            
+            <h3>Who Should Be on Your List?</h3>
+            <div class="quick-points">
+                <div class="quick-point">
+                    <i class="fas fa-star quick-point-icon"></i>
+                    <span><strong>The Listener:</strong> Someone who lets you talk without judgment</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-lightbulb quick-point-icon"></i>
+                    <span><strong>The Problem Solver:</strong> Someone who helps you think through solutions</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-hands quick-point-icon"></i>
+                    <span><strong>The Practical Helper:</strong> Someone who can assist with immediate needs</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-smile quick-point-icon"></i>
+                    <span><strong>The Uplifter:</strong> Someone who helps you see the positive</span>
+                </div>
+            </div>
+
+            <h3>Building Your Emergency Contact List</h3>
+            <ol>
+                <li><strong>Identify 3-5 people</strong> you trust and feel comfortable calling</li>
+                <li><strong>Have a conversation</strong> with each person about being an emergency contact</li>
+                <li><strong>Understand their availability</strong> - when is the best time to call?</li>
+                <li><strong>Respect boundaries</strong> - not everyone can be available 24/7</li>
+                <li><strong>Include professional support</strong> - GP, counselor, crisis lines</li>
+                <li><strong>Keep the list updated</strong> and easily accessible</li>
+            </ol>
+
+            <h3>How to Make the Call</h3>
+            <blockquote>
+                "Hi [Name], I'm having a really hard time right now and could use someone to talk to. Do you have a few minutes?"
+            </blockquote>
+            
+            <p>It's okay to:</p>
+            <ul>
+                <li>Ask for what you need (listening, advice, practical help)</li>
+                <li>Set a time limit for the conversation</li>
+                <li>Call someone else if the first person isn't available</li>
+                <li>Follow up with a thank you message later</li>
+            </ul>
+
+            <div class="disclaimer">
+                <div class="disclaimer-title">Remember</div>
+                <div class="disclaimer-text">If you're having thoughts of self-harm or suicide, call emergency services (000) or Lifeline (13 11 14) immediately. Your emergency contacts are for support, not crisis intervention.</div>
+            </div>
+        `,
         relatedPosts: [4, 6, 12]
     },
     {
@@ -462,9 +581,103 @@ const additionalPosts = [
         tags: ["NDIS", "Centrelink", "Legislation", "Rights", "Advocacy"],
         readTime: "20 min read",
         image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=250&fit=crop",
+        content: `
+            <h2>Understanding Australia's Support Systems</h2>
+            <p>Navigating government support systems can be overwhelming, but understanding your rights and how to advocate for yourself is empowering. This guide will help you understand key systems and legislation.</p>
+
+            <h3>National Disability Insurance Scheme (NDIS)</h3>
+            <div class="quick-points">
+                <div class="quick-point">
+                    <i class="fas fa-gavel quick-point-icon"></i>
+                    <span><strong>NDIS Act 2013:</strong> Establishes your rights to reasonable and necessary supports</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-user-check quick-point-icon"></i>
+                    <span><strong>Eligibility:</strong> Permanent disability with significant impact on daily life</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-clipboard-list quick-point-icon"></i>
+                    <span><strong>Planning:</strong> Your plan should reflect your goals and needs</span>
+                </div>
+            </div>
+
+            <h4>Key NDIS Rights (Section 4 NDIS Act 2013):</h4>
+            <ul>
+                <li>Right to respect for your inherent dignity</li>
+                <li>Right to respect for your individual autonomy</li>
+                <li>Right to freedom from discrimination</li>
+                <li>Right to full and effective participation in society</li>
+            </ul>
+
+            <h3>Centrelink and Social Security</h3>
+            <div class="quick-points">
+                <div class="quick-point">
+                    <i class="fas fa-shield-alt quick-point-icon"></i>
+                    <span><strong>Social Security Act 1991:</strong> Outlines payment entitlements and obligations</span>
+                </div>
+                <div class="quick-point">
+                    <i class="fas fa-balance-scale quick-point-icon"></i>
+                    <span><strong>Review Rights:</strong> You can request internal and external reviews of decisions</span>
+                </div>
+            </div>
+
+            <h3>How to Quote Legislation Effectively</h3>
+            <ol>
+                <li><strong>Identify the relevant Act:</strong> NDIS Act 2013, Social Security Act 1991, etc.</li>
+                <li><strong>Find the specific section:</strong> Use the section number and title</li>
+                <li><strong>Quote accurately:</strong> Use exact wording from the legislation</li>
+                <li><strong>Provide context:</strong> Explain how it applies to your situation</li>
+            </ol>
+
+            <h4>Example Quote:</h4>
+            <blockquote>
+                "Under Section 34(1)(a) of the NDIS Act 2013, supports must be 'reasonable and necessary' and 'likely to be effective and beneficial for the participant.'"
+            </blockquote>
+
+            <h3>Privacy and Your Information</h3>
+            <p><strong>Privacy Act 1988</strong> protects your personal information. Key rights include:</p>
+            <ul>
+                <li>Right to know what information is collected</li>
+                <li>Right to access your personal information</li>
+                <li>Right to correct inaccurate information</li>
+                <li>Right to complain about privacy breaches</li>
+            </ul>
+
+            <div class="resource-directory">
+                <h4>Advocacy and Support Resources</h4>
+                <ul>
+                    <li><a href="https://www.ndis.gov.au/" class="resource-link">NDIS Official Website</a></li>
+                    <li><a href="https://www.servicesaustralia.gov.au/" class="resource-link">Services Australia (Centrelink)</a></li>
+                    <li><a href="https://www.ombudsman.gov.au/" class="resource-link">Commonwealth Ombudsman</a></li>
+                    <li><a href="https://www.adacas.org.au/" class="resource-link">ADACAS - Disability Advocacy</a></li>
+                </ul>
+            </div>
+
+            <div class="mermaid-chart">
+                <div class="mermaid">
+                graph TD
+                    A[Issue with Government Service] --> B{Type of Service?}
+                    B -->|NDIS| C[Contact NDIA]
+                    B -->|Centrelink| D[Contact Services Australia]
+                    C --> E[Not Resolved?]
+                    D --> F[Not Resolved?]
+                    E -->|Yes| G[NDIS Quality and Safeguards Commission]
+                    F -->|Yes| H[Commonwealth Ombudsman]
+                    G --> I[Still Not Resolved?]
+                    H --> J[Still Not Resolved?]
+                    I -->|Yes| K[Administrative Appeals Tribunal]
+                    J -->|Yes| K
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <div class="disclaimer-title">Legal Advice</div>
+                <div class="disclaimer-text">This information is general in nature and not legal advice. For complex legal matters, consider seeking advice from a qualified legal professional or advocacy service.</div>
+            </div>
+        `,
         relatedPosts: [9, 10, 3]
-    },
-    // Continue with more posts...
+    }
+    // More posts continue here...
 ];
 
 // Combine all posts
