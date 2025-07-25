@@ -27,7 +27,22 @@ export default function HomePage() {
 
   const handleNewProject = () => {
     trackFeatureUsage('new_project')
-    // Logic to create new project will be implemented
+    
+    // Create a new project
+    const { createProject } = useBuilderStore.getState()
+    const newProject = createProject(
+      `Project ${projects.length + 1}`,
+      'A new AI-generated website project'
+    )
+    
+    // Create a new chat session linked to the project
+    const { createSession, addSystemMessage } = useChatStore.getState()
+    const newSession = createSession(`${newProject.name} Chat`, newProject.id)
+    
+    // Add a welcome system message
+    addSystemMessage(
+      `Welcome to ${newProject.name}! I'm ready to help you build your website. What would you like to create? You can describe the type of website, its purpose, design preferences, or any specific features you'd like to include.`
+    )
   }
 
   const handleViewToggle = (view: 'chat' | 'preview') => {

@@ -33,14 +33,14 @@ struct DungeonMasterTabView: View {
                     LinearGradient(
                         gradient: Gradient(colors: [
                             Color.black,
-                            Color.purple.opacity(0.4),
-                            Color.black.opacity(0.8),
-                            Color.purple.opacity(0.2)
+                            Color.purple.opacity(0.8),
+                            Color.black.opacity(0.9)
                         ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
                 )
+                .foregroundColor(.white) // High-contrast white text
         }
     }
 }
@@ -57,14 +57,14 @@ struct LogTabView: View {
                     LinearGradient(
                         gradient: Gradient(colors: [
                             Color.black,
-                            Color.purple.opacity(0.3),
-                            Color.black.opacity(0.8),
-                            Color.purple.opacity(0.2)
+                            Color.purple.opacity(0.7),
+                            Color.black.opacity(0.95)
                         ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
                 )
+                .foregroundColor(Color.white.opacity(0.95)) // High-contrast off-white text
         }
     }
 }
@@ -99,41 +99,44 @@ struct LogListView: View {
                     VStack(alignment: .leading) {
                         Text(roll.rollType.rawValue)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
                         Text("\(roll.numberOfDice)d\(roll.diceType)\(roll.modifier != 0 ? (roll.modifier > 0 ? "+\(roll.modifier)" : "\(roll.modifier)") : "")")
                             .font(.headline)
+                            .foregroundColor(.white) // High-contrast primary text
                     }
                     
                     Spacer()
                     
                     Text("\(roll.finalTotal)")
                         .fontWeight(.bold)
-                        .foregroundColor(roll.rollType == .damage ? .red : (roll.rollType == .healing ? .green : .blue))
+                        .foregroundColor(roll.rollType == .damage ? Color.red.opacity(0.9) : (roll.rollType == .healing ? Color.green.opacity(0.9) : Color.cyan.opacity(0.9)))
                         .font(.title2)
                 }
                 
                 if !roll.description.isEmpty {
                     Text(roll.description)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
                 }
                 
                 Text("Rolls: \(roll.results.map { String($0) }.joined(separator: ", "))")
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.white.opacity(0.9)) // High-contrast body text
                 
                 if roll.modifier != 0 {
                     Text("Base: \(roll.total) | Modifier: \(roll.modifier >= 0 ? "+" : "")\(roll.modifier)")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
                 }
                 
                 Text(roll.timestamp, style: .relative)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.white.opacity(0.7)) // High-contrast timestamp text
             }
             .padding(.vertical, 4)
+            .listRowBackground(Color.clear) // Ensure transparent row background for gradient visibility
         }
+        .listStyle(PlainListStyle()) // Remove default list styling for better gradient display
     }
 }
 

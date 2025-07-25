@@ -1,5 +1,3 @@
-import { CameraResultType, CameraSource } from '@capacitor/camera';
-
 // Mock Capacitor plugins with factory functions
 jest.mock('@capacitor/device', () => ({
   Device: {
@@ -21,6 +19,16 @@ jest.mock('@capacitor/camera', () => ({
   Camera: {
     getPhoto: jest.fn(),
     requestPermissions: jest.fn(),
+  },
+  CameraResultType: {
+    DataUrl: 'dataUrl',
+    Base64: 'base64',
+    Uri: 'uri',
+  },
+  CameraSource: {
+    Camera: 'camera',
+    Photos: 'photos',
+    Prompt: 'prompt',
   },
 }));
 
@@ -46,7 +54,7 @@ jest.mock('@capacitor/preferences', () => ({
 // Import the mocked modules
 const { Device } = require('@capacitor/device');
 const { Network } = require('@capacitor/network');
-const { Camera } = require('@capacitor/camera');
+const { Camera, CameraResultType, CameraSource } = require('@capacitor/camera');
 const { Geolocation } = require('@capacitor/geolocation');
 const { Preferences } = require('@capacitor/preferences');
 
@@ -384,7 +392,7 @@ describe('Capacitor Device Integration', () => {
         webViewVersion: 'unknown',
       };
 
-      Device.getInfo.mockResolvedValue(mockDeviceInfo);
+      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
       expect(deviceInfo.platform).toBe('web');

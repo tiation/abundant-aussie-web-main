@@ -293,6 +293,12 @@ This app has been tested with:
 
 ## 📸 Screenshots
 
+### 🎲 App in Action - iOS Simulator
+<div align="center">
+  <img src="screenshot.png" alt="D&D Dice Roller Running on iOS Simulator" width="400">
+  <p><em>D&D Dice Roller app running on iPhone 16 Pro simulator - Simple and elegant interface</em></p>
+</div>
+
 ### 🏠 Main Interface - Choose Your Path
 <div align="center">
   <img src="/Users/tiaastor/Desktop/dice_dmplayerscreen.png" alt="Player and Dungeon Master Selection" width="400">
