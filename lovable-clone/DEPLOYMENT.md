@@ -58,7 +58,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-OPENAI_API_KEY=your_openai_api_key
+GOOGLE_AI_API_KEY=your_google_ai_api_key
 NEXTAUTH_URL=https://your-site.netlify.app
 NEXTAUTH_SECRET=your_nextauth_secret_key
 ```

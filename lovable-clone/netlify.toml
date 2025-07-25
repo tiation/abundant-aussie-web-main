@@ -26,7 +26,7 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.openai.com https://vercel.live https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.openai.com https://api.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com; frame-src 'self';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://generativelanguage.googleapis.com https://vercel.live https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://generativelanguage.googleapis.com https://api.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com; frame-src 'self';"
 
 # Cache optimization
 [[headers]]
@@ -44,6 +44,6 @@
 # NEXT_PUBLIC_SUPABASE_ANON_KEY = "your_supabase_anon_key"
 # NEXT_PUBLIC_POSTHOG_KEY = "your_posthog_key"
 # NEXT_PUBLIC_POSTHOG_HOST = "your_posthog_host"
-# OPENAI_API_KEY = "your_openai_api_key"
+# GOOGLE_AI_API_KEY = "your_google_ai_api_key"
 # NEXTAUTH_URL = "https://your-site.netlify.app"
 # NEXTAUTH_SECRET = "your_nextauth_secret"

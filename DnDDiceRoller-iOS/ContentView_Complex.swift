@@ -26,6 +26,7 @@ struct ContentView: View {
     @State private var isSpinningDie = false
     @State private var spinAngle: Double = 0
     @State private var showingStore = false
+    @State private var customRollDescription = ""
     @StateObject private var paymentManager = PaymentManager()
     @StateObject private var analyticsManager = AnalyticsManager()
     
@@ -202,18 +203,20 @@ struct ContentView: View {
                                 VStack(alignment: .leading, spacing: 10) {
                                     // Adaptive results grid using FlexibleView
                                     VStack(alignment: .leading) {
-                                        Text("Results:")
+Text("Results:")
                                             .font(.subheadline)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.white) // Updated to high-contrast white
+                                            .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                         
                                         // Grid layout with fixed column sizes for consistent display and left alignment
                                         let columnCount = min(6, getOptimalColumnCount(for: rollResults[0].results.count))
                                         let columns = Array(repeating: GridItem(.fixed(46), spacing: 10), count: columnCount)
                                         
                                         HStack {
-                                            Text("Results: \(rollResults[0].results.count) dice")
+Text("Results: \(rollResults[0].results.count) dice")
                                                 .font(.subheadline)
-                                                .foregroundColor(.secondary)
+                                                .foregroundColor(.white) // Updated to high-contrast white
+                                                .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                             
                                             Spacer()
                                         }
@@ -273,6 +276,57 @@ struct ContentView: View {
                     .cornerRadius(10)
                     .padding(.horizontal)
                 }
+                
+                // Custom Roll Description TextField with High Contrast
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Custom Roll Description:")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.8), radius: 2, x: 1, y: 1)
+                        .padding(.horizontal)
+                    
+                    TextField("Enter description for this roll...", text: $customRollDescription)
+                        .font(.body)
+                        .foregroundColor(.white) // High-contrast white text
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.black.opacity(0.8),
+                                            Color.purple.opacity(0.6)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                )
+                        )
+                        .overlay(
+                            // Add subtle inner shadow for depth
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.white.opacity(0.1),
+                                            Color.clear
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    ),
+                                    lineWidth: 0.5
+                                )
+                        )
+                        .shadow(color: .black.opacity(0.5), radius: 4, x: 2, y: 2)
+                        .textFieldStyle(PlainTextFieldStyle()) // Remove default styling
+                        .padding(.horizontal)
+                }
+                .padding(.bottom)
                 
                 // Roll button
                 Button(action: rollDice) {
@@ -404,8 +458,9 @@ struct RollHistoryView: View {
             ScrollView(.vertical, showsIndicators: true) {
                 LazyVStack(spacing: 16) {
                     if rolls.isEmpty {
-                        Text("No rolls yet. Roll some dice!")
-                            .foregroundColor(.secondary)
+Text("No rolls yet. Roll some dice!")
+                            .foregroundColor(.white) // Updated to high-contrast white
+                            .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                             .padding(.top, 40)
                     }
                     ForEach(rolls) { roll in
@@ -423,16 +478,18 @@ struct RollHistoryView: View {
                             
                             // Date, time, and dice count for better context
                             HStack {
-                                Text(roll.timestamp, style: .relative)
+Text(roll.timestamp, style: .relative)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.white) // Updated to high-contrast white
+                                    .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                 
                                 Spacer()
                                 
                                 if roll.results.count > 10 {
-                                    Text("\(roll.results.count) dice")
+Text("\(roll.results.count) dice")
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.white) // Updated to high-contrast white
+                                        .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 2)
                                         .background(Color.gray.opacity(0.1))
@@ -444,17 +501,19 @@ struct RollHistoryView: View {
 // Roll results section with full scrolling capabilities
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack {
-                                    Text("Rolls:")
+Text("Rolls:")
                                         .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.white) // Updated to high-contrast white
+                                        .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                     
                                     Spacer()
                                     
                                     // Indicator of result count for large rolls
                                     if roll.results.count > 20 {
-                                        Text("\(roll.results.count) results")
+Text("\(roll.results.count) results")
                                             .font(.caption)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.white) // Updated to high-contrast white
+                                            .shadow(color: .black.opacity(0.2), radius: 1, x: 1, y: 1) // Added shadow for enhancement
                                     }
                                 }
                                 

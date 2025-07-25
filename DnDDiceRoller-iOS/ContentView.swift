@@ -4,15 +4,14 @@ struct ContentView: View {
     @State private var diceResult = 0
     @State private var diceType = "d20"
     @State private var isRolling = false
+    @State private var customRollDescription = ""
     
     let diceTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"]
     
     var body: some View {
         VStack(spacing: 30) {
             Text("🎲 D&D Dice Roller 🎲")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .fantasyText(.heroTitle, enableGlow: true)
             
             // Dice type selector
             Picker("Dice Type", selection: $diceType) {
@@ -26,21 +25,53 @@ struct ContentView: View {
             // Result display
             ZStack {
                 Circle()
-                    .fill(LinearGradient(
-                        gradient: Gradient(colors: [.red, .orange]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ))
+                    .fill(FantasyTheme.Gradients.diceGradient)
                     .frame(width: 150, height: 150)
-                    .shadow(radius: 10)
+                    .shadow(
+                        color: FantasyTheme.Shadows.elementDepth.color,
+                        radius: FantasyTheme.Shadows.elementDepth.radius,
+                        x: FantasyTheme.Shadows.elementDepth.x,
+                        y: FantasyTheme.Shadows.elementDepth.y
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        FantasyTheme.Colors.primaryText.opacity(0.3),
+                                        Color.clear
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
                 
                 Text("\(diceResult)")
-                    .font(.system(size: 48, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(FantasyTheme.Typography.diceResult())
+                    .foregroundColor(FantasyTheme.Colors.primaryText)
+                    .shadow(
+                        color: Color.black.opacity(0.8),
+                        radius: 2,
+                        x: 1,
+                        y: 1
+                    )
             }
             .scaleEffect(isRolling ? 1.2 : 1.0)
             .rotationEffect(.degrees(isRolling ? 360 : 0))
             .animation(.easeInOut(duration: 0.5), value: isRolling)
+            
+            // Custom Roll Description TextField with High Contrast
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Custom Roll Description:")
+                    .fantasyText(.sectionTitle)
+                
+                TextField("Enter description for this roll...", text: $customRollDescription)
+                    .fantasyField()
+                    .textFieldStyle(PlainTextFieldStyle())
+            }
+            .padding(.horizontal)
             
             // Roll button
             Button(action: rollDice) {
@@ -48,39 +79,32 @@ struct ContentView: View {
                     Image(systemName: "dice.fill")
                     Text("Roll \(diceType)")
                 }
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding(.horizontal, 30)
-                .padding(.vertical, 15)
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(LinearGradient(
-                            gradient: Gradient(colors: [.blue, .purple]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
-                )
-                .shadow(radius: 5)
+                .fantasyButton(.dice)
             }
             .disabled(isRolling)
             
             if diceResult > 0 {
-                Text("You rolled: \(diceResult)")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-                    .padding(.top)
+                let maxPossible = getSidesForDice(diceType)
+                HStack {
+                    Text("You rolled:")
+                        .fantasyText(.bodyText)
+                    Text("\(diceResult)")
+                        .font(FantasyTheme.Typography.sectionTitle())
+                        .foregroundColor(FantasyTheme.colorForDiceResult(diceResult, maxPossible: maxPossible))
+                        .shadow(
+                            color: Color.black.opacity(0.8),
+                            radius: 1,
+                            x: 1,
+                            y: 1
+                        )
+                }
+                .padding(.top)
             }
             
             Spacer()
         }
         .padding()
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [.black.opacity(0.1), .gray.opacity(0.1)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
+        .background(FantasyTheme.Gradients.appBackground)
     }
     
     private func rollDice() {

@@ -234,3 +234,4 @@ compliance-reports/
 
 # Local Netlify folder
 .netlify
+.env_api_keys

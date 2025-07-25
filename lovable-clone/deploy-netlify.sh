@@ -62,7 +62,7 @@ if [ $? -eq 0 ]; then
     echo "   - NEXT_PUBLIC_SUPABASE_ANON_KEY"
     echo "   - NEXT_PUBLIC_POSTHOG_KEY"
     echo "   - NEXT_PUBLIC_POSTHOG_HOST"
-    echo "   - OPENAI_API_KEY"
+    echo "   - GOOGLE_AI_API_KEY"
     echo "   - NEXTAUTH_URL"
     echo "   - NEXTAUTH_SECRET"
 else

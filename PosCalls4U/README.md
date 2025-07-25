@@ -1,5 +1,10 @@
 # PosCalls4U - Enterprise Call Center Platform
 
+[![ChaseWhiteRabbit NGO](https://img.shields.io/badge/ChaseWhiteRabbit-NGO-blue.svg)](https://chasewhiterabbit.org)
+[![Enterprise Grade](https://img.shields.io/badge/Enterprise-Grade-red.svg)](#)
+[![DevOps Ready](https://img.shields.io/badge/DevOps-Ready-green.svg)](#)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 ## 🚀 Overview
 
 PosCalls4U is a modern, enterprise-grade call center platform designed for scalability, security, and exceptional user experience. Built with cutting-edge technologies including Node.js, React, TypeScript, and MongoDB, it provides comprehensive team management, real-time analytics, and advanced authentication features.
@@ -297,6 +302,60 @@ socket.on('call:statistics', (data) => {
   // Update call statistics in dashboard
 });
 ```
+
+## 🏢 Enterprise 6 Ethical Standards
+
+This project adheres to enterprise-grade development practices with striking, edgy design principles:
+
+### DevOps Best Practices
+- **Continuous Integration**: Automated GitLab CI/CD pipelines for testing, building, and deployment
+- **Infrastructure as Code**: Kubernetes configurations and Helm charts for consistent deployments
+- **Monitoring 6 Observability**: Comprehensive logging with Grafana dashboards on `grafana.sxc.codes`
+- **Security Scanning**: Automated vulnerability assessments and dependency checks
+- **Performance Optimization**: Load testing and resource monitoring across VPS infrastructure
+
+### ChaseWhiteRabbit NGO Mission
+Built in support of the **ChaseWhiteRabbit NGO mission** to create ethical, enterprise-grade solutions that:
+- Promote sustainable technology practices
+- Support open-source development
+- Foster inclusive and accessible software design
+- Enable positive social impact through technology
+
+### CI/CD Pipeline Integration
+- **GitLab CI**: Automated testing and deployment via `gitlab.sxc.codes`
+- **Container Registry**: Docker image management on `docker.sxc.codes`
+- **Kubernetes Deployment**: Automated deployments via `helm.sxc.codes`
+- **Quality Assurance**: Automated code quality checks and security scans
+
+## 🔗 Related Repositories
+
+### Core Projects
+| Repository | Description |
+|------------|-------------|
+| [TiationDevOps-Platform](https://github.com/tiation/TiationDevOps-Platform) | Enterprise DevOps management platform |
+| [DnDDiceRoller-iOS](https://github.com/tiation/DnDDiceRoller-iOS) | Tabletop gaming dice roller |
+| [node-standardization](https://github.com/tiation/node-standardization) | Node.js project templates |
+
+## 👥 Project Team 26 Contact
+
+### Core Contributors
+- **Jack Jonas** ([jackjonas95@gmail.com](mailto:jackjonas95@gmail.com)) - *Crane Operator 6 Heavy Vehicle Mechanic, Karratha WA*
+  - Experienced rigger and crane operator bringing real-world industry expertise
+  - Specializes in heavy vehicle mechanics and construction site operations
+  - Based in Karratha, Western Australia, serving the mining and construction sectors
+
+- **Tia** ([tiatheone@protonmail.com](mailto:tiatheone@protonmail.com)) - *Swedish Software Developer 6 NGO Founder*
+  - Founder of ChaseWhiteRabbit NGO
+  - Enterprise software architect and full-stack developer
+  - Passionate about ethical technology and social impact through code
+
+### Our Mission
+This collaboration represents the perfect fusion of **industry expertise** and **technical innovation**. Jack's deep understanding of the transient rigging industry's challenges, combined with Tia's software development expertise, aims to create solutions that truly serve the construction community while funding the humanitarian work of ChaseWhiteRabbit NGO.
+
+### Contact Information
+- **Technical Support**: [tiatheone@protonmail.com](mailto:tiatheone@protonmail.com)
+- **Industry Consultation**: [jackjonas95@gmail.com](mailto:jackjonas95@gmail.com)
+- **General Inquiries**: [info@chasewhiterabbit.org](mailto:info@chasewhiterabbit.org)
 
 ## 📊 API Reference
 
@@ -896,7 +955,18 @@ git push heroku main
 - Configure monitoring and logging
 - Implement CI/CD pipelines
 
-## 🚧 Development Notes
+## 📄 License
+
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)** - see the [LICENSE](LICENSE) file for details.
+
+### GPL v3 License Summary
+- ✅ **Freedom to use** - Use the software for any purpose
+- ✅ **Freedom to study** - Access and modify the source code
+- ✅ **Freedom to share** - Distribute copies to help others
+- ✅ **Freedom to improve** - Distribute modified versions
+- ⚠️ **Copyleft requirement** - Derivative works must also be GPL-licensed
+
+## 🆘 Development Notes
 
 This implementation follows enterprise-grade practices:
 
@@ -917,7 +987,7 @@ This Step 4 builds upon:
 - **Security middleware:** Enhanced with social login support
 - **Frontend integration:** Ready for React implementation
 
-## 📖 Documentation
+## 📂 Documentation
 
 - [Complete API Documentation](./docs/api/authentication.md)
 - [Environment Configuration](./server/.env.example)
@@ -934,5 +1004,6 @@ The system is now ready for advanced features like team management, call handlin
 
 ---
 
-**Built with enterprise standards in mind** 🏢⚡️  
-*Ready for production deployment and scalable growth*
+**Built with ❤️ by the ChaseWhiteRabbit NGO Team**
+
+*Empowering communities through ethical technology solutions*

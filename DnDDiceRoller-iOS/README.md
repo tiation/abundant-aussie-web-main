@@ -1,5 +1,10 @@
 # 🎲 Dice of Middle-earth - iOS Dice Roller
 
+[![ChaseWhiteRabbit NGO](https://img.shields.io/badge/ChaseWhiteRabbit-NGO-blue.svg)](https://chasewhiterabbit.org)
+[![Enterprise Grade](https://img.shields.io/badge/Enterprise-Grade-red.svg)](#)
+[![DevOps Ready](https://img.shields.io/badge/DevOps-Ready-green.svg)](#)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 <div align="center">
 
 ![Dice of Middle-earth Banner](https://img.shields.io/badge/🧙‍♂️_TIATION_ECOSYSTEM-Dice_of_Middle_earth-FF6B35?style=for-the-badge&labelColor=0A0A0A&color=FF6B35)

@@ -392,7 +392,7 @@ describe('Capacitor Device Integration', () => {
         webViewVersion: 'unknown',
       };
 
-      mockDevice.getInfo.mockResolvedValue(mockDeviceInfo);
+      Device.getInfo.mockResolvedValue(mockDeviceInfo);
 
       const deviceInfo = await Device.getInfo();
       expect(deviceInfo.platform).toBe('web');

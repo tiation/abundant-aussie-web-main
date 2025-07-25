@@ -6,16 +6,19 @@ import { BuilderPreview } from '@/components/builder/BuilderPreview'
 import { Header } from '@/components/ui/Header'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { useAnalytics } from '@/hooks/useAnalytics'
+import { useStoreHydration } from '@/hooks/useStoreHydration'
 import { useChatStore } from '@/stores/chatStore'
 import { useBuilderStore } from '@/stores/builderStore'
 import { Button } from '@/components/ui/Button'
 import { PlusIcon, CodeBracketIcon, EyeIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline'
+import geminiService from '@/services/geminiAI'
 
 export default function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeView, setActiveView] = useState<'chat' | 'preview'>('chat')
+  const hasHydrated = useStoreHydration()
   const { trackEvent, trackFeatureUsage } = useAnalytics()
-  const { messages, isLoading } = useChatStore()
+  const { messages, isLoading, createSession, addSystemMessage } = useChatStore()
   const { currentProject, projects } = useBuilderStore()
 
   useEffect(() => {
@@ -48,6 +51,21 @@ export default function HomePage() {
   const handleViewToggle = (view: 'chat' | 'preview') => {
     setActiveView(view)
     trackFeatureUsage(`view_${view}`)
+  }
+
+  // Show loading state during hydration
+  if (!hasHydrated) {
+    return (
+      <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Loading BuildAI...</h2>
+          <p className="text-muted-foreground">Preparing your AI-powered website builder</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -146,7 +164,6 @@ export default function HomePage() {
                 onClick={() => {
                   trackFeatureUsage('welcome_dismissed')
                   // Create a new session and add a welcome message to dismiss the modal
-                  const { createSession, addSystemMessage } = useChatStore.getState()
                   createSession('New Project')
                   addSystemMessage('Welcome to BuildAI! I\'m ready to help you build your website. What would you like to create?')
                 }}

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { generateId } from '@/lib/utils'
+import geminiService from '@/services/geminiAI'
 
 export interface ChatMessage {
   id: string
@@ -101,13 +102,30 @@ export const useChatStore = create<ChatState>()(
           }
         })
         
-        // Simulate AI response (replace with actual API call)
-        setTimeout(() => {
-          get().receiveMessage(`I understand you want to: "${content}". Let me help you build that!`, {
-            model: 'gpt-4',
-            tokens: 50,
-          })
-        }, 2000)
+        // Use Gemini AI for actual responses
+        setTimeout(async () => {
+          try {
+            const aiResponse = await geminiService.generateContent(
+              `You are BuildAI, an AI assistant that helps users create websites. The user said: "${content}". 
+              
+              Respond helpfully and ask clarifying questions if needed to understand what kind of website they want to build. Keep responses concise and friendly.`
+            )
+            
+            get().receiveMessage(aiResponse, {
+              model: 'gemini-pro',
+              tokens: aiResponse.length,
+            })
+          } catch (error) {
+            console.error('Error getting AI response:', error)
+            get().receiveMessage(
+              "I'm having trouble connecting to the AI service right now. Please try again later.",
+              {
+                model: 'fallback',
+                error: true,
+              }
+            )
+          }
+        }, 1000)
       },
       
       receiveMessage: (content: string, metadata?: ChatMessage['metadata']) => {

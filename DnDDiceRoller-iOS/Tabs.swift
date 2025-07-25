@@ -9,13 +9,7 @@ struct PlayerTabView: View {
             PlayerView(rollLogger: rollLogger)
                 .navigationTitle("⚔️ Player")
                 .navigationBarTitleDisplayMode(.inline)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.red.opacity(0.05), Color.gray.opacity(0.02)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .background(FantasyTheme.Gradients.appBackground)
         }
     }
 }
@@ -32,15 +26,15 @@ struct DungeonMasterTabView: View {
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color.black,
-                            Color.purple.opacity(0.8),
-                            Color.black.opacity(0.9)
+                            FantasyTheme.Colors.deepShadow,
+                            FantasyTheme.Colors.shadowPurple.opacity(0.8),
+                            FantasyTheme.Colors.darkMystic
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .foregroundColor(.white) // High-contrast white text
+                .foregroundColor(FantasyTheme.Colors.primaryText)
         }
     }
 }
@@ -56,15 +50,15 @@ struct LogTabView: View {
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color.black,
-                            Color.purple.opacity(0.7),
-                            Color.black.opacity(0.95)
+                            FantasyTheme.Colors.deepShadow,
+                            FantasyTheme.Colors.shadowPurple.opacity(0.7),
+                            FantasyTheme.Colors.darkMystic
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .foregroundColor(Color.white.opacity(0.95)) // High-contrast off-white text
+                .foregroundColor(FantasyTheme.Colors.primaryText)
         }
     }
 }
@@ -78,13 +72,7 @@ struct GeneralDiceTabView: View {
             EnhancedGeneralDiceView(rollLogger: rollLogger, quickRollManager: quickRollManager)
                 .navigationTitle("🎲 General Dice")
                 .navigationBarTitleDisplayMode(.inline)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.blue.opacity(0.05), Color.gray.opacity(0.02)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .background(FantasyTheme.Gradients.appBackground)
         }
     }
 }
@@ -98,45 +86,45 @@ struct LogListView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(roll.rollType.rawValue)
-                            .font(.caption)
-                            .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
+                            .fantasyText(.captionText)
                         Text("\(roll.numberOfDice)d\(roll.diceType)\(roll.modifier != 0 ? (roll.modifier > 0 ? "+\(roll.modifier)" : "\(roll.modifier)") : "")")
-                            .font(.headline)
-                            .foregroundColor(.white) // High-contrast primary text
+                            .fantasyText(.sectionTitle)
                     }
                     
                     Spacer()
                     
                     Text("\(roll.finalTotal)")
+                        .font(FantasyTheme.Typography.sectionTitle())
                         .fontWeight(.bold)
-                        .foregroundColor(roll.rollType == .damage ? Color.red.opacity(0.9) : (roll.rollType == .healing ? Color.green.opacity(0.9) : Color.cyan.opacity(0.9)))
-                        .font(.title2)
+                        .foregroundColor(roll.rollType == .damage ? FantasyTheme.Colors.dragonRed : (roll.rollType == .healing ? FantasyTheme.Colors.emeraldGreen : FantasyTheme.Colors.arcaneBlue))
+                        .shadow(
+                            color: Color.black.opacity(0.8),
+                            radius: 1,
+                            x: 1,
+                            y: 1
+                        )
                 }
                 
                 if !roll.description.isEmpty {
                     Text(roll.description)
-                        .font(.caption)
-                        .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
+                        .fantasyText(.captionText)
                 }
                 
                 Text("Rolls: \(roll.results.map { String($0) }.joined(separator: ", "))")
-                    .font(.body)
-                    .foregroundColor(Color.white.opacity(0.9)) // High-contrast body text
+                    .fantasyText(.bodyText)
                 
                 if roll.modifier != 0 {
                     Text("Base: \(roll.total) | Modifier: \(roll.modifier >= 0 ? "+" : "")\(roll.modifier)")
-                        .font(.caption)
-                        .foregroundColor(Color.white.opacity(0.8)) // High-contrast secondary text
+                        .fantasyText(.captionText)
                 }
                 
                 Text(roll.timestamp, style: .relative)
-                    .font(.caption)
-                    .foregroundColor(Color.white.opacity(0.7)) // High-contrast timestamp text
+                    .fantasyText(.tertiaryText)
             }
             .padding(.vertical, 4)
-            .listRowBackground(Color.clear) // Ensure transparent row background for gradient visibility
+            .listRowBackground(Color.clear)
         }
-        .listStyle(PlainListStyle()) // Remove default list styling for better gradient display
+        .listStyle(PlainListStyle())
     }
 }
 
@@ -146,13 +134,11 @@ struct GeneralDiceView: View {
     var body: some View {
         VStack {
             Text("🎲 General Dice Roller")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .fantasyText(.heroTitle, enableGlow: true)
                 .padding()
             
             Text("Quick access to all dice rolling functions")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .fantasyText(.secondaryText)
                 .padding(.bottom)
             
             ScrollView {
@@ -164,54 +150,61 @@ struct GeneralDiceView: View {
                             VStack {
                                 Image(systemName: "dice.fill")
                                     .font(.system(size: 30))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(FantasyTheme.Colors.primaryText)
                                 Text(diceType.rawValue)
-                                    .font(.headline)
-                                    .foregroundColor(.white)
+                                    .fantasyText(.sectionTitle)
                             }
                             .frame(height: 80)
                             .frame(maxWidth: .infinity)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.blue.opacity(0.6)]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .background(FantasyTheme.Colors.buttonPrimary)
                             .cornerRadius(12)
-                            .shadow(radius: 3)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                FantasyTheme.Colors.primaryText.opacity(0.2),
+                                                Color.clear
+                                            ]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                            .shadow(
+                                color: FantasyTheme.Shadows.elementDepth.color,
+                                radius: FantasyTheme.Shadows.elementDepth.radius,
+                                x: FantasyTheme.Shadows.elementDepth.x,
+                                y: FantasyTheme.Shadows.elementDepth.y
+                            )
                         }
                     }
                 }
                 .padding(.horizontal)
                 
                 Divider()
+                    .background(FantasyTheme.Colors.secondaryText)
                     .padding(.vertical)
                 
                 Text("Custom Die Roller")
-                    .font(.headline)
+                    .fantasyText(.sectionTitle)
                     .padding(.horizontal)
                 
                 HStack {
                     Text("Custom Die (d\(quickRollManager.customDieSides))")
-                        .font(.subheadline)
+                        .fantasyText(.bodyText)
                     Spacer()
                     Button("Roll") {
                         // Custom roll action placeholder
                     }
-                    .buttonStyle(.borderedProminent)
+                    .fantasyButton(.secondary)
                 }
                 .padding(.horizontal)
             }
             
             Spacer()
         }
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.05), Color.gray.opacity(0.02)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
+        .background(FantasyTheme.Gradients.appBackground)
     }
 }

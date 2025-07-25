@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import posthog from 'posthog-js'
 
-export const PostHogProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+export const PostHogProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Only init PostHog if API key is provided
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
@@ -14,14 +14,6 @@ export const PostHogProvider = ({ children }: { children: React.ReactNode }): JS
       loaded: (posthog) => {
         if (process.env.NODE_ENV === 'development') posthog.debug() // Debug mode
       },
-      // Enable feature flags
-      feature_flags: { autoReload: true },
-      session_recording: {
-        // opt out of session recording
-        onRecordingStart: () => false,
-      },
-      // Set your cross-domain config
-      cross_subdomain_cookie: false,
     })
     // Cleanup on unmount
     return () => {
@@ -32,6 +24,6 @@ export const PostHogProvider = ({ children }: { children: React.ReactNode }): JS
     }
   }, [])
 
-  return children
+  return <>{children}</>
 }
 

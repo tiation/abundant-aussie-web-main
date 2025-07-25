@@ -95,6 +95,44 @@ Abundant Aussie Web is a cutting-edge platform designed to empower communities t
 ![Analytics](./screenshots/analytics.png)
 *Advanced reporting and analytics capabilities*
 
+## 🔧 Troubleshooting
+
+### Connectivity Issues
+
+1. **RiggerBackend cannot reach Postgres or Redis:**
+   - **Error Code 1:** Connection refused. Verify if Postgres/Redis services are running.
+   - **Error Code 2:** Timeout error. Check network configuration and firewall settings.
+
+### SSL/TLS Certificate Issues
+
+1. **Certificate Mismatch Errors:**
+   - Check the domain name in the certificate matches the URL.
+   - Ensure all certificate chains are correctly configured.
+
+2. **SSL/TLS Certificate Renewal:**
+   - Use Certbot to automate renewal.
+   - Verify the new certificate by checking its expiration date using OpenSSL.
+
+### Resource Optimization on VPS
+
+1. **Lack of Resources:**
+   - Reduce memory usage by optimizing application configurations.
+   - Use tools like `htop` to monitor and reduce unnecessary processes.
+   - Enable swap space on small VPS nodes.
+
+2. **Optimization Tips:**
+   - Compress static files to reduce bandwidth.
+   - Use a CDN to offload content serving.
+
+### Log Analysis Using Promtail, Loki, and Grafana
+
+1. **Setting up Promtail:**
+   - Install Promtail and configure it to send logs to Loki.
+  
+2. **Visualizing Logs in Grafana:**
+   - Integrate Grafana with Loki.
+   - Create dashboards for visualizing logs with real-time filtering and querying.
+
 ## 🚀 Quick Start Guide
 
 ### Prerequisites

@@ -98,7 +98,7 @@ export interface EnvironmentConfig {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string
   NEXT_PUBLIC_POSTHOG_KEY: string
   NEXT_PUBLIC_POSTHOG_HOST: string
-  OPENAI_API_KEY: string
+  GOOGLE_AI_API_KEY: string
   NEXTAUTH_URL: string
   NEXTAUTH_SECRET: string
 }

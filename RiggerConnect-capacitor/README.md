@@ -157,6 +157,22 @@ const config: CapacitorConfig = {
 export default config;
 ```
 
+## 🔗 Related Repositories
+
+### Core Platform Components
+
+| Repository | Platform | Description | GitHub SSH URL |
+|------------|----------|-------------|----------------|
+| **RiggerConnect-web** | Web | Business-focused recruitment platform | `git@github.com:tiation/RiggerConnect-web.git` |
+| **RiggerConnect-android** | Android | Mobile business management app | `git@github.com:tiation/RiggerConnect-android.git` |
+| **RiggerConnect-ios** | iOS | Mobile business management app | `git@github.com:tiation/RiggerConnect-ios.git` |
+| **RiggerConnect-capacitor** | Cross-platform | Cross-platform mobile framework | `git@github.com:tiation/RiggerConnect-capacitor.git` |
+| **RiggerHub-web** | Web | Worker-focused job search platform | `git@github.com:tiation/RiggerHub-web.git` |
+| **RiggerHub-android** | Android | Mobile worker app | `git@github.com:tiation/RiggerHub-android.git` |
+| **RiggerHub-ios** | iOS | Mobile worker app | `git@github.com:tiation/RiggerHub-ios.git` |
+| **RiggerBackend** | API/Backend | Core backend services and APIs | `git@github.com:tiation/RiggerBackend.git` |
+| **RiggerShared** | Multi-platform | Shared libraries and components | `git@github.com:tiation/RiggerShared.git` |
+
 ## 🧪 Testing
 
 ### Test Stack
@@ -285,13 +301,67 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 
 ## 🔗 Related Repositories
 
-### Rigger Ecosystem
-- **[RiggerBackend](https://github.com/tiaastor/RiggerBackend/)**: Node.js API and microservices
-- **[RiggerConnect-web](https://github.com/tiaastor/RiggerConnect-web/)**: React web application
-- **[RiggerConnect-ios](https://github.com/tiaastor/RiggerConnect-ios/)**: Native iOS application
-- **[RiggerConnect-android](https://github.com/tiaastor/RiggerConnect-android/)**: Native Android application
-- **[RiggerHub-web](https://github.com/tiaastor/RiggerHub-web/)**: Business portal web application
-- **[RiggerShared](https://github.com/tiaastor/RiggerShared/)**: Shared libraries and utilities
+### Core Platform Components
+
+| Repository | Platform | Description | GitHub SSH URL |
+|------------|----------|-------------|----------------|
+| **RiggerBackend** | API/Backend | Core backend services and APIs for the Rigger ecosystem | `git@github.com:tiation/RiggerBackend.git` |
+| **RiggerConnect-web** | Web | Professional networking platform for construction workers | `git@github.com:tiation/RiggerConnect-web.git` |
+| **RiggerConnect-android** | Android | Native Android mobile networking application | `git@github.com:tiation/RiggerConnect-android.git` |
+| **RiggerConnect-capacitor** | Cross-platform | Cross-platform mobile app built with Ionic Capacitor | `git@github.com:tiation/RiggerConnect-capacitor.git` |
+| **RiggerConnect-ios** | iOS | Native iOS mobile networking application | `git@github.com:tiation/RiggerConnect-ios.git` |
+| **RiggerHub-web** | Web | Operations management hub for business users | `git@github.com:tiation/RiggerHub-web.git` |
+| **RiggerHub-android** | Android | Native Android operations management application | `git@github.com:tiation/RiggerHub-android.git` |
+| **RiggerHub-ios** | iOS | Native iOS operations management application | `git@github.com:tiation/RiggerHub-ios.git` |
+| **RiggerShared** | Multi-platform | Shared libraries, components, and utilities | `git@github.com:tiation/RiggerShared.git` |
+
+## 👥 Contact & Team
+
+### Project Leaders
+
+**Jack Jonas** - Karratha Crane Operator & Industry Expert  
+📧 [jackjonas95@gmail.com](mailto:jackjonas95@gmail.com)  
+🏗️ **Industry Expertise**: Seasoned rigger, crane operator, and heavy vehicle mechanic based in Karratha, Western Australia. Jack's extensive field experience ensures this cross-platform mobile application addresses the real-world networking and career development needs of riggers who require reliable mobile tools that work seamlessly across different devices and platforms in challenging industrial environments.
+
+**Tia** - ChaseWhiteRabbit NGO Technical Leadership  
+📧 [tiatheone@protonmail.com](mailto:tiatheone@protonmail.com)  
+🌟 **NGO Mission-Driven Leadership**: Swedish software developer and founder of ChaseWhiteRabbit NGO, dedicated to creating ethical technology solutions that empower blue-collar workers. Tia's mission-driven approach ensures this cross-platform app provides construction industry professionals with powerful networking tools while maintaining the organization's commitment to community impact and worker welfare.
+
+## 🤝 Project Team & Purpose
+
+This project is part of a broader suite of repositories aimed at supporting the **transient rigging and heavy lifting industry** in Western Australia and beyond.
+
+🔗 **Related Repositories**:
+
+* [`RiggerConnect-web`](https://github.com/ChaseWhiteRabbit/RiggerConnect-web) - Professional networking platform for construction workers
+* [`RiggerConnect-android`](https://github.com/ChaseWhiteRabbit/RiggerConnect-android) - Native Android mobile networking application
+* [`RiggerConnect-ios`](https://github.com/ChaseWhiteRabbit/RiggerConnect-ios) - Native iOS mobile networking application
+* [`RiggerConnect-capacitor`](https://github.com/ChaseWhiteRabbit/RiggerConnect-capacitor) - Cross-platform mobile app built with Ionic Capacitor
+* [`RiggerHub-web`](https://github.com/ChaseWhiteRabbit/RiggerHub-web) - Operations management hub for business users
+* [`RiggerHub-android`](https://github.com/ChaseWhiteRabbit/RiggerHub-android) - Native Android operations management application
+* [`RiggerHub-ios`](https://github.com/ChaseWhiteRabbit/RiggerHub-ios) - Native iOS operations management application
+* [`RiggerShared`](https://github.com/ChaseWhiteRabbit/RiggerShared) - Shared libraries, components, and utilities
+* [`RiggerBackend`](https://github.com/ChaseWhiteRabbit/RiggerBackend) - Core backend services and APIs for the Rigger ecosystem
+
+📬 **Contact**:
+For questions, ideas, or collaboration inquiries, please reach out to:
+
+* **Jack Jonas** – [jackjonas95@gmail.com](mailto:jackjonas95@gmail.com)
+* **Tia** – [tiatheone@protonmail.com](mailto:tiatheone@protonmail.com)
+
+---
+
+### 🙌 About the Founders
+
+**Jack Jonas** is a seasoned rigger, crane operator, and heavy vehicle mechanic based in Karratha, Western Australia. His firsthand experience in the field shapes the practical backbone of this platform.
+
+**Tia** is a Swedish software developer and founder of the NGO **ChaseWhiteRabbit**, which is dedicated to building inclusive, systemic solutions to complex challenges.
+
+Together, they created this SaaS platform to:
+
+* Help connect riggers, doggers, and crane operators to real work opportunities.
+* Support better logistics, transparency, and compliance in the field.
+* Fund and sustain the good work being done by **ChaseWhiteRabbit** in disadvantaged communities.
 
 ### ChaseWhiteRabbit NGO
 This project is proudly developed under the ChaseWhiteRabbit NGO, dedicated to creating ethical, enterprise-grade solutions for the construction industry.
@@ -318,3 +388,49 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Built with ❤️ by the ChaseWhiteRabbit NGO team**
 
 *Connecting construction professionals, one app at a time.*
+
+## 🌟 Project Vision: Empowering Industry Through Ethical Technology
+
+### How This Platform Serves Jack Jonas and the Rigging Industry
+
+RiggerConnect Capacitor delivers cross-platform mobile excellence specifically designed for Western Australia's construction and rigging professionals. For experienced riggers like Jack Jonas working across diverse mobile environments, this Capacitor application provides:
+
+- **Universal Mobile Access**: Cross-platform application ensuring consistent functionality across iOS and Android devices, accommodating diverse technology preferences in the rigging workforce
+- **Field-Optimized Performance**: Capacitor-based architecture delivering native performance for professional networking and career development tools in challenging industrial environments
+- **Seamless Device Integration**: Advanced mobile features like camera integration, GPS services, and offline functionality supporting real-world rigging workflow requirements
+- **Professional Networking Excellence**: Sophisticated cross-platform interface enabling riggers to connect with industry professionals, employers, and peers regardless of mobile platform
+- **Career Development Tools**: Comprehensive mobile portfolio management and learning resources accessible across all devices and platforms
+
+### Supporting ChaseWhiteRabbit NGO's Charitable Mission
+
+Every successful connection made through RiggerConnect Capacitor generates sustainable funding for ChaseWhiteRabbit NGO's charitable initiatives:
+
+- **Cross-Platform Impact**: Revenue from universal mobile access directly supports NGO programs focused on digital inclusion and technology equity across diverse communities
+- **Professional Development Funding**: Platform success in facilitating networking and career development enables NGO investment in vocational training programs for disadvantaged youth
+- **Mobile Technology Access**: Cross-platform app revenue helps establish mobile technology training centers in remote and underserved communities
+- **Research and Innovation**: Platform growth supports NGO development of additional open-source cross-platform tools that benefit blue-collar workers globally
+- **Industry Advocacy**: Revenue funds research and policy advocacy for improved worker networking opportunities and professional development support
+
+### Ethical, Accessible, and Worker-First Technology
+
+RiggerConnect Capacitor exemplifies ChaseWhiteRabbit NGO's commitment to creating ethical technology solutions that empower blue-collar workers:
+
+**🔍 Ethical by Design**
+- GPL v3 licensing ensures complete transparency and prevents proprietary exploitation of worker networking and professional data
+- Algorithmic fairness in networking recommendations and career opportunity matching prevents discrimination and promotes equal access
+- Privacy-first architecture with cross-platform data protection ensuring user information security across all devices
+- Anti-bias safeguards in professional networking algorithms ensuring equal opportunity regardless of background or demographics
+
+**♿ Accessibility as a Core Value**
+- Capacitor accessibility features ensuring consistent usability across platforms for users with diverse abilities
+- Multi-language support reflecting Australia's diverse workforce communities and international rigging professionals
+- Offline-first design acknowledging connectivity challenges in remote construction and mining sites
+- Cross-platform compatibility ensuring access regardless of device preferences or economic constraints
+
+**👷 Worker-Focused Philosophy**
+- User ownership of professional networking data and career profiles prevents vendor lock-in and ensures portability
+- Transparent networking algorithms that workers can understand and influence
+- Direct feedback mechanisms giving construction professionals genuine voice in platform development and feature prioritization
+- Skills-based professional recognition that values practical experience, safety record, and industry expertise over academic credentials
+
+This cross-platform mobile application demonstrates that cutting-edge Capacitor technology can simultaneously serve professional networking needs, empower individual workers across diverse mobile platforms, and generate sustainable funding for social good - proving that ethical technology practices and cross-platform accessibility create stronger, more inclusive business models.

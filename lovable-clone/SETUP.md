@@ -8,7 +8,7 @@ This comprehensive guide covers setting up BuildAI for development and deploying
 - Git
 - A Netlify account
 - (Optional) Supabase account for authentication
-- (Optional) OpenAI API key for AI features
+- (Optional) Google Gemini API key for AI features
 - (Optional) PostHog account for analytics
 
 ## 🚀 Quick Start
@@ -132,8 +132,8 @@ NEXT_TELEMETRY_DISABLED=1
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 
-# AI Features (OpenAI)
-OPENAI_API_KEY=sk-your-openai-api-key
+# AI Features (Google Gemini)
+GOOGLE_AI_API_KEY=your-google-ai-api-key
 
 # Authentication (NextAuth)
 NEXTAUTH_URL=https://your-site.netlify.app
@@ -221,7 +221,7 @@ npm start
 - ✅ User management
 
 ### AI Integration
-- ✅ OpenAI API integration
+- ✅ Google Gemini API integration
 - ✅ Chat interface components
 - ✅ AI-powered features
 - ✅ Free tier optimization

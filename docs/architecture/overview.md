@@ -45,12 +45,26 @@ The Rigger Platform consists of multiple interconnected applications:
 
 ```mermaid
 graph TB
-    %% Client Applications
+    %% Repository Layer - All 8 Official Repositories
+    subgraph "Rigger Ecosystem Repositories"
+        REPO_CONNECT_WEB[RiggerConnect-web<br/>React Web Platform]
+        REPO_CONNECT_ANDROID[RiggerConnect-android<br/>Native Android App]
+        REPO_CONNECT_IOS[RiggerConnect-ios<br/>Native iOS App]
+        REPO_HUB_WEB[RiggerHub-web<br/>Business Web Platform]
+        REPO_HUB_ANDROID[RiggerHub-android<br/>Business Android App]
+        REPO_HUB_IOS[RiggerHub-ios<br/>Business iOS App]
+        REPO_BACKEND[RiggerBackend<br/>API Services & Microservices]
+        REPO_SHARED[RiggerShared<br/>Common Libraries & Utilities]
+    end
+
+    %% Client Layer - Runtime Applications
     subgraph "Client Layer"
         WEB1[RiggerConnect Web]
         WEB2[RiggerHub Web]
         MOB1[RiggerConnect iOS]
         MOB2[RiggerConnect Android]
+        MOB3[RiggerHub iOS]
+        MOB4[RiggerHub Android]
     end
 
     %% API Gateway
@@ -92,12 +106,25 @@ graph TB
         SMS[SMS Service]
     end
 
-    %% Connections
+    %% Repository to Client Connections
+    REPO_CONNECT_WEB -.-> WEB1
+    REPO_HUB_WEB -.-> WEB2
+    REPO_CONNECT_IOS -.-> MOB1
+    REPO_CONNECT_ANDROID -.-> MOB2
+    REPO_HUB_IOS -.-> MOB3
+    REPO_HUB_ANDROID -.-> MOB4
+    REPO_BACKEND -.-> GATEWAY
+    REPO_SHARED -.-> SHARED
+
+    %% Client to API Connections
     WEB1 --> GATEWAY
     WEB2 --> GATEWAY
     MOB1 --> GATEWAY
     MOB2 --> GATEWAY
+    MOB3 --> GATEWAY
+    MOB4 --> GATEWAY
 
+    %% API Gateway Connections
     GATEWAY --> AUTH
     GATEWAY --> USER
     GATEWAY --> JOB
@@ -107,6 +134,7 @@ graph TB
     GATEWAY --> MATCHING
     GATEWAY --> WORKSAFE
 
+    %% Microservices to Shared Library Connections
     USER --> SHARED
     JOB --> SHARED
     NOTIF --> SHARED
@@ -115,6 +143,7 @@ graph TB
     MATCHING --> SHARED
     WORKSAFE --> SHARED
 
+    %% Microservices to Database Connections
     USER --> SUPABASE
     JOB --> SUPABASE
     NOTIF --> SUPABASE
@@ -123,20 +152,35 @@ graph TB
     MATCHING --> SUPABASE
     WORKSAFE --> SUPABASE
 
+    %% Queue and Cache Connections
     NOTIF --> QUEUE
     MATCHING --> QUEUE
     
     USER --> CACHE
     JOB --> CACHE
     
+    %% Search and Analytics
     NOTIF --> ELASTIC
     USER --> ELASTIC
     JOB --> ELASTIC
 
+    %% External Service Connections
     WORKSAFE --> WORKSAFE_EXT
     PAYMENT --> PAYMENT_EXT
     NOTIF --> EMAIL
     NOTIF --> SMS
+
+    %% Repository Styling
+    classDef repoStyle fill:#2D3748,stroke:#4A5568,stroke-width:2px,color:#E2E8F0
+    classDef webStyle fill:#3182CE,stroke:#2B6CB0,stroke-width:2px,color:#E6FFFA
+    classDef mobileStyle fill:#38A169,stroke:#2F855A,stroke-width:2px,color:#F0FFF4
+    classDef backendStyle fill:#D69E2E,stroke:#B7791F,stroke-width:2px,color:#FFFBEB
+    classDef sharedStyle fill:#805AD5,stroke:#6B46C1,stroke-width:2px,color:#FAF5FF
+    
+    class REPO_CONNECT_WEB,REPO_HUB_WEB webStyle
+    class REPO_CONNECT_ANDROID,REPO_CONNECT_IOS,REPO_HUB_ANDROID,REPO_HUB_IOS mobileStyle
+    class REPO_BACKEND backendStyle
+    class REPO_SHARED sharedStyle
 ```
 
 ## Application Architecture
